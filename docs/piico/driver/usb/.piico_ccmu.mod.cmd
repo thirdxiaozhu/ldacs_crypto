@@ -1,0 +1,1 @@
+cmd_/home/wencheng/key_management/piico/driver/usb/piico_ccmu.mod := printf '%s\n'   piico_mini.o | awk '!x[$$0]++ { print("/home/wencheng/key_management/piico/driver/usb/"$$0) }' > /home/wencheng/key_management/piico/driver/usb/piico_ccmu.mod

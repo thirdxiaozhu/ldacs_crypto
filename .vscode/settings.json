@@ -1,0 +1,10 @@
+{
+    "cmake.configureOnOpen": false,
+    "files.associations": {
+        "sdf-keytype.h": "c",
+        "sdfe-type.h": "c",
+        "libsdf.h": "c",
+        "sdf-func.h": "c",
+        "stdio.h": "c"
+    }
+}

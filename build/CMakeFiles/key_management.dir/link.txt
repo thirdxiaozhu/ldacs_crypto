@@ -1,0 +1,1 @@
+/usr/bin/cc      CMakeFiles/key_management.dir/main.c.o  -o key_management -rdynamic src/libkm_src.so -lsdf -lpthread -Wl,-rpath,/root/KM/key_management/build/src 
