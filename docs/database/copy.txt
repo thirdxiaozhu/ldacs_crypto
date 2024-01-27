@@ -1,0 +1,34 @@
+编程过程中的文件拷贝
+// 十六进制的密钥 存入密钥池 返回密钥编号
+int insert_into_root_key_pool(MYSQL *mysql, unsigned char *key_value, int kek_index, int *key_index)
+{
+    // sprintf(query_insert, "%s%d%s%d%s%d%s", str1, 0, ",'", key_value, "','", kek_index, "');");
+    char query_insert[512];
+    char query_insert_kek[255];
+    snprintf(query_insert, sizeof(query_insert), "INSERT INTO root_key_pool VALUES('0','%s','",key_value);
+    for (int i = 0; i < strlen(key_value); i++)
+    {
+        char hex[4];
+        snprintf(hex, sizeof(hex), "%02X", key_value[i]);
+        strncat(query_insert, hex, sizeof(query_insert) - strlen(query_insert) - 1);
+    }
+    sprintf(query_insert_kek, "%s%d%s", "','", kek_index, "');");
+    strncat(query_insert, query_insert_kek, sizeof(query_insert) - strlen(query_insert) - 1);
+    printf("query_insert:%s\n", query_insert);
+    if (mysql_query(mysql, query_insert))
+    {
+        fprintf(stderr, "Failed to insert: Error: %s\n",
+                mysql_error(mysql));
+        return KM_ERROR_SQL_KEYPOOL_INSERT;
+    }
+
+    // 返回密钥编号
+    char *str_select = "select key_index from root_key_pool where encrypted_key = ";
+    char query_index[255];
+    char *response;
+    sprintf(query_index, "%s%s%s%s", str_select, "'", key_value, "'");
+    printf("query_index:%s\n", query_index);
+    // select_from_root_key_pool(mysql, query_index, &response);
+    *key_index = atoi(response); // 密钥编号转为int类型
+    return 0;
+}

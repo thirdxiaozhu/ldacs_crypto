@@ -1,0 +1,1 @@
+cmd_/home/wencheng/key_management/piico/driver/usb/modules.order := {   echo /home/wencheng/key_management/piico/driver/usb/piico_ccmu.o; :; } > /home/wencheng/key_management/piico/driver/usb/modules.order

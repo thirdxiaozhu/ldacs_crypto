@@ -1,0 +1,53 @@
+sql数据库用户名和密码
+root password
+admin password
+
+ubuntu sql数据库安装过程记录
+  140  sudo apt install mysql-server
+  143  sudo /etc/init.d/mysql start
+  145  sudo apt update
+  146  sudo apt install mysql-server
+  147  sudo /etc/init.d/mysql start
+  148  mysql --version
+  149  sudo mysql_secure_installation
+  150  sudo mysql
+
+  登录mysql数据库
+  151  mysql -u root -p
+  152  mysql -u admin -p
+  153  clear
+  154  sudo ufw enable
+  155  sudo ufw allow mysql
+  156  sudo systemctl enable mysql
+  157  sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+
+创建用户 授权远程登录
+host 192.168.136.136
+  select user from user
+  mysql -uroot -p
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'localhost' WITH GRANT OPTION;
+flush privileges;
+grant all privileges on *.* to 'admin'@'%' identified by 'password';
+第一个*是数据库，可以改成允许访问的数据库名称
+第二个* 是数据库的表名称，*代表允许访问任意的表
+admin代表远程登录使用的用户名，可以自定义
+%代表允许任意ip登录，如果你想指定特定的IP，可以把%替换掉就可以了
+password代表远程登录时使用的密码，可以自定义
+新增用户赋权并设置远程访问
+ CREATE USER 'admin'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+ GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
+远程连接数据库
+mysql -h 192.168.136.136 -P 3306 -u 'admin' -p 
+
+查看端口使用情况
+  162  netstat -an | grep 3306
+
+
+  ssh
+  171  sudo serviece ssh start
+  172  sudo service ssh start
+  173  sudo service sshd status
+  174  vim /etc/ssh/sshd_config
+  175  history
+

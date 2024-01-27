@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/key_manage.h
+stdio.h
+-
+stdlib.h
+-
+sys/time.h
+-
+stdint.h
+-
+unistd.h
+-
+sdf/libsdf.h
+-
+sdfkmt/sdfe-func.h
+-
+sdfkmt/sdfe-type.h
+-
+
+/root/KM/key_management/main.c
+stdio.h
+-
+string.h
+-
+key_manage.h
+/root/KM/key_management/key_manage.h
+time.h
+-
+sdf/libsdf.h
+-
+

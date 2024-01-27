@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC    -shared -Wl,-soname,libkm_src.so -o libkm_src.so CMakeFiles/km_src.dir/key_manage.c.o 

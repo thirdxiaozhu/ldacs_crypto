@@ -1,0 +1,1 @@
+cmd_/home/wencheng/key_management/piico/driver/usb/piico_ccmu.o := ld -m elf_x86_64 -z noexecstack   -r -o /home/wencheng/key_management/piico/driver/usb/piico_ccmu.o @/home/wencheng/key_management/piico/driver/usb/piico_ccmu.mod 
