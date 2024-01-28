@@ -226,6 +226,7 @@ l_err write_keypkg_to_file(const char *filename, struct KeyPkg *pkg);
 *                        业务逻辑接口：kek预置                            *
 *************************************************************************
 */
+// 光电+光电密码卡方案：因为AS不支持PCIE 此方案不适用
 // 将kek写入文件
 l_err write_kekpkg_to_file(const char *filename, struct KEKPkg *pkg);
 
@@ -238,4 +239,5 @@ l_err generate_and_export_kek(int key_len, int kek_index, uint8_t *rcver, int rc
 // 验证并导入KEK到指定索引位置
 l_err external_import_kek(struct KEKPkg *kek_pkg, int kek_index, uint8_t *local_id, int id_len);
 
+// 光电+派科PICE转USB的接口 (未完成)
 #endif
