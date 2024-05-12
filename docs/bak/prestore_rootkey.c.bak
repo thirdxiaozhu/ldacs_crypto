@@ -13,6 +13,8 @@ int main(void)
 
     void *DeviceHandle, *pSessionHandle, *phKeyHandle;
     uint8_t key[16] = {0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10};
+    unsigned iv_len = 16;
+    uint8_t iv_mac[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     uint8_t iv_enc[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     uint8_t iv_dec[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     int key_len = 16;
@@ -95,7 +97,7 @@ int main(void)
 
                     // 加密
                     printf("encrypt test====================================================");
-                    int encrypt_result = encrypt_with_domestic_algo(phKeyHandle, alg_id, iv_enc, data, data_len, cipher_data, &cipher_data_len);
+                    int encrypt_result = encrypt(phKeyHandle, alg_id, iv_enc, data, data_len, cipher_data, &cipher_data_len);
                     if (encrypt_result == 0)
                     {
                         // 加密成功，cipher_data 中存放着加密后的数据
@@ -115,7 +117,7 @@ int main(void)
 
                     // 解密
                     printf("decrypt test====================================================");
-                    int decrypt_result = decrypt_with_domestic_algo(phKeyHandle, alg_id, iv_dec, cipher_data, cipher_data_len, plain_data, &plain_data_len);
+                    int decrypt_result = decrypt(phKeyHandle, alg_id, iv_dec, cipher_data, cipher_data_len, plain_data, &plain_data_len);
                     printbuff("key", key, key_len);
                     printbuff("iv_dec", iv_dec, 16);
                     printf("key handle %p\n", phKeyHandle);
@@ -244,7 +246,7 @@ int main(void)
         printf("Key as-sgw syccessfully derived!the Handle is %p\n", key_assgw_handle);
         printf(" metadata is as followed:\n");
         print_key_metadata(key_info);
-        // encrypt_with_domestic_algo(key_assgw_handle, alg_id, iv_enc, data, data_len, cipher_data, &cipher_data_len);
+        // encrypt(key_assgw_handle, alg_id, iv_enc, data, data_len, cipher_data, &cipher_data_len);
         // printbuff("cipher data:", cipher_data, cipher_data_len);
     }
     else
@@ -302,78 +304,140 @@ int main(void)
 
     write_keypkg_to_file("keystore.txt", &key_pkg);
  */
-    /*************************************************************
-     *                           根密钥预置                      *
-     ************************************************************/
-    // USB密码卡:生成+导出加密和签名密钥-调用密码卡工具
-    /*
-    // 导出SM2签名公钥 SM2加密公钥
-    int ecc_key_index = 1;
-    ECCrefPublicKey *pk_sign = malloc(sizeof(ECCrefPublicKey));
-    ret = SDF_ExportSignPublicKey_ECC(pSessionHandle, 1, pk_sign);
-    if (ret != LD_OK)
-    {
-        printf("SDF_ExportSignPublicKey_ECC error!return 0x%08x\n", ret);
-    }
-    ECCrefPublicKey *pk_enc = malloc(sizeof(ECCrefPublicKey));
-    SDF_ExportEncPublicKey_ECC(pSessionHandle, 1, pk_enc);
-    if (ret != LD_OK)
-    {
-        printf("SDF_ExportEncPublicKey_ECC error!return 0x%08x\n", ret);
-    }
 
-    // SGW:使用外部密钥生成根密钥 并导出根密钥 存储到到文件区
-    int rootkey_len = 256; // bit
-    ECCCipher *rootkey = malloc(sizeof(ECCCipher));
-    void *rootkey_handle_in_sgw;
-    ret = SDF_GenerateKeyWithEPK_ECC(pSessionHandle, rootkey_len, SGD_SM2, pk_enc, rootkey, &rootkey_handle_in_sgw);
-    if (ret != LD_OK)
+    /********************************************************
+     *                   纯对称方案的根密钥预置               *
+     *******************************************************/
+
+    // 网关密码卡生成随机数作为根密钥
+    uint8_t rootkey[32];
+    unsigned int rootkey_len = 32;
+    SDF_GenerateRandom(pSessionHandle, 32, rootkey);
+
+    // 明文拷贝根密钥，网关记录根密钥分发结果
+
+    // 根密钥使用
+    void *handle_rootkey;
+    SDF_ImportKey(pSessionHandle, rootkey, rootkey_len, handle_rootkey);
+
+    // 根密钥存储:存储结构 KEK-kek_for_rootkey-kek
+    unsigned int KEK_len = 16;
+    SDFE_GenerateKEK(pSessionHandle, KEK_len, 1); // 生成1号KEK
+    time_t currentTime;
+    struct KeyMetaData keyinfo = {
+        // 指定该密钥的信息
+        .id = 1,
+        .length = 16,
+        .owner_1 = "AS1",
+        .owner_2 = "Sec-GW1",
+        .state = PRE_ACTIVATION,
+        .type = LOCAL_STORAGE_PROTECTION_KEY,
+        .effectuation_time = time(&currentTime),
+        .update_cycle = 365,
+    };
+    unsigned int kek_index = 1; // 密码卡内KEK
+    void *handle_kek_for_rootkey;
+    uint8_t kek_for_rootkey[32];
+    unsigned int len_kek_for_rootkey;
+    int result_generate_kek_for_rootkey;
+    result_generate_kek_for_rootkey = generate_key_with_kek(kek_index, &keyinfo, &handle_kek_for_rootkey, kek_for_rootkey, &len_kek_for_rootkey); // AS密码卡生成LOCAL_STORAGE_PROTECTION_KEY类型的密钥kek_for_rootkey
+    if (result_generate_kek_for_rootkey != LD_OK)
     {
-        printf("SDF_GenerateKeyWithEPK_ECC error,return 0x%08x\n", ret);
+        printf("fail to result_generate_kek_for_rootkey.\n");
     }
     else
     {
-        printf("SDF_GenerateKeyWithEPK_ECC OK, the Handle is %p\n", rootkey_handle_in_sgw);
+        printf("succeed to result_generate_kek_for_rootkey.\n");
+        printbuff("cipher", kek_for_rootkey, len_kek_for_rootkey);
+        printf("handle : %p \n", handle_kek_for_rootkey);
+        print_key_metadata(&keyinfo);
     }
 
-    // USB密码卡:  分发密码卡给AS AS插上密码卡
+    // kek_for_rootkey存储到文件区，用于下次导入时恢复
+    //    unsigned int len_iv_kek_backup = 16;
+    //    uint8_t iv_kek_backup[len_iv_kek_backup];
+    //    SDF_GenerateRandom(pSessionHandle, 16, iv_kek_backup);
 
-    //  AS获取私钥使用权限
-    uint8_t *pin = "11111111";
-    unsigned int pin_len = strlen(pin);
-    ret = SDF_GetPrivateKeyAccessRight(pSessionHandle, 2, pin, pin_len);
-    if (ret != LD_OK)
+    // kek_for_rootkey恢复
+
+    // 根密钥存储到KeyPkg结构体中：使用本地存储保护密钥 对根密钥进行加密
+    unsigned int algo_rootkey_enc = SGD_SM4_OFB;
+    unsigned int len_iv = 16;
+    uint8_t iv_enc_rootkey[len_iv];
+    uint8_t iv_dec_rootkey[len_iv];
+    SDF_GenerateRandom(pSessionHandle, 16, iv_enc_rootkey);
+    memcpy(iv_dec_rootkey, iv_enc_rootkey, len_iv);
+    uint8_t rootkey_cipher[32];
+    unsigned int rootkey_cipher_len;
+    // printbuff("iv_enc_rootkey", iv_enc_rootkey, len_iv);
+    SDF_Encrypt(pSessionHandle, handle_kek_for_rootkey, algo_rootkey_enc, iv_enc_rootkey, rootkey, rootkey_len, rootkey_cipher, &rootkey_cipher_len);
+    printbuff("rootkey", rootkey, rootkey_len);
+    printbuff("encrypted rootkey ", rootkey_cipher, rootkey_cipher_len);
+    struct KeyMetaData root_keyinfo = {
+        // 指定该密钥的信息
+        .id = 1,
+        .length = rootkey_cipher_len,
+        .owner_1 = "AS1",
+        .owner_2 = "Sec-GW1",
+        .state = PRE_ACTIVATION,
+        .type = ROOT_KEY,
+        .effectuation_time = time(&currentTime),
+        .update_cycle = 365,
+    };
+    struct KeyPkg rootkey_pkg;
+    generate_key_pkg(&root_keyinfo, rootkey_cipher, iv_mac, iv_len, handle_kek_for_rootkey, &rootkey_pkg);
+    printf("rootkey pkg ==================================\n");
+    print_key_pkg(&rootkey_pkg);
+
+    // 将创建文件根密钥包写入密码卡文件区
+    uint8_t *rootkey_file_name = "rootkey.txt";
+    unsigned int filesize;
+    int createFileResult = SDF_CreateFile(pSessionHandle, rootkey_file_name, strlen(rootkey_file_name), sizeof(struct KeyPkg));
+    if (createFileResult != 0)
     {
-        printf("SDF_GetPrivateKeyAccessRight error,return 0x%08x\n", ret);
+        printf("Error creating file error!return 08x% 08x(%s)\n", ret, strerror(ret));
     }
     else
     {
-        printf(" SDF_GetPrivateKeyAccessRight OK\n");
+        printf(" creating file OK\n");
     }
-    // USB密码卡-导入根密钥
-    // 读取文件
-
-    // 使用内部私钥解密根密钥
-    ECCCipher *rootkey_1 = malloc(sizeof(ECCCipher));
-    void *rootkey_handle_in_as = malloc(sizeof(void));
-    printf("the rootkey_handle_in_as is %p\n", rootkey_handle_in_as);
-
-    int prikey_index = 1;
-    printf("The encrypt key is :\n");
-    printbuff("data.x", rootkey->x, ECCref_MAX_LEN);
-    printbuff("data.y", rootkey->y, ECCref_MAX_LEN);
-    printbuff("data.M", rootkey->M, 32);
-    printbuff("data.c", rootkey->C, rootkey->L);
-    ret = SDF_ImportKeyWithISK_ECC(pSessionHandle, prikey_index, rootkey, &rootkey_handle_in_as);
-    printf("the rootkey_handle_in_as is %p\n", rootkey_handle_in_as);
-    if (ret != LD_OK)
+    // 将根密钥写入文件区
+    unsigned char *byteBuffer = (unsigned char *)&rootkey_pkg; // 将结构体转换为 unsigned char*
+    int writeFileResult = SDF_WriteFile(pSessionHandle, rootkey_file_name, strlen(rootkey_file_name), 0, sizeof(struct KeyPkg), &rootkey_pkg);
+    if (writeFileResult != 0)
     {
-        printf("SDF_ImportKeyWithISK_ECC error,return 0x%08x\n", ret);
+        printf("Error writing to file\n");
+        return writeFileResult;
     }
     else
     {
-        printf("the rootkey_handle_in_as is %p\n", rootkey_handle_in_as);
+        printf(" writing to file ok\n");
     }
-*/
+    // 将根密钥从文件区读取出来
+    struct KeyPkg restored_pkg;
+    unsigned char *restored_byteBuffer =  (unsigned char *)&restored_pkg;
+    unsigned int readLength;
+    int readFileResult = SDF_ReadFile(pSessionHandle, rootkey_file_name, strlen(rootkey_file_name), 0, &readLength, &restored_byteBuffer);
+    if (readFileResult != 0)
+    {
+        printf("Error reading from file\n");
+        return readFileResult;
+    }
+    else
+    {
+
+        memcpy(&restored_pkg, byteBuffer, sizeof(struct KeyPkg)); // 再将 unsigned char* 转回结构体，使用 memcpy 将 byteBuffer 的数据拷贝到 restored_pkg 中
+        printf(" reading from file OK\n");
+        printf("rootkey_pkg_from_file\n");
+        print_key_pkg(&restored_byteBuffer);
+    }
+
+    // 根密钥使用 校验密钥完整性
+    uint8_t rootkey_plain[32];
+    unsigned int rootkey_plain_len;
+    SDF_Decrypt(pSessionHandle, handle_kek_for_rootkey, algo_rootkey_enc, iv_dec_rootkey, rootkey_cipher, rootkey_cipher_len, rootkey_plain, &rootkey_plain_len); // 解密根密钥
+    printbuff("decrypted rootkey ", rootkey_plain, rootkey_plain_len);
+    SDF_ImportKey(pSessionHandle, rootkey_plain, rootkey_plain_len, &handle_rootkey);
+
     return 0;
 }

@@ -4,13 +4,13 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_C
-  "/root/KM/key_management/main.c" "/root/KM/key_management/build/CMakeFiles/key_management.dir/main.c.o"
+  "/home/wencheng/crypto/key_management/export_rootkey.c" "/home/wencheng/crypto/key_management/build/CMakeFiles/key_management.dir/export_rootkey.c.o"
   )
 SET(CMAKE_C_COMPILER_ID "GNU")
 
 # Targets to which this target links.
 SET(CMAKE_TARGET_LINKED_INFO_FILES
-  "/root/KM/key_management/build/src/CMakeFiles/km_src.dir/DependInfo.cmake"
+  "/home/wencheng/crypto/key_management/build/src/CMakeFiles/km_src.dir/DependInfo.cmake"
   )
 
 # The include file search paths:

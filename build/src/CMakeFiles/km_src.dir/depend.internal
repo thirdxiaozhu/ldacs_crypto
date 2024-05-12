@@ -3,4 +3,4 @@
 
 src/CMakeFiles/km_src.dir/key_manage.c.o
  ../include/key_manage.h
- /root/KM/key_management/src/key_manage.c
+ /home/wencheng/crypto/key_management/src/key_manage.c
