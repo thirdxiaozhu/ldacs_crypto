@@ -7,19 +7,6 @@ CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
   CMake that the project does not need compatibility with older versions.
 
 
--- Configuring done (0.5s)
-CMake Error at tests/CMakeLists.txt:16 (target_link_libraries):
-  Target "keygentest" links to:
-
-    cli::ldacs_roles
-
-  but the target was not found.  Possible reasons include:
-
-    * There is a typo in the target name.
-    * A find_package call is missing for an IMPORTED target.
-    * An ALIAS target is missing.
-
-
-
+-- Configuring done (0.0s)
 -- Generating done (0.0s)
-CMake Generate step failed.  Build files cannot be regenerated correctly.
+-- Build files have been written to: /home/wencheng/crypto/key_management/cmake-build-debug

@@ -7,6 +7,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(tests
 keygen
+rkey_export
 )
 
 enable_testing()

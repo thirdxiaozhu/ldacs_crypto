@@ -44,8 +44,7 @@ typedef void *HANDLE; // 密钥句柄别名
 #define ALGO_HASH SGD_SM3            // hash调用的算法
 
 // 报错码
-typedef enum
-{
+typedef enum {
     LD_KM_OK = 0,
 
     LD_ERR_KM_OPEN_DEVICE = 100,           // 打开密码设备错误
@@ -80,8 +79,7 @@ typedef enum
 } l_km_err;
 
 // 密钥类型
-enum KEY_TYPE
-{
+enum KEY_TYPE {
     KEK = 0,              // store in pcie-card , for key establishment and storage
     ROOT_KEY,             // KAS 根密钥
     MASTER_KEY_AS_SGW,    // KASSGW 主密钥
@@ -96,8 +94,7 @@ enum KEY_TYPE
 };
 
 // 密钥状态 用于控制密钥的使用
-enum STATE
-{
+enum STATE {
     PRE_ACTIVATION, // 未激活
     ACTIVE,         // 已激活
     SUSPENDED,      // 已撤销
@@ -107,8 +104,7 @@ enum STATE
 };
 
 // 密钥属性结构体 用于指定密钥的参数
-struct KeyMetaData
-{
+struct KeyMetaData {
     uuid_t id;
     uint8_t owner_1[MAX_OWENER_LEN];
     uint8_t owner_2[MAX_OWENER_LEN];
@@ -121,8 +117,7 @@ struct KeyMetaData
 };
 
 // 密钥包 用于密钥的存储和分发
-struct KeyPkg
-{
+struct KeyPkg {
     struct KeyMetaData *meta_data;          // 密钥属性
     uint8_t kek_cipher[MAX_KEK_CIPHER_LEN]; // 密钥加密密钥的密文 用于密钥存储保护
     uint32_t kek_cipher_len;
@@ -141,93 +136,93 @@ struct KeyPkg
 */
 // 随机数生成
 l_km_err generate_random(
-    int len,
-    uint8_t *random_data);
+        int len,
+        uint8_t *random_data);
 
 // 国密加密（支持SM4_OFB/CFB/CBC/ECB）
 l_km_err encrypt(
-    void *key_handle,
-    uint32_t alg_id,
-    uint8_t *iv,
-    uint8_t *data,
-    uint32_t data_length,
-    uint8_t *cipher_data,
-    uint32_t *cipher_data_len);
+        void *key_handle,
+        uint32_t alg_id,
+        uint8_t *iv,
+        uint8_t *data,
+        uint32_t data_length,
+        uint8_t *cipher_data,
+        uint32_t *cipher_data_len);
 
 // 国密解密（支持SM4_OFB/CFB/CBC/ECB）
 l_km_err decrypt(
-    void *key_handle,
-    uint32_t alg_id,
-    uint8_t *iv,
-    uint8_t *cipher_data,
-    uint32_t cipher_data_len,
-    uint8_t *plain_data,
-    uint32_t *plain_data_len);
+        void *key_handle,
+        uint32_t alg_id,
+        uint8_t *iv,
+        uint8_t *cipher_data,
+        uint32_t cipher_data_len,
+        uint8_t *plain_data,
+        uint32_t *plain_data_len);
 
 // hash （支持SGD_SM3）输出32byte的结果
 l_km_err hash(
-    uint32_t alg_id,
-    uint8_t *data,
-    size_t data_len,
-    uint8_t *output);
+        uint32_t alg_id,
+        uint8_t *data,
+        size_t data_len,
+        uint8_t *output);
 
 // mac （支持SGD_SM4_CFB）
 l_km_err mac(
-    void *key_handle,
-    uint32_t alg_id,
-    uint8_t *iv,
-    uint8_t *data,
-    uint32_t data_length,
-    uint8_t *mac,
-    uint32_t *mac_length);
+        void *key_handle,
+        uint32_t alg_id,
+        uint8_t *iv,
+        uint8_t *data,
+        uint32_t data_length,
+        uint8_t *mac,
+        uint32_t *mac_length);
 
 // sm3 hmac key长度要求为32byte
 l_km_err hmac(
-    uint8_t *key,
-    uint32_t key_len,
-    uint8_t *data,
-    uint32_t data_len,
-    uint8_t *hmac_value,
-    uint32_t *hmac_len);
+        uint8_t *key,
+        uint32_t key_len,
+        uint8_t *data,
+        uint32_t data_len,
+        uint8_t *hmac_value,
+        uint32_t *hmac_len);
 
 // sm3 hmac key长度要求为32byte
 l_km_err hmac_with_keyhandle(
-    void *handle,
-    uint8_t *data,
-    uint32_t data_len,
-    uint8_t *hmac_value,
-    uint32_t *hmac_len);
+        void *handle,
+        uint8_t *data,
+        uint32_t data_len,
+        uint8_t *hmac_value,
+        uint32_t *hmac_len);
 
 /************************************************************************
  *                           基础密钥管理功能                             *
  ************************************************************************/
 // 导入明文密钥
 l_km_err import_key(
-    uint8_t *key,
-    uint32_t key_length,
-    void **key_handle);
+        uint8_t *key,
+        uint32_t key_length,
+        void **key_handle);
 
 // 销毁密钥
 l_km_err destroy_key(
-    void *key_handle);
+        void *key_handle);
 
 // 指定KEK索引和密钥元数据，生成密钥，返回密钥句柄和密钥密文
 l_km_err generate_key_with_kek(
-    int kek_index,
-    struct KeyMetaData *key_info,
-    void **key_handle,
-    uint8_t *cipher_key,
-    int *cipher_len);
+        int kek_index,
+        struct KeyMetaData *key_info,
+        void **key_handle,
+        uint8_t *cipher_key,
+        int *cipher_len);
 
 // 基于口令的密钥派生函数（prf：sm3 hmac）
 l_km_err pbkdf2(
-    uint8_t *password,
-    uint32_t password_len,
-    uint8_t *salt,
-    uint32_t salt_len,
-    uint32_t iterations,
-    uint32_t derived_key_len,
-    uint8_t *derived_key);
+        uint8_t *password,
+        uint32_t password_len,
+        uint8_t *salt,
+        uint32_t salt_len,
+        uint32_t iterations,
+        uint32_t derived_key_len,
+        uint8_t *derived_key);
 
 /*************************************************************************
  *                      业务逻辑接口：密钥生成和派生                       *
@@ -235,31 +230,31 @@ l_km_err pbkdf2(
 
 // 密钥派生
 l_km_err derive_key(
-    void *kdk_handle,
-    enum KEY_TYPE key_type,
-    uint32_t key_len,
-    uint8_t *owner1,
-    uint8_t *owner2,
-    uint8_t *rand,
-    uint32_t rand_len,
-    void **key_handle,
-    struct KeyPkg *pkg);
+        void *kdk_handle,
+        enum KEY_TYPE key_type,
+        uint32_t key_len,
+        uint8_t *owner1,
+        uint8_t *owner2,
+        uint8_t *rand,
+        uint32_t rand_len,
+        void **key_handle,
+        struct KeyPkg *pkg);
 
 // 输入密钥包 获取密钥句柄
 l_km_err get_keyhandle(
-    struct KeyPkg *pkg,
-    void **key_handle);
+        struct KeyPkg *pkg,
+        void **key_handle);
 
 /*************************************************************************
  *                      业务逻辑接口：密钥更新                            *
  *************************************************************************/
 // 更新会话密钥
 l_km_err update_sessionkey(
-    struct KeyMetaData* meta_data,  // 会话密钥元数据
-    HANDLE masterkey_handle,       // 主密钥句柄
-    uint8_t *nonce,                // 随机数
-    uint32_t nonce_len,            // 随机数长度
-    struct KeyPkg* updated_keypkg); // 更新的会话密钥
+        struct KeyMetaData *meta_data,  // 会话密钥元数据
+        HANDLE masterkey_handle,       // 主密钥句柄
+        uint8_t *nonce,                // 随机数
+        uint32_t nonce_len,            // 随机数长度
+        struct KeyPkg *updated_keypkg); // 更新的会话密钥
 
 /*************************************************************************
  *                      业务逻辑接口：密钥存储                            *
@@ -270,27 +265,27 @@ l_km_err update_sessionkey(
  **************************************************************************/
 // 网关导出根密钥包到文件rootkey.bin中(给AS的) 本地存储根密钥于rootkey.txt中
 l_km_err export_rootkey(
-    struct KeyMetaData *root_keyinfo,
-    struct KeyPkg *pkg);
+        struct KeyMetaData *root_keyinfo,
+        struct KeyPkg *pkg);
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
 l_km_err writefile_to_cryptocard(
-    uint8_t* filepath, 
-    uint8_t* filename);
+        uint8_t *filepath,
+        uint8_t *filename);
 
 // 验证文件中的根密钥 存储于密码卡 返回密钥包结构体
 l_km_err import_rootkey(
-    struct KeyPkg *rootkey_pkg,
-    void **rootkey_handle);
+        struct KeyPkg *rootkey_pkg,
+        void **rootkey_handle);
 
 // 从密码卡读取文件 放到指定位置
 l_km_err readfile_from_cryptocard(
-    uint8_t* filename, 
-    uint8_t* filepath);
+        uint8_t *filename,
+        uint8_t *filepath);
 
 // 从文件中获取根密钥  输出根密钥句柄
 l_km_err get_rootkey_handle(
-    void **rootkey_handle);
+        void **rootkey_handle);
 
 /* ************************************************************************
  *                          测试用：输出和显示格式控制                          *
@@ -298,25 +293,25 @@ l_km_err get_rootkey_handle(
 
 // 打印字符数组
 l_km_err printbuff(
-    const char *printtitle,
-    uint8_t *buff, int len);
+        const char *printtitle,
+        uint8_t *buff, int len);
 
 // 逐行打印密钥信息结构体
 l_km_err print_key_metadata(
-    struct KeyMetaData *key_info);
+        struct KeyMetaData *key_info);
 
 // 逐行打印key_pkg结构体
 l_km_err print_key_pkg(
-    struct KeyPkg *key_pkg);
+        struct KeyPkg *key_pkg);
 
 // 将密钥包输出到文件
 l_km_err write_keypkg_to_file(
-    const char *filename,
-    struct KeyPkg *pkg);
+        const char *filename,
+        struct KeyPkg *pkg);
 
 // 从文件读出密钥包
 l_km_err read_keypkg_from_file(
-    const char *filename,
-    struct KeyPkg *pkg);
+        const char *filename,
+        struct KeyPkg *pkg);
 
 #endif

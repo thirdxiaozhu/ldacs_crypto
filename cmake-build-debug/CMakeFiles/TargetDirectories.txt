@@ -1,4 +1,3 @@
-/home/wencheng/crypto/key_management/cmake-build-debug/CMakeFiles/key_management.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/CMakeFiles/edit_cache.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/CMakeFiles/rebuild_cache.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/CMakeFiles/list_install_components.dir
@@ -13,6 +12,7 @@
 /home/wencheng/crypto/key_management/cmake-build-debug/src/CMakeFiles/install/local.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/src/CMakeFiles/install/strip.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/tests/CMakeFiles/keygentest.dir
+/home/wencheng/crypto/key_management/cmake-build-debug/tests/CMakeFiles/rkey_exporttest.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/tests/CMakeFiles/edit_cache.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/tests/CMakeFiles/rebuild_cache.dir
 /home/wencheng/crypto/key_management/cmake-build-debug/tests/CMakeFiles/list_install_components.dir

@@ -40,40 +40,6 @@ include CMakeFiles/rules.ninja
 # Logical path to working directory; prefix for absolute paths.
 
 cmake_ninja_workdir = /home/wencheng/crypto/key_management/cmake-build-debug/
-# =============================================================================
-# Object build statements for EXECUTABLE target key_management
-
-
-#############################################
-# Order-only phony target for key_management
-
-build cmake_object_order_depends_target_key_management: phony || cmake_object_order_depends_target_km_src
-
-build CMakeFiles/key_management.dir/export_rootkey.c.o: C_COMPILER__key_management_unscanned_Debug /home/wencheng/crypto/key_management/export_rootkey.c || cmake_object_order_depends_target_key_management
-  DEP_FILE = CMakeFiles/key_management.dir/export_rootkey.c.o.d
-  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
-  INCLUDES = -I/home/wencheng/crypto/key_management/include
-  OBJECT_DIR = CMakeFiles/key_management.dir
-  OBJECT_FILE_DIR = CMakeFiles/key_management.dir
-
-
-# =============================================================================
-# Link build statements for EXECUTABLE target key_management
-
-
-#############################################
-# Link the executable key_management
-
-build key_management: C_EXECUTABLE_LINKER__key_management_Debug CMakeFiles/key_management.dir/export_rootkey.c.o | src/libkm_src.so || src/libkm_src.so
-  FLAGS = -g
-  LINK_FLAGS = -rdynamic
-  LINK_LIBRARIES = -Wl,-rpath,/home/wencheng/crypto/key_management/cmake-build-debug/src  src/libkm_src.so  -lsdf  -lpthread  -luuid
-  OBJECT_DIR = CMakeFiles/key_management.dir
-  POST_BUILD = :
-  PRE_LINK = :
-  TARGET_FILE = key_management
-  TARGET_PDB = key_management.dbg
-
 
 #############################################
 # Utility command for edit_cache
@@ -283,6 +249,39 @@ build tests/keygentest: C_EXECUTABLE_LINKER__keygentest_Debug tests/CMakeFiles/k
   TARGET_FILE = tests/keygentest
   TARGET_PDB = keygentest.dbg
 
+# =============================================================================
+# Object build statements for EXECUTABLE target rkey_exporttest
+
+
+#############################################
+# Order-only phony target for rkey_exporttest
+
+build cmake_object_order_depends_target_rkey_exporttest: phony || cmake_object_order_depends_target_km_src
+
+build tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o: C_COMPILER__rkey_exporttest_unscanned_Debug /home/wencheng/crypto/key_management/tests/rkey_export_test.c || cmake_object_order_depends_target_rkey_exporttest
+  DEP_FILE = tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o.d
+  FLAGS = -g -std=gnu99 -fdiagnostics-color=always
+  INCLUDES = -I/home/wencheng/crypto/key_management/include -I/home/wencheng/crypto/key_management/tests/include
+  OBJECT_DIR = tests/CMakeFiles/rkey_exporttest.dir
+  OBJECT_FILE_DIR = tests/CMakeFiles/rkey_exporttest.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target rkey_exporttest
+
+
+#############################################
+# Link the executable tests/rkey_exporttest
+
+build tests/rkey_exporttest: C_EXECUTABLE_LINKER__rkey_exporttest_Debug tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o | src/libkm_src.so || src/libkm_src.so
+  FLAGS = -g
+  LINK_LIBRARIES = -Wl,-rpath,/home/wencheng/crypto/key_management/cmake-build-debug/src  src/libkm_src.so  -lsdf  -lpthread  -luuid
+  OBJECT_DIR = tests/CMakeFiles/rkey_exporttest.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = tests/rkey_exporttest
+  TARGET_PDB = rkey_exporttest.dbg
+
 
 #############################################
 # Utility command for edit_cache
@@ -357,6 +356,8 @@ build km_src: phony src/libkm_src.so
 
 build libkm_src.so: phony src/libkm_src.so
 
+build rkey_exporttest: phony tests/rkey_exporttest
+
 # =============================================================================
 # Folder targets.
 
@@ -365,7 +366,7 @@ build libkm_src.so: phony src/libkm_src.so
 #############################################
 # Folder: /home/wencheng/crypto/key_management/cmake-build-debug
 
-build all: phony key_management src/all tests/all
+build all: phony src/all tests/all
 
 # =============================================================================
 
@@ -379,7 +380,7 @@ build src/all: phony src/libkm_src.so
 #############################################
 # Folder: /home/wencheng/crypto/key_management/cmake-build-debug/tests
 
-build tests/all: phony tests/keygentest
+build tests/all: phony tests/keygentest tests/rkey_exporttest
 
 # =============================================================================
 # Unknown Build Time Dependencies.
