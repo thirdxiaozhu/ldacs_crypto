@@ -38,10 +38,10 @@ EQUALS = =
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /root/KM/key_management
+CMAKE_SOURCE_DIR = /home/wencheng/crypto/key_management
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /root/KM/key_management/build
+CMAKE_BINARY_DIR = /home/wencheng/crypto/key_management/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/key_management.dir/depend.make
@@ -52,37 +52,37 @@ include CMakeFiles/key_management.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/key_management.dir/flags.make
 
-CMakeFiles/key_management.dir/main.c.o: CMakeFiles/key_management.dir/flags.make
-CMakeFiles/key_management.dir/main.c.o: ../main.c
-	$(CMAKE_COMMAND) -E cmake_progress_report /root/KM/key_management/build/CMakeFiles $(CMAKE_PROGRESS_1)
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/key_management.dir/main.c.o"
-	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/key_management.dir/main.c.o   -c /root/KM/key_management/main.c
+CMakeFiles/key_management.dir/export_rootkey.c.o: CMakeFiles/key_management.dir/flags.make
+CMakeFiles/key_management.dir/export_rootkey.c.o: ../export_rootkey.c
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building C object CMakeFiles/key_management.dir/export_rootkey.c.o"
+	/bin/cc  $(C_DEFINES) $(C_FLAGS) -o CMakeFiles/key_management.dir/export_rootkey.c.o   -c /home/wencheng/crypto/key_management/export_rootkey.c
 
-CMakeFiles/key_management.dir/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/key_management.dir/main.c.i"
-	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -E /root/KM/key_management/main.c > CMakeFiles/key_management.dir/main.c.i
+CMakeFiles/key_management.dir/export_rootkey.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/key_management.dir/export_rootkey.c.i"
+	/bin/cc  $(C_DEFINES) $(C_FLAGS) -E /home/wencheng/crypto/key_management/export_rootkey.c > CMakeFiles/key_management.dir/export_rootkey.c.i
 
-CMakeFiles/key_management.dir/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/key_management.dir/main.c.s"
-	/usr/bin/cc  $(C_DEFINES) $(C_FLAGS) -S /root/KM/key_management/main.c -o CMakeFiles/key_management.dir/main.c.s
+CMakeFiles/key_management.dir/export_rootkey.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/key_management.dir/export_rootkey.c.s"
+	/bin/cc  $(C_DEFINES) $(C_FLAGS) -S /home/wencheng/crypto/key_management/export_rootkey.c -o CMakeFiles/key_management.dir/export_rootkey.c.s
 
-CMakeFiles/key_management.dir/main.c.o.requires:
-.PHONY : CMakeFiles/key_management.dir/main.c.o.requires
+CMakeFiles/key_management.dir/export_rootkey.c.o.requires:
+.PHONY : CMakeFiles/key_management.dir/export_rootkey.c.o.requires
 
-CMakeFiles/key_management.dir/main.c.o.provides: CMakeFiles/key_management.dir/main.c.o.requires
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/main.c.o.provides.build
-.PHONY : CMakeFiles/key_management.dir/main.c.o.provides
+CMakeFiles/key_management.dir/export_rootkey.c.o.provides: CMakeFiles/key_management.dir/export_rootkey.c.o.requires
+	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/export_rootkey.c.o.provides.build
+.PHONY : CMakeFiles/key_management.dir/export_rootkey.c.o.provides
 
-CMakeFiles/key_management.dir/main.c.o.provides.build: CMakeFiles/key_management.dir/main.c.o
+CMakeFiles/key_management.dir/export_rootkey.c.o.provides.build: CMakeFiles/key_management.dir/export_rootkey.c.o
 
 # Object files for target key_management
 key_management_OBJECTS = \
-"CMakeFiles/key_management.dir/main.c.o"
+"CMakeFiles/key_management.dir/export_rootkey.c.o"
 
 # External object files for target key_management
 key_management_EXTERNAL_OBJECTS =
 
-key_management: CMakeFiles/key_management.dir/main.c.o
+key_management: CMakeFiles/key_management.dir/export_rootkey.c.o
 key_management: CMakeFiles/key_management.dir/build.make
 key_management: src/libkm_src.so
 key_management: CMakeFiles/key_management.dir/link.txt
@@ -93,7 +93,7 @@ key_management: CMakeFiles/key_management.dir/link.txt
 CMakeFiles/key_management.dir/build: key_management
 .PHONY : CMakeFiles/key_management.dir/build
 
-CMakeFiles/key_management.dir/requires: CMakeFiles/key_management.dir/main.c.o.requires
+CMakeFiles/key_management.dir/requires: CMakeFiles/key_management.dir/export_rootkey.c.o.requires
 .PHONY : CMakeFiles/key_management.dir/requires
 
 CMakeFiles/key_management.dir/clean:
@@ -101,6 +101,6 @@ CMakeFiles/key_management.dir/clean:
 .PHONY : CMakeFiles/key_management.dir/clean
 
 CMakeFiles/key_management.dir/depend:
-	cd /root/KM/key_management/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /root/KM/key_management /root/KM/key_management /root/KM/key_management/build /root/KM/key_management/build /root/KM/key_management/build/CMakeFiles/key_management.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/wencheng/crypto/key_management/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/wencheng/crypto/key_management /home/wencheng/crypto/key_management /home/wencheng/crypto/key_management/build /home/wencheng/crypto/key_management/build /home/wencheng/crypto/key_management/build/CMakeFiles/key_management.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/key_management.dir/depend
 

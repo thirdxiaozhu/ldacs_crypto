@@ -1,2 +1,2 @@
-/root/KM/key_management/build/CMakeFiles/key_management.dir
-/root/KM/key_management/build/src/CMakeFiles/km_src.dir
+/home/wencheng/crypto/key_management/build/CMakeFiles/key_management.dir
+/home/wencheng/crypto/key_management/build/src/CMakeFiles/km_src.dir

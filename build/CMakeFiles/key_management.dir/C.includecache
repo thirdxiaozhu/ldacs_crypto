@@ -17,6 +17,12 @@ stdint.h
 -
 unistd.h
 -
+string.h
+-
+fcntl.h
+-
+uuid/uuid.h
+-
 sdf/libsdf.h
 -
 sdfkmt/sdfe-func.h
@@ -24,15 +30,11 @@ sdfkmt/sdfe-func.h
 sdfkmt/sdfe-type.h
 -
 
-/root/KM/key_management/main.c
+/home/wencheng/crypto/key_management/export_rootkey.c
 stdio.h
 -
 string.h
 -
 key_manage.h
-/root/KM/key_management/key_manage.h
-time.h
--
-sdf/libsdf.h
--
+/home/wencheng/crypto/key_management/key_manage.h
 

@@ -1,5 +1,5 @@
 FILE(REMOVE_RECURSE
-  "CMakeFiles/key_management.dir/main.c.o"
+  "CMakeFiles/key_management.dir/export_rootkey.c.o"
   "key_management.pdb"
   "key_management"
 )

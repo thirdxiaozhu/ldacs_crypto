@@ -17,6 +17,12 @@ stdint.h
 -
 unistd.h
 -
+string.h
+-
+fcntl.h
+-
+uuid/uuid.h
+-
 sdf/libsdf.h
 -
 sdfkmt/sdfe-func.h
@@ -24,7 +30,7 @@ sdfkmt/sdfe-func.h
 sdfkmt/sdfe-type.h
 -
 
-/root/KM/key_management/src/key_manage.c
+/home/wencheng/crypto/key_management/src/key_manage.c
 stdio.h
 -
 stdlib.h
@@ -44,7 +50,7 @@ netinet/in.h
 arpa/inet.h
 -
 key_manage.h
-/root/KM/key_management/src/key_manage.h
+/home/wencheng/crypto/key_management/src/key_manage.h
 time.h
 -
 
