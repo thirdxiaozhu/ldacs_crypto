@@ -1,17 +1,10 @@
 # ninja log v5
-4	173	1715501925132063965	src/CMakeFiles/km_src.dir/key_manage.c.o	a41d539246c57f65
-3	64	1715087666129443724	CMakeFiles/key_management.dir/main.c.o	1964e6de06789170
-2	131	1715502026169260824	build.ninja	da074881770b2482
-243	329	1715499588390861354	key_management	fc3c0b5574f5a91e
-5	66	1715501925026065863	tests/CMakeFiles/keygentest.dir/keygen_test.c.o	fdb1ac3d79bb1985
-1	87	1715499588149865654	CMakeFiles/key_management.dir/export_rootkey.c.o	109f535bcd48cc7e
-173	230	1715501925189062944	src/libkm_src.so	e782de2ff4936c1e
-230	319	1715501925278061350	tests/keygentest	f5d99a5f9e2a70f5
-6	65	1715502067654521275	tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o	490b8cfc429ff277
-6	222	1715502067812518458	src/CMakeFiles/km_src.dir/key_manage.c.o	a41d539246c57f65
-222	276	1715502067866517495	src/libkm_src.so	e782de2ff4936c1e
-276	379	1715502067969515659	tests/rkey_exporttest	f0c8bb92cc3dda05
-3	80	1715502821923047698	tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o	490b8cfc429ff277
-2	156	1715502821998046357	src/CMakeFiles/km_src.dir/key_manage.c.o	a41d539246c57f65
-156	219	1715502822060045248	src/libkm_src.so	e782de2ff4936c1e
-219	314	1715502822155043549	tests/rkey_exporttest	f0c8bb92cc3dda05
+3	68	1715742512680085272	tests/CMakeFiles/key_distributetest.dir/key_distribute_test.c.o	864d5acc68b68459
+2	149	1715742512761083786	src/CMakeFiles/km_src.dir/key_manage.c.o	a41d539246c57f65
+149	214	1715742512826082594	src/libkm_src.so	e782de2ff4936c1e
+214	312	1715742512923080816	tests/key_distributetest	4ae8eebccb31450b
+2	59	1715742605560382090	tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o	490b8cfc429ff277
+59	166	1715742605666380146	tests/rkey_exporttest	396a7eeea4f70c61
+4	27	1715742709346478925	tests/CMakeFiles/keygentest.dir/keygen_test.c.o	fdb1ac3d79bb1985
+5	35	1715742749980733799	tests/CMakeFiles/keygentest.dir/keygen_test.c.o	fdb1ac3d79bb1985
+36	139	1715742750083731910	tests/keygentest	52253d9a161bf7f2

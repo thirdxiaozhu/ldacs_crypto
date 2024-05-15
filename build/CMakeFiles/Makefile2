@@ -56,41 +56,6 @@ CMAKE_SOURCE_DIR = /home/wencheng/crypto/key_management
 CMAKE_BINARY_DIR = /home/wencheng/crypto/key_management/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/key_management.dir
-
-# All Build rule for target.
-CMakeFiles/key_management.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/depend
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  1
-	@echo "Built target key_management"
-.PHONY : CMakeFiles/key_management.dir/all
-
-# Include target in all.
-all: CMakeFiles/key_management.dir/all
-.PHONY : all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/key_management.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/key_management.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : CMakeFiles/key_management.dir/rule
-
-# Convenience name for target.
-key_management: CMakeFiles/key_management.dir/rule
-.PHONY : key_management
-
-# clean rule for target.
-CMakeFiles/key_management.dir/clean:
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/clean
-.PHONY : CMakeFiles/key_management.dir/clean
-
-# clean rule for target.
-clean: CMakeFiles/key_management.dir/clean
-.PHONY : clean
-
-#=============================================================================
 # Directory level rules for directory src
 
 # Convenience name for "all" pass in the directory.
@@ -112,7 +77,7 @@ src/preinstall:
 src/CMakeFiles/km_src.dir/all:
 	$(MAKE) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/depend
 	$(MAKE) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  2
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  3
 	@echo "Built target km_src"
 .PHONY : src/CMakeFiles/km_src.dir/all
 
@@ -138,6 +103,130 @@ src/CMakeFiles/km_src.dir/clean:
 
 # clean rule for target.
 clean: src/CMakeFiles/km_src.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory tests
+
+# Convenience name for "all" pass in the directory.
+tests/all: tests/CMakeFiles/key_distributetest.dir/all
+tests/all: tests/CMakeFiles/keygentest.dir/all
+tests/all: tests/CMakeFiles/rkey_exporttest.dir/all
+.PHONY : tests/all
+
+# Convenience name for "clean" pass in the directory.
+tests/clean: tests/CMakeFiles/key_distributetest.dir/clean
+tests/clean: tests/CMakeFiles/keygentest.dir/clean
+tests/clean: tests/CMakeFiles/rkey_exporttest.dir/clean
+.PHONY : tests/clean
+
+# Convenience name for "preinstall" pass in the directory.
+tests/preinstall:
+.PHONY : tests/preinstall
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/key_distributetest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/key_distributetest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) -f tests/CMakeFiles/key_distributetest.dir/build.make tests/CMakeFiles/key_distributetest.dir/depend
+	$(MAKE) -f tests/CMakeFiles/key_distributetest.dir/build.make tests/CMakeFiles/key_distributetest.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  1
+	@echo "Built target key_distributetest"
+.PHONY : tests/CMakeFiles/key_distributetest.dir/all
+
+# Include target in all.
+all: tests/CMakeFiles/key_distributetest.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/key_distributetest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/key_distributetest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/key_distributetest.dir/rule
+
+# Convenience name for target.
+key_distributetest: tests/CMakeFiles/key_distributetest.dir/rule
+.PHONY : key_distributetest
+
+# clean rule for target.
+tests/CMakeFiles/key_distributetest.dir/clean:
+	$(MAKE) -f tests/CMakeFiles/key_distributetest.dir/build.make tests/CMakeFiles/key_distributetest.dir/clean
+.PHONY : tests/CMakeFiles/key_distributetest.dir/clean
+
+# clean rule for target.
+clean: tests/CMakeFiles/key_distributetest.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/keygentest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/keygentest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) -f tests/CMakeFiles/keygentest.dir/build.make tests/CMakeFiles/keygentest.dir/depend
+	$(MAKE) -f tests/CMakeFiles/keygentest.dir/build.make tests/CMakeFiles/keygentest.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  2
+	@echo "Built target keygentest"
+.PHONY : tests/CMakeFiles/keygentest.dir/all
+
+# Include target in all.
+all: tests/CMakeFiles/keygentest.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/keygentest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/keygentest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/keygentest.dir/rule
+
+# Convenience name for target.
+keygentest: tests/CMakeFiles/keygentest.dir/rule
+.PHONY : keygentest
+
+# clean rule for target.
+tests/CMakeFiles/keygentest.dir/clean:
+	$(MAKE) -f tests/CMakeFiles/keygentest.dir/build.make tests/CMakeFiles/keygentest.dir/clean
+.PHONY : tests/CMakeFiles/keygentest.dir/clean
+
+# clean rule for target.
+clean: tests/CMakeFiles/keygentest.dir/clean
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/rkey_exporttest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/rkey_exporttest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/depend
+	$(MAKE) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/wencheng/crypto/key_management/build/CMakeFiles  4
+	@echo "Built target rkey_exporttest"
+.PHONY : tests/CMakeFiles/rkey_exporttest.dir/all
+
+# Include target in all.
+all: tests/CMakeFiles/rkey_exporttest.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/rkey_exporttest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_exporttest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/rkey_exporttest.dir/rule
+
+# Convenience name for target.
+rkey_exporttest: tests/CMakeFiles/rkey_exporttest.dir/rule
+.PHONY : rkey_exporttest
+
+# clean rule for target.
+tests/CMakeFiles/rkey_exporttest.dir/clean:
+	$(MAKE) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/clean
+.PHONY : tests/CMakeFiles/rkey_exporttest.dir/clean
+
+# clean rule for target.
+clean: tests/CMakeFiles/rkey_exporttest.dir/clean
 .PHONY : clean
 
 #=============================================================================

@@ -165,6 +165,12 @@ km_src_LIB_DEPENDS:STATIC=general;sdf;general;pthread;general;uuid;
 //Value Computed by CMake
 km_src_SOURCE_DIR:STATIC=/home/wencheng/crypto/key_management/src
 
+//Value Computed by CMake
+km_test_BINARY_DIR:STATIC=/home/wencheng/crypto/key_management/build/tests
+
+//Value Computed by CMake
+km_test_SOURCE_DIR:STATIC=/home/wencheng/crypto/key_management/tests
+
 
 ########################
 # INTERNAL cache entries
@@ -246,7 +252,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_LOCAL_GENERATORS:INTERNAL=2
+CMAKE_NUMBER_OF_LOCAL_GENERATORS:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

@@ -11,10 +11,25 @@ SET(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/2.8.12.2/CMakeCCompiler.cmake"
   "CMakeFiles/2.8.12.2/CMakeSystem.cmake"
   "../src/CMakeLists.txt"
+  "../tests/CMakeLists.txt"
+  "/usr/share/cmake/Modules/CMakeCCompiler.cmake.in"
+  "/usr/share/cmake/Modules/CMakeCCompilerABI.c"
   "/usr/share/cmake/Modules/CMakeCInformation.cmake"
+  "/usr/share/cmake/Modules/CMakeClDeps.cmake"
   "/usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake"
+  "/usr/share/cmake/Modules/CMakeDetermineCCompiler.cmake"
+  "/usr/share/cmake/Modules/CMakeDetermineCompiler.cmake"
+  "/usr/share/cmake/Modules/CMakeDetermineCompilerABI.cmake"
+  "/usr/share/cmake/Modules/CMakeDetermineCompilerId.cmake"
+  "/usr/share/cmake/Modules/CMakeDetermineSystem.cmake"
+  "/usr/share/cmake/Modules/CMakeFindBinUtils.cmake"
   "/usr/share/cmake/Modules/CMakeGenericSystem.cmake"
+  "/usr/share/cmake/Modules/CMakeParseImplicitLinkInfo.cmake"
+  "/usr/share/cmake/Modules/CMakeSystem.cmake.in"
   "/usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake"
+  "/usr/share/cmake/Modules/CMakeTestCCompiler.cmake"
+  "/usr/share/cmake/Modules/CMakeTestCompilerCommon.cmake"
+  "/usr/share/cmake/Modules/CMakeUnixFindMake.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU-C.cmake"
   "/usr/share/cmake/Modules/Compiler/GNU.cmake"
   "/usr/share/cmake/Modules/Platform/Linux-GNU-C.cmake"
@@ -31,12 +46,18 @@ SET(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 SET(CMAKE_MAKEFILE_PRODUCTS
+  "CMakeFiles/2.8.12.2/CMakeSystem.cmake"
+  "CMakeFiles/2.8.12.2/CMakeCCompiler.cmake"
+  "CMakeFiles/2.8.12.2/CMakeCCompiler.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   "src/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 SET(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/key_management.dir/DependInfo.cmake"
   "src/CMakeFiles/km_src.dir/DependInfo.cmake"
+  "tests/CMakeFiles/key_distributetest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/keygentest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/rkey_exporttest.dir/DependInfo.cmake"
   )

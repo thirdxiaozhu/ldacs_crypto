@@ -1,9 +1,12 @@
 //
 // Created by wencheng on 5/12/24.
 //
-
+#include <stdio.h>
+#include <string.h>
 #include "key_manage.h"
-int main(){
+
+int main() {
+
     // 变量初始化
     void *DeviceHandle, *pSessionHandle, *phKeyHandle;
     int ret;
@@ -23,18 +26,13 @@ int main(){
             .key_type = ROOT_KEY,
             .update_cycle = 365,
     };
-    struct KeyPkg keypkg;
-    // struct KeyPkg *keypkg = malloc(sizeof(struct KeyPkg));
-    ret = export_rootkey(&root_keyinfo, &keypkg); // 根密钥存入文件
-    if (ret != LD_KM_OK)
-    {
+    ld_keypkg_t *keypkg = export_rootkey(&root_keyinfo); // 根密钥存入文件
+    if (ret != LD_KM_OK) {
         printf("export_rootkey WRONG\n");
-    }
-    else
-    {
+    } else {
         printf("[**SGW**]export rootkey OK=======================\n");
         // print_key_pkg(&keypkg);
-        print_key_metadata(keypkg.meta_data);
+        print_key_metadata(keypkg->meta_data);
     }
 
     SDF_CloseSession(pSessionHandle);
