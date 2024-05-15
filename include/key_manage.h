@@ -46,93 +46,94 @@ typedef void *HANDLE; // 密钥句柄别名
 // 报错码
 typedef enum
 {
-    LD_KM_OK = 0,
+        LD_KM_OK = 0,
 
-    LD_ERR_KM_OPEN_DEVICE = 100,           // 打开密码设备错误
-    LD_ERR_KM_OPEN_SESSION,                // 与设备建立会话失败
-    LD_ERR_KM_GENERATE_RANDOM,             // 生成随机数失败
-    LD_ERR_KM_HashInit,                    // hash init失败
-    LD_ERR_KM_HashUpdate,                  //  hash update失败
-    LD_ERR_KM_HashFinal,                   // hash final失败
-    LD_ERR_KM_MAC,                         // mac接口运行失败
-    LD_ERR_KM_ENCRYPT,                     // 加密失败
-    LD_ERR_KM_DECRYPT,                     // 解密失败
-    LD_ERR_KM_SM3HMAC,                     // hmac失败
-    LD_ERR_KM_PARAMETERS_ERR,              // pbkdf2参数错误
-    LD_ERR_KM_PARAMETERS_NULL,             // 接口参数为空
-    LD_ERR_KM_MEMORY_ALLOCATION_IN_PBKDF2, // pbkdf2中分配内存错误
-    LD_ERR_KM_GENERATE_KEY_WITH_KEK,       // 使用kek加密生成密钥错误
-    LD_ERR_KM_GENERATE_KEK,                // 生成kek错误
-    LD_ERR_KM_EXPORT_KEK,                  // 导出kek错误
-    LD_ERR_KM_IMPORT_KEY_WITH_KEK,         // 导入密文密钥错误
-    LD_ERR_KM_IMPORT_KEY,                  // 导入明文密钥错误
-    LD_ERR_KM_DESTROY_KEY,                 // 销毁密钥错误
-    LD_ERR_KM_PBKDF2,                      // pbkdf2执行错误
-    LD_ERR_KM_EXTERNAL_IMPORT_KEK,         // 外部导入kek错误
-    LD_ERR_KM_WRITE_FILE,                  // 将kekpkg写入文件错误
-    LD_ERR_KM_READ_FILE,                   // 从文件读取kekpkg错误
-    LD_ERR_KM_OPEN_FILE,                   // 打开文件错误
-    LD_ERR_KM_ROOTKEY_VERIFY,              // 根密钥验证错误
-    LD_ERR_KM_MASTERKEY_VERIFY,            // 主密钥验证错误
-    LD_ERR_KM_DERIVE_KEY,                  // 密钥派生错误
-    LD_ERR_KM_DERIVE_SESSION_KEY           // 会话密钥派生错误
+        LD_ERR_KM_OPEN_DEVICE = 100,           // 打开密码设备错误
+        LD_ERR_KM_OPEN_SESSION,                // 与设备建立会话失败
+        LD_ERR_KM_GENERATE_RANDOM,             // 生成随机数失败
+        LD_ERR_KM_HashInit,                    // hash init失败
+        LD_ERR_KM_HashUpdate,                  //  hash update失败
+        LD_ERR_KM_HashFinal,                   // hash final失败
+        LD_ERR_KM_MAC,                         // mac接口运行失败
+        LD_ERR_KM_ENCRYPT,                     // 加密失败
+        LD_ERR_KM_DECRYPT,                     // 解密失败
+        LD_ERR_KM_SM3HMAC,                     // hmac失败
+        LD_ERR_KM_PARAMETERS_ERR,              // pbkdf2参数错误
+        LD_ERR_KM_PARAMETERS_NULL,             // 接口参数为空
+        LD_ERR_KM_MEMORY_ALLOCATION_IN_PBKDF2, // pbkdf2中分配内存错误
+        LD_ERR_KM_GENERATE_KEY_WITH_KEK,       // 使用kek加密生成密钥错误
+        LD_ERR_KM_GENERATE_KEK,                // 生成kek错误
+        LD_ERR_KM_EXPORT_KEK,                  // 导出kek错误
+        LD_ERR_KM_IMPORT_KEY_WITH_KEK,         // 导入密文密钥错误
+        LD_ERR_KM_IMPORT_KEY,                  // 导入明文密钥错误
+        LD_ERR_KM_DESTROY_KEY,                 // 销毁密钥错误
+        LD_ERR_KM_PBKDF2,                      // pbkdf2执行错误
+        LD_ERR_KM_EXTERNAL_IMPORT_KEK,         // 外部导入kek错误
+        LD_ERR_KM_WRITE_FILE,                  // 将kekpkg写入文件错误
+        LD_ERR_KM_READ_FILE,                   // 从文件读取kekpkg错误
+        LD_ERR_KM_OPEN_FILE,                   // 打开文件错误
+        LD_ERR_KM_ROOTKEY_VERIFY,              // 根密钥验证错误
+        LD_ERR_KM_MASTERKEY_VERIFY,            // 主密钥验证错误
+        LD_ERR_KM_DERIVE_KEY,                  // 密钥派生错误
+        LD_ERR_KM_DERIVE_SESSION_KEY           // 会话密钥派生错误
 
 } l_km_err;
 
 // 密钥类型
 enum KEY_TYPE
 {
-    KEK = 0,              // store in pcie-card , for key establishment and storage
-    ROOT_KEY,             // KAS 根密钥
-    MASTER_KEY_AS_SGW,    // KASSGW 主密钥
-    MASTER_KEY_AS_GS,     // KASGS 主密钥
-    SESSION_KEY_USR_ENC,  // KUENC 用户数据加密
-    SESSION_KEY_USR_INT,  // KUINT 用户数据完整性
-    SESSION_KEY_DC_INT,   // KDC 保护DC信道完整性
-    SESSION_KEY_KEK,      // KKEK 组密钥分发保护
-    SESSION_KEY_MAKE_INT, // KM 派生会话密钥过程中完整性保护
-    GROUP_KEY_BC,         // KBC BC信道完整性保护
-    GROUP_KEY_CC,         // KCC CC信道完整性保护
+        KEK = 0,              // store in pcie-card , for key establishment and storage
+        ROOT_KEY,             // KAS 根密钥
+        MASTER_KEY_AS_SGW,    // KASSGW 主密钥
+        MASTER_KEY_AS_GS,     // KASGS 主密钥
+        SESSION_KEY_USR_ENC,  // KUENC 用户数据加密
+        SESSION_KEY_USR_INT,  // KUINT 用户数据完整性
+        SESSION_KEY_DC_INT,   // KDC 保护DC信道完整性
+        SESSION_KEY_KEK,      // KKEK 组密钥分发保护
+        SESSION_KEY_MAKE_INT, // KM 派生会话密钥过程中完整性保护
+        GROUP_KEY_BC,         // KBC BC信道完整性保护
+        GROUP_KEY_CC,         // KCC CC信道完整性保护
+        NH_KEY,               // 下一跳密钥 临时变量
 };
 
 // 密钥状态 用于控制密钥的使用
 enum STATE
 {
-    PRE_ACTIVATION, // 未激活
-    ACTIVE,         // 已激活
-    SUSPENDED,      // 已撤销
-    DEACTIVATED,    // 已失活
-    COMPROMISED,    // 已泄露
-    DESTROYED,      // 已销毁
+        PRE_ACTIVATION, // 未激活
+        ACTIVE,         // 已激活
+        SUSPENDED,      // 已撤销
+        DEACTIVATED,    // 已失活
+        COMPROMISED,    // 已泄露
+        DESTROYED,      // 已销毁
 };
 
 // 密钥属性结构体 用于指定密钥的参数
-struct KeyMetaData
+typedef struct KeyMetaData
 {
-    uuid_t id;
-    uint8_t owner_1[MAX_OWENER_LEN];
-    uint8_t owner_2[MAX_OWENER_LEN];
-    enum KEY_TYPE key_type;
-    uint32_t length; // 单位 字节
-    enum STATE state;
-    time_t creation_time;
-    time_t update_cycle; // 单位 天
-    // uint8_t counter;
-};
+        uuid_t id;
+        uint8_t owner_1[MAX_OWENER_LEN];
+        uint8_t owner_2[MAX_OWENER_LEN];
+        enum KEY_TYPE key_type;
+        uint32_t length; // 单位 字节
+        enum STATE state;
+        time_t creation_time;
+        time_t update_cycle; // 单位 天
+                             // uint8_t counter;
+} ld_keymetadata_t;
 
 // 密钥包 用于密钥的存储和分发
-struct KeyPkg
+typedef struct KeyPkg
 {
-    struct KeyMetaData *meta_data;          // 密钥属性
-    uint8_t kek_cipher[MAX_KEK_CIPHER_LEN]; // 密钥加密密钥的密文 用于密钥存储保护
-    uint32_t kek_cipher_len;
-    uint8_t key_cipher[MAX_KEY_CIPHER_LEN]; // 密钥 存储时用密码卡加密，分发时用分发保护密钥加密
-    uint16_t iv_len;
-    uint8_t iv[MAX_IV_LEN];           // 初始化向量 用于生成校验码
-    uint16_t chck_len;                // 校验值长度
-    uint16_t chck_alg;                // 校验算法标识
-    uint8_t chck_value[MAX_CHCK_LEN]; // 长度为chck_len的校验值
-};
+        struct KeyMetaData *meta_data;          // 密钥属性
+        uint8_t kek_cipher[MAX_KEK_CIPHER_LEN]; // 密钥加密密钥的密文 用于密钥存储保护
+        uint32_t kek_cipher_len;
+        uint8_t key_cipher[MAX_KEY_CIPHER_LEN]; // 密钥 存储时用密码卡加密，分发时用分发保护密钥加密
+        uint16_t iv_len;
+        uint8_t iv[MAX_IV_LEN];           // 初始化向量 用于生成校验码
+        uint16_t chck_len;                // 校验值长度
+        uint16_t chck_alg;                // 校验算法标识
+        uint8_t chck_value[MAX_CHCK_LEN]; // 长度为chck_len的校验值
+} ld_keypkg_t;
 
 /*
 ************************************************************************
@@ -255,11 +256,11 @@ l_km_err get_keyhandle(
  *************************************************************************/
 // 更新会话密钥
 l_km_err update_sessionkey(
-    struct KeyMetaData* meta_data,  // 会话密钥元数据
-    HANDLE masterkey_handle,       // 主密钥句柄
-    uint8_t *nonce,                // 随机数
-    uint32_t nonce_len,            // 随机数长度
-    struct KeyPkg* updated_keypkg); // 更新的会话密钥
+    struct KeyMetaData *meta_data,  // 会话密钥元数据
+    HANDLE masterkey_handle,        // 主密钥句柄
+    uint8_t *nonce,                 // 随机数
+    uint32_t nonce_len,             // 随机数长度
+    struct KeyPkg *updated_keypkg); // 更新的会话密钥
 
 /*************************************************************************
  *                      业务逻辑接口：密钥存储                            *
@@ -269,14 +270,13 @@ l_km_err update_sessionkey(
  *                        业务逻辑接口：预置根密钥                           *
  **************************************************************************/
 // 网关导出根密钥包到文件rootkey.bin中(给AS的) 本地存储根密钥于rootkey.txt中
-l_km_err export_rootkey(
-    struct KeyMetaData *root_keyinfo,
-    struct KeyPkg *pkg);
+ld_keypkg_t *export_rootkey(
+    struct KeyMetaData *root_keyinfo);
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
 l_km_err writefile_to_cryptocard(
-    uint8_t* filepath, 
-    uint8_t* filename);
+    uint8_t *filepath,
+    uint8_t *filename);
 
 // 验证文件中的根密钥 存储于密码卡 返回密钥包结构体
 l_km_err import_rootkey(
@@ -285,8 +285,8 @@ l_km_err import_rootkey(
 
 // 从密码卡读取文件 放到指定位置
 l_km_err readfile_from_cryptocard(
-    uint8_t* filename, 
-    uint8_t* filepath);
+    uint8_t *filename,
+    uint8_t *filepath);
 
 // 从文件中获取根密钥  输出根密钥句柄
 l_km_err get_rootkey_handle(

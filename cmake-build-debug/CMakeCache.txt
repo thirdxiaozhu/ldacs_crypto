@@ -204,6 +204,9 @@ km_src_BINARY_DIR:STATIC=/home/wencheng/crypto/key_management/cmake-build-debug/
 //Value Computed by CMake
 km_src_IS_TOP_LEVEL:STATIC=OFF
 
+//Dependencies for the target
+km_src_LIB_DEPENDS:STATIC=general;sdf;general;pthread;general;uuid;
+
 //Value Computed by CMake
 km_src_SOURCE_DIR:STATIC=/home/wencheng/crypto/key_management/src
 

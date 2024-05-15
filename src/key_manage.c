@@ -55,7 +55,9 @@ l_km_err generate_random(int len, uint8_t *random_data)
 }
 
 // 国密算法加密接口
-l_km_err encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *cipher_data, uint32_t *cipher_data_len)
+l_km_err
+encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *cipher_data,
+        uint32_t *cipher_data_len)
 {
     HANDLE DeviceHandle, pSessionHandle;
     HANDLE phKeyHandle;
@@ -88,7 +90,8 @@ l_km_err encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, 
 }
 
 // 国密算法解密
-l_km_err decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher_data, uint32_t cipher_data_len, uint8_t *plain_data, uint32_t *plain_data_len)
+l_km_err decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher_data, uint32_t cipher_data_len,
+                 uint8_t *plain_data, uint32_t *plain_data_len)
 {
     HANDLE DeviceHandle, pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
@@ -96,7 +99,8 @@ l_km_err decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher
 
     // 调用SDF_Dncrypt函数
 
-    int result = SDF_Decrypt(pSessionHandle, key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data, plain_data_len);
+    int result = SDF_Decrypt(pSessionHandle, key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data,
+                             plain_data_len);
     if (result != LD_KM_OK)
     {
         printf("SDF_Decrypt with phKeyHandle error!ret is %08x \n", result);
@@ -165,7 +169,8 @@ l_km_err hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *output)
 }
 
 // MAC运算 SM4_CFB
-l_km_err mac(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *mac, uint32_t *mac_length)
+l_km_err mac(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *mac,
+             uint32_t *mac_length)
 {
     HANDLE DeviceHandle, hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
@@ -184,7 +189,8 @@ l_km_err mac(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint
 }
 
 // 通用sm3 hmac ，key长度要求为32byte
-l_km_err hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_t *hmac_value, uint32_t *hmac_len)
+l_km_err
+hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_t *hmac_value, uint32_t *hmac_len)
 {
     HANDLE DeviceHandle, pSessionHandle;
     uint32_t hash_result_len;
@@ -341,7 +347,8 @@ l_km_err destroy_key(void *key_handle)
 }
 
 // 基于口令的密钥派生（prf：sm3 hmac）
-l_km_err pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint32_t salt_len, uint32_t iterations, uint32_t derived_key_len, uint8_t *derived_key)
+l_km_err pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint32_t salt_len, uint32_t iterations,
+                uint32_t derived_key_len, uint8_t *derived_key)
 {
     // 参数检查
     if (password == NULL || salt == NULL)
@@ -449,8 +456,14 @@ l_km_err pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint32_
 /************
  * 密钥更新 *
  ***********/
+// 更新主密钥 输入sac 输出主密钥包
+l_km_err update_masterkey(uint8_t *sac_as, uint8_t *sac_source_gs, uint8_t *sac_target_gs, struct KeyPkg *pkg)
+{
+}
+
 // 更新会话密钥
-l_km_err update_sessionkey(struct KeyMetaData *meta_data, HANDLE masterkey_handle, uint8_t *nonce, uint32_t nonce_len, struct KeyPkg *updated_keypkg)
+l_km_err update_sessionkey(struct KeyMetaData *meta_data, HANDLE masterkey_handle, uint8_t *nonce, uint32_t nonce_len,
+                           struct KeyPkg *updated_keypkg)
 {
     // 打开密码卡
     HANDLE DeviceHandle, hSessionHandle;
@@ -466,7 +479,8 @@ l_km_err update_sessionkey(struct KeyMetaData *meta_data, HANDLE masterkey_handl
     uint8_t owner_2[16];
     memcpy(owner_1, meta_data->owner_1, 16);
     memcpy(owner_2, meta_data->owner_2, 16);
-    derive_key(masterkey_handle, key_type, len, owner_1, owner_2, nonce, nonce_len, &keyhandle, updated_keypkg); // 派生会话密钥
+    derive_key(masterkey_handle, key_type, len, owner_1, owner_2, nonce, nonce_len, &keyhandle,
+               updated_keypkg); // 派生会话密钥
 
     // 撤销原密钥
     meta_data->state = SUSPENDED; // 改变密钥状态
@@ -481,22 +495,23 @@ l_km_err update_sessionkey(struct KeyMetaData *meta_data, HANDLE masterkey_handl
 /************
  * 密钥派生 *
  ***********/
-l_km_err derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, uint8_t *owner1, uint8_t *owner2, uint8_t *rand, uint32_t rand_len, void **key_handle, struct KeyPkg *pkg)
+l_km_err
+derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, uint8_t *owner1, uint8_t *owner2, uint8_t *rand,
+           uint32_t rand_len, void **key_handle, struct KeyPkg *pkg)
 {
-    // 初始化输出变量空间
+    // 参数检查 初始化输出变量空间
     if (pkg == NULL)
     {
         pkg = malloc(sizeof(struct KeyPkg));
     }
 
-    HANDLE DeviceHandle, hSessionHandle;
-    SDF_OpenDevice(&DeviceHandle);                  // 打开设备
-    SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
-
     uint8_t key[64];
     uint8_t salt[32];
     uint32_t salt_len;
     time_t current_time;
+    HANDLE DeviceHandle, hSessionHandle;
+    SDF_OpenDevice(&DeviceHandle);                  // 打开设备
+    SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
     // 派生密钥
     uint8_t *string_key_type = (uint8_t *)&key_type;
@@ -530,11 +545,16 @@ l_km_err derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, 
 
     // 密钥加密存储
     uint32_t kek_index = 1;
-    // SDFE_GenerateKEK(hSessionHandle, 128, kek_index); // KEK需要提前生成
     uint8_t cipher_kek[32];
     uint32_t cipherkek_len;
     void *kek_handle;
-    SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len, &kek_handle); // 生成对主密钥加密的密钥
+    ret = SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len,
+                                 &kek_handle); // 生成对主密钥加密的密钥
+    if (ret != LD_KM_OK)
+    {
+        printf("Error in derive : SDF_GenerateKeyWithKEK failed!\n");
+        return LD_ERR_KM_DERIVE_KEY;
+    }
 
     uint32_t iv_len = 16;
     uint8_t iv_enc[16];
@@ -545,7 +565,12 @@ l_km_err derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, 
     memcpy(pkg->iv, iv_enc, iv_len);
     uint8_t key_cipher[32];
     uint32_t cipher_len;
-    SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, key_len, key_cipher, &cipher_len); // 主密钥密文
+    ret = SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, key_len, key_cipher, &cipher_len); // 主密钥密文
+    if (ret != LD_KM_OK)
+    {
+        printf("Error in derive : SDF_Encrypt failed!\n");
+        return LD_ERR_KM_DERIVE_KEY;
+    }
     // printbuff("Key Cipher", key_cipher, cipher_len);
 
     // 将相关信息存入结构体
@@ -570,18 +595,17 @@ l_km_err derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, 
     uint32_t chck_len;      // 校验值长度
     uint8_t chck_value[32]; // 长度为chck_len的校验值
     // printbuff("iv", iv_mac, iv_len);
-    SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value, &chck_len);
+    ret = SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value, &chck_len);
+    if (ret != LD_KM_OK)
+    {
+        printf("Error in derive : SDF_CalculateMAC failed!\n");
+        return LD_ERR_KM_DERIVE_KEY;
+    }
     // printbuff("chck_value", chck_value, chck_len);
 
     pkg->chck_alg = ALGO_MAC;
     pkg->chck_len = chck_len;
     memcpy(pkg->chck_value, chck_value, chck_len);
-    // ret = print_key_pkg(pkg);
-    // if (ret != LD_KM_OK)
-    // {
-    //     printf("Error in derive : print_key_pkg, return : %d\n", ret);
-    //     return LD_ERR_KM_DERIVE_KEY;
-    // }
 
     // 导入密钥 返回密钥句柄 截断 只取前16字节
     // void *temp_handle;
@@ -592,8 +616,6 @@ l_km_err derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, 
         printf("Error in derive : SDF_ImportKey, return : %d\n", ret);
         return LD_ERR_KM_DERIVE_KEY;
     }
-
-    // memcpy(key_handle, temp_handle, sizeof(void *)); // 拷贝密钥句柄
 
     // 销毁内存中的密钥 关闭会话
     SDF_CloseSession(hSessionHandle);
@@ -613,7 +635,8 @@ l_km_err get_keyhandle(struct KeyPkg *pkg, void **key_handle)
     uint32_t kek_index = 1;
     void *kek_handle;
     int ret;
-    ret = SDF_ImportKeyWithKEK(hSessionHandle, ALGO_WITH_KEK, kek_index, pkg->kek_cipher, pkg->kek_cipher_len, &kek_handle);
+    ret = SDF_ImportKeyWithKEK(hSessionHandle, ALGO_WITH_KEK, kek_index, pkg->kek_cipher, pkg->kek_cipher_len,
+                               &kek_handle);
     if (ret != LD_KM_OK)
     {
         printf("get key handle : import kek failed!\n");
@@ -628,7 +651,8 @@ l_km_err get_keyhandle(struct KeyPkg *pkg, void **key_handle)
     uint8_t iv_dec[16];
     memcpy(iv_mac, pkg->iv, 16);
     memcpy(iv_dec, pkg->iv, 16);
-    ret = SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, pkg->key_cipher, pkg->meta_data->length, chck_value, &chck_len);
+    ret = SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, pkg->key_cipher, pkg->meta_data->length,
+                           chck_value, &chck_len);
     // printbuff("chck", chck_value,chck_len);
     if (ret != LD_KM_OK) // 计算mac失败
     {
@@ -645,7 +669,8 @@ l_km_err get_keyhandle(struct KeyPkg *pkg, void **key_handle)
     // 解密密钥
     uint8_t key[64];
     uint32_t key_len;
-    ret = SDF_Decrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_dec, pkg->key_cipher, pkg->meta_data->length, key, &key_len);
+    ret = SDF_Decrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_dec, pkg->key_cipher, pkg->meta_data->length,
+                      key, &key_len);
     if (ret != LD_KM_OK)
     {
         printf("get masterkey handle: decrypt failed!\n");
@@ -675,7 +700,8 @@ l_km_err get_keyhandle(struct KeyPkg *pkg, void **key_handle)
  ***********/
 
 // 指定KEK索引和密钥元数据（密钥类型，密钥所有者，密钥长度，启用日期，更新周期），初始化元数据并生成密钥、密钥id，输出密钥句柄、使用KEK加密的密钥密文、和密钥元数据结构体。
-l_km_err generate_key_with_kek(int kek_index, struct KeyMetaData *key_info, void **key_handle, uint8_t *cipher_key, int *cipher_len)
+l_km_err generate_key_with_kek(int kek_index, struct KeyMetaData *key_info, void **key_handle, uint8_t *cipher_key,
+                               int *cipher_len)
 {
     void *DeviceHandle, *pSessionHandle;
     if (key_info == NULL)
@@ -715,7 +741,7 @@ l_km_err generate_key_with_kek(int kek_index, struct KeyMetaData *key_info, void
  * 密钥存储 *
  ************/
 
-// 将keypkg写入文件：默认在build文件夹下
+// 将keypkg写入文件
 l_km_err write_keypkg_to_file(const char *filename, struct KeyPkg *pkg)
 {
     FILE *file = fopen(filename, "wb");
@@ -791,13 +817,10 @@ l_km_err read_keypkg_from_file(const char *filename, struct KeyPkg *pkg)
  *  根密钥预置  *
  **************/
 // 网关导出根密钥包到文件rootkey.bin中(给AS的) 本地存储根密钥于rootkey.txt中
-l_km_err export_rootkey(struct KeyMetaData *root_keyinfo, struct KeyPkg *pkg)
+ld_keypkg_t *export_rootkey(struct KeyMetaData *root_keyinfo)
 {
     // 输出参数赋予空间
-    if (pkg == NULL)
-    {
-        pkg = malloc(sizeof(struct KeyPkg));
-    }
+    ld_keypkg_t *keypkg = malloc(sizeof(ld_keypkg_t));
 
     HANDLE DeviceHandle, hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                                                          // 打开设备
@@ -808,7 +831,8 @@ l_km_err export_rootkey(struct KeyMetaData *root_keyinfo, struct KeyPkg *pkg)
 
     // 网关密码卡生成随机数作为根密钥
     uint8_t rootkey[32];
-    SDF_GenerateRandom(hSessionHandle, root_keyinfo->length, rootkey); // printf("sec-gw generate root key（plain)====================\n");
+    SDF_GenerateRandom(hSessionHandle, root_keyinfo->length,
+                       rootkey); // printf("sec-gw generate root key（plain)====================\n");
     uint8_t hash_value[32];
     uint32_t hash_len = 32;
     uint32_t chck_algo = ALGO_HASH;
@@ -819,18 +843,18 @@ l_km_err export_rootkey(struct KeyMetaData *root_keyinfo, struct KeyPkg *pkg)
     uuid_generate(uuid);
     uuid_copy(root_keyinfo->id, uuid);
     root_keyinfo->key_type = ROOT_KEY;
-    pkg->meta_data = root_keyinfo;
+    keypkg->meta_data = root_keyinfo;
     root_keyinfo->creation_time = time(&currentTime);
     // 设置 chck_value、chck_algo、chck_len、key 字段
-    pkg->chck_alg = chck_algo;
-    pkg->chck_len = hash_len;
-    memcpy(pkg->chck_value, hash_value, hash_len);
-    memcpy(pkg->key_cipher, rootkey, root_keyinfo->length);
-    pkg->iv_len = 0;         // 没有iv
-    pkg->kek_cipher_len = 0; // 没有kek
+    keypkg->chck_alg = chck_algo;
+    keypkg->chck_len = hash_len;
+    memcpy(keypkg->chck_value, hash_value, hash_len);
+    memcpy(keypkg->key_cipher, rootkey, root_keyinfo->length);
+    keypkg->iv_len = 0;         // 没有iv
+    keypkg->kek_cipher_len = 0; // 没有kek
     // printf("sec-gw generate root key pkg,write_keypkg_to_file（plain)====================\n");
     // print_key_pkg(pkg);
-    write_keypkg_to_file(export_filename, pkg); // 导出到文件
+    write_keypkg_to_file(export_filename, keypkg); // 导出到文件
 
     // 使用本地密钥加密和完整性保护存储
     uint32_t kek_index = 1;
@@ -838,40 +862,46 @@ l_km_err export_rootkey(struct KeyMetaData *root_keyinfo, struct KeyPkg *pkg)
     uint8_t cipher_kek[32];
     uint32_t cipherkek_len;
     void *kek_handle;
-    SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len, &kek_handle); // 生成对密钥加密的密钥
+    SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len,
+                           &kek_handle); // 生成对密钥加密的密钥
     // printbuff("cipher kek",cipher_kek,cipherkek_len);
     uint8_t key_cipher[32];
     uint32_t cipher_len;
-    uint8_t iv_enc[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
+    uint8_t iv_enc[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32,
+                          0x20};
     uint32_t iv_len = 16;
-    pkg->iv_len = iv_len;
-    memcpy(pkg->iv, iv_enc, iv_len);                                                                                                     // 替换iv ivenc和mac相同
-    SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, pkg->key_cipher, pkg->meta_data->length, key_cipher, &cipher_len); // 使用kek加密根密钥 并生成pkg
+    keypkg->iv_len = iv_len;
+    memcpy(keypkg->iv, iv_enc,
+           iv_len); // 替换iv ivenc和mac相同
+    SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, keypkg->key_cipher, keypkg->meta_data->length,
+                key_cipher, &cipher_len); // 使用kek加密根密钥 并生成pkg
 
     // 存入kek密文 替换验证码
-    uint8_t iv_mac[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
-    uint32_t chck_len;                                                                                             // 校验值长度
-    uint8_t chck_value[32];                                                                                        // 长度为chck_len的校验值
-    SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value, &chck_len); // 使用kek对根密钥计算消息验证码memcpy(pkg->kek_cipher, cipher_kek, cipherkek_len);
-    memcpy(pkg->kek_cipher, cipher_kek, cipherkek_len);
-    pkg->kek_cipher_len = cipherkek_len;
-    memcpy(pkg->key_cipher, key_cipher, cipher_len);
-    pkg->chck_alg = ALGO_MAC;
-    pkg->chck_len = chck_len;
-    memcpy(pkg->chck_value, chck_value, chck_len);
+    uint8_t iv_mac[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32,
+                          0x20};
+    uint32_t chck_len;      // 校验值长度
+    uint8_t chck_value[32]; // 长度为chck_len的校验值
+    SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value,
+                     &chck_len); // 使用kek对根密钥计算消息验证码memcpy(pkg->kek_cipher, cipher_kek, cipherkek_len);
+    memcpy(keypkg->kek_cipher, cipher_kek, cipherkek_len);
+    keypkg->kek_cipher_len = cipherkek_len;
+    memcpy(keypkg->key_cipher, key_cipher, cipher_len);
+    keypkg->chck_alg = ALGO_MAC;
+    keypkg->chck_len = chck_len;
+    memcpy(keypkg->chck_value, chck_value, chck_len);
     // print_key_pkg(pkg);
 
     // 本地激活根密钥
-    pkg->meta_data->state = ACTIVE;
+    keypkg->meta_data->state = ACTIVE;
 
     // 本地存储根密钥
     uint8_t *filename = "/home/wencheng/crypto/key_management/keystore/rootkey.txt"; // 本地存储的密钥文件
-    write_keypkg_to_file(filename, pkg);                                             // 导出到文件
+    write_keypkg_to_file(filename, keypkg);                                          // 导出到文件
 
     SDF_CloseSession(hSessionHandle);
     SDF_CloseDevice(DeviceHandle);
 
-    return LD_KM_OK;
+    return keypkg;
 }
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
@@ -977,7 +1007,6 @@ l_km_err readfile_from_cryptocard(uint8_t *filename, uint8_t *filepath)
     return LD_KM_OK;
 }
 
-
 // AS从密码卡中文件导入根密钥 验证文件中的根密钥 返回密钥包结构体
 l_km_err import_rootkey(struct KeyPkg *rootkey_pkg, void **rootkey_handle)
 {
@@ -1030,22 +1059,27 @@ l_km_err import_rootkey(struct KeyPkg *rootkey_pkg, void **rootkey_handle)
     uint8_t cipher_kek[32];
     uint32_t cipherkek_len;
     void *kek_handle;
-    SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len, &kek_handle); // 生成对密钥加密的密钥
+    SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK, kek_index, cipher_kek, &cipherkek_len,
+                           &kek_handle); // 生成对密钥加密的密钥
     // printbuff("cipher kek",cipher_kek,cipherkek_len);
 
     // 使用kek加密根密钥 并生成pkg
     uint8_t key_cipher[32];
     uint32_t cipher_len;
-    uint8_t iv_enc[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
+    uint8_t iv_enc[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32,
+                          0x20};
     uint32_t iv_len = 16;
     pkg->iv_len = iv_len;
     memcpy(pkg->iv, iv_enc, iv_len); // 替换iv
-    SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, pkg->key_cipher, pkg->meta_data->length, key_cipher, &cipher_len);
+    SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, pkg->key_cipher, pkg->meta_data->length,
+                key_cipher, &cipher_len);
 
-    uint8_t iv_mac[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
-    uint32_t chck_len;                                                                                             // 校验值长度
-    uint8_t chck_value[32];                                                                                        // 长度为chck_len的校验值
-    SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value, &chck_len); // 使用kek对根密钥计算消息验证码
+    uint8_t iv_mac[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32,
+                          0x20};
+    uint32_t chck_len;      // 校验值长度
+    uint8_t chck_value[32]; // 长度为chck_len的校验值
+    SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac, key_cipher, cipher_len, chck_value,
+                     &chck_len); // 使用kek对根密钥计算消息验证码
 
     // 存入kek密文 替换验证码
     memcpy(pkg->kek_cipher, cipher_kek, cipherkek_len);
@@ -1093,7 +1127,8 @@ l_km_err get_rootkey_handle(void **rootkey_handle)
     // 根密钥使用-校验密钥完整性
     uint32_t kek_index = 1;
     void *kek_handle;
-    ret = SDF_ImportKeyWithKEK(pSessionHandle, ALGO_WITH_KEK, kek_index, restored_pkg.kek_cipher, restored_pkg.kek_cipher_len, &kek_handle); // 导入密钥加密密钥
+    ret = SDF_ImportKeyWithKEK(pSessionHandle, ALGO_WITH_KEK, kek_index, restored_pkg.kek_cipher,
+                               restored_pkg.kek_cipher_len, &kek_handle); // 导入密钥加密密钥
     if (ret != LD_KM_OK)
     {
         printf("get key handle : import kek failed!\n");
@@ -1106,7 +1141,8 @@ l_km_err get_rootkey_handle(void **rootkey_handle)
     uint8_t mac_value[32];
     uint32_t mac_len;
 
-    SDF_CalculateMAC(pSessionHandle, kek_handle, ALGO_MAC, iv, restored_pkg.key_cipher, restored_pkg.meta_data->length, mac_value, &mac_len);
+    SDF_CalculateMAC(pSessionHandle, kek_handle, ALGO_MAC, iv, restored_pkg.key_cipher, restored_pkg.meta_data->length,
+                     mac_value, &mac_len);
     if (memcmp(mac_value, restored_pkg.chck_value, mac_len) != 0)
     {
         printf("root key integrity Wrong\n");
@@ -1117,8 +1153,10 @@ l_km_err get_rootkey_handle(void **rootkey_handle)
     uint8_t rootkey_plain[32];
     uint32_t len_rootkey_plain;
     uint32_t algo_rootkey_enc = SGD_SM4_OFB;
-    uint8_t iv_dec[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
-    SDF_Decrypt(pSessionHandle, kek_handle, algo_rootkey_enc, iv_dec, restored_pkg.key_cipher, restored_pkg.meta_data->length, rootkey_plain, &len_rootkey_plain);
+    uint8_t iv_dec[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32,
+                          0x20};
+    SDF_Decrypt(pSessionHandle, kek_handle, algo_rootkey_enc, iv_dec, restored_pkg.key_cipher,
+                restored_pkg.meta_data->length, rootkey_plain, &len_rootkey_plain);
     SDF_ImportKey(pSessionHandle, rootkey_plain, len_rootkey_plain, rootkey_handle); // 返回密钥句柄
 
     SDF_CloseSession(pSessionHandle);
@@ -1198,6 +1236,9 @@ l_km_err print_key_metadata(struct KeyMetaData *key_info)
         break;
     case GROUP_KEY_CC:
         printf("GROUP_KEY_CC (KCC)\n");
+        break;
+    case NH_KEY:
+        printf("NextHop KEY\n");
         break;
     default:
         printf("Unknown KEY_TYPE\n");

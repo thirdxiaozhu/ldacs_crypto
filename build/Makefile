@@ -143,19 +143,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named key_management
-
-# Build rule for target.
-key_management: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 key_management
-.PHONY : key_management
-
-# fast build rule for target.
-key_management/fast:
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/build
-.PHONY : key_management/fast
-
-#=============================================================================
 # Target rules for targets named km_src
 
 # Build rule for target.
@@ -168,29 +155,44 @@ km_src/fast:
 	$(MAKE) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/build
 .PHONY : km_src/fast
 
-export_rootkey.o: export_rootkey.c.o
-.PHONY : export_rootkey.o
+#=============================================================================
+# Target rules for targets named key_distributetest
 
-# target to build an object file
-export_rootkey.c.o:
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/export_rootkey.c.o
-.PHONY : export_rootkey.c.o
+# Build rule for target.
+key_distributetest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 key_distributetest
+.PHONY : key_distributetest
 
-export_rootkey.i: export_rootkey.c.i
-.PHONY : export_rootkey.i
+# fast build rule for target.
+key_distributetest/fast:
+	$(MAKE) -f tests/CMakeFiles/key_distributetest.dir/build.make tests/CMakeFiles/key_distributetest.dir/build
+.PHONY : key_distributetest/fast
 
-# target to preprocess a source file
-export_rootkey.c.i:
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/export_rootkey.c.i
-.PHONY : export_rootkey.c.i
+#=============================================================================
+# Target rules for targets named keygentest
 
-export_rootkey.s: export_rootkey.c.s
-.PHONY : export_rootkey.s
+# Build rule for target.
+keygentest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 keygentest
+.PHONY : keygentest
 
-# target to generate assembly for a file
-export_rootkey.c.s:
-	$(MAKE) -f CMakeFiles/key_management.dir/build.make CMakeFiles/key_management.dir/export_rootkey.c.s
-.PHONY : export_rootkey.c.s
+# fast build rule for target.
+keygentest/fast:
+	$(MAKE) -f tests/CMakeFiles/keygentest.dir/build.make tests/CMakeFiles/keygentest.dir/build
+.PHONY : keygentest/fast
+
+#=============================================================================
+# Target rules for targets named rkey_exporttest
+
+# Build rule for target.
+rkey_exporttest: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rkey_exporttest
+.PHONY : rkey_exporttest
+
+# fast build rule for target.
+rkey_exporttest/fast:
+	$(MAKE) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/build
+.PHONY : rkey_exporttest/fast
 
 # Help Target
 help:
@@ -202,13 +204,12 @@ help:
 	@echo "... install"
 	@echo "... install/local"
 	@echo "... install/strip"
-	@echo "... key_management"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... km_src"
-	@echo "... export_rootkey.o"
-	@echo "... export_rootkey.i"
-	@echo "... export_rootkey.s"
+	@echo "... key_distributetest"
+	@echo "... keygentest"
+	@echo "... rkey_exporttest"
 .PHONY : help
 
 
