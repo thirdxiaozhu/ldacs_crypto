@@ -1,0 +1,1 @@
+/bin/cc      CMakeFiles/keygentest.dir/keygen_test.c.o  -o keygentest -rdynamic ../src/libkm_src.so -lsdf -lpthread -luuid -Wl,-rpath,/home/wencheng/crypto/key_management/build/src 

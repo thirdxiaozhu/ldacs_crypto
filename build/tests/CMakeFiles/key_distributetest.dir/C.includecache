@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/key_manage.h
+stdio.h
+-
+stdlib.h
+-
+sys/time.h
+-
+stdint.h
+-
+unistd.h
+-
+string.h
+-
+fcntl.h
+-
+uuid/uuid.h
+-
+sdf/libsdf.h
+-
+sdfkmt/sdfe-func.h
+-
+sdfkmt/sdfe-type.h
+-
+
+/home/wencheng/crypto/key_management/tests/key_distribute_test.c
+stdio.h
+-
+string.h
+-
+key_manage.h
+/home/wencheng/crypto/key_management/tests/key_manage.h
+uuid/uuid.h
+-
+
