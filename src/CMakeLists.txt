@@ -1,15 +1,35 @@
-cmake_minimum_required(VERSION  2.8.12.2)
+cmake_minimum_required(VERSION 3.22)
 project(km_src C)
 
 set(CMAKE_C_STANDARD 99)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_library(km_src SHARED key_manage.c )
 
-# 光电密码卡
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf pthread uuid)
-# 派科密码卡
-# target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccmu pthread uuid)
+# 选择适配的密码卡
+cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
+    add_compile_definitions(USE_SDF)
+    set(IS_USE_SDF ON) 
+ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as")
+    add_compile_definitions(USE_PIICO)
+    set(IS_USE_PIICO ON)
+ELSE ()
+    add_compile_definitions(USE_GMSSL)
+    set(IS_USE_GMSSL ON)
+ENDIF ()
+
+add_library(km_src SHARED key_manage.c database.c)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread uuid sqlite3)
+
+IF (${IS_USE_SDF})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf sqlite3)
+ENDIF ()
+IF (${IS_USE_PIICO})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccu sqlite3)
+ENDIF ()
+IF (${IS_USE_GMSSL})
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC gmssl sqlite3)
+ENDIF ()
 
 
 # 设置安装路径

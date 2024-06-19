@@ -5,6 +5,10 @@
         "sdfe-type.h": "c",
         "libsdf.h": "c",
         "sdf-func.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "sdfe-func.h": "c",
+        "string.h": "c",
+        "db.h": "c",
+        "key_manage.h": "c"
     }
 }
