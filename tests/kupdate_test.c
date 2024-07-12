@@ -5,7 +5,7 @@
  */
 
 #include "key_manage.h"
-#include "database.h"
+#include "kmdb.h"
 
 int main()
 {
@@ -37,7 +37,7 @@ int main()
         */
 
         // 查询新密钥id
-        QueryResult_for_queryid qr_mkid = query_id(dbname, sgw_tablename, sac_as, sac_gs_t, MASTER_KEY_AS_GS);
+        QueryResult_for_queryid qr_mkid = query_id(dbname, sgw_tablename, sac_as, sac_gs_t, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_mkid.count == 0)
         {
             printf("NULL Query.\n");
@@ -72,7 +72,7 @@ int main()
         /* 源GS端撤销密钥 */
         /*
         // 查询密钥id
-        QueryResult_for_queryid qr_gskid = query_id(dbname, gs_s_tablename, sac_gs_s, sac_as, MASTER_KEY_AS_GS);
+        QueryResult_for_queryid qr_gskid = query_id(dbname, gs_s_tablename, sac_gs_s, sac_as, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_gskid.count != 1)
         {
             printf("Query NULL or more than one.\n");

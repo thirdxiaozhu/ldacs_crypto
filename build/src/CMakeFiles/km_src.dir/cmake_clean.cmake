@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/km_src.dir/database.c.o"
-  "CMakeFiles/km_src.dir/database.c.o.d"
   "CMakeFiles/km_src.dir/key_manage.c.o"
   "CMakeFiles/km_src.dir/key_manage.c.o.d"
+  "CMakeFiles/km_src.dir/kmdb.c.o"
+  "CMakeFiles/km_src.dir/kmdb.c.o.d"
   "libkm_src.pdb"
   "libkm_src.so"
 )

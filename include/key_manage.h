@@ -14,6 +14,13 @@
 #include <sdf/libsdf.h>
 #include <sdfkmt/sdfe-func.h>
 #include <sdfkmt/sdfe-type.h>
+
+typedef enum
+{
+    TRUE = 1,
+    FALSE = 0
+} bool;
+
 /*
 ************************************************************************
 *                           结构体声明和别名定义                         *
@@ -34,6 +41,8 @@
 
 // 密钥句柄别名
 typedef void *CCARD_HANDLE;
+
+// typedef enum { TRUE = 1, FALSE = 0 } bool;
 
 // 报错码
 typedef enum
@@ -67,16 +76,18 @@ typedef enum
     LD_ERR_KM_WRITE_FILE,                  // 将kekpkg写入文件错误
     LD_ERR_KM_READ_FILE,                   // 从文件读取kekpkg错误
     LD_ERR_KM_OPEN_FILE,                   // 打开文件错误
-    LD_ERR_KM_ROOTKEY_VERIFY,              // 根密钥验证错误
-    LD_ERR_KM_MASTERKEY_VERIFY,            // 主密钥验证错误
-    LD_ERR_KM_DERIVE_KEY,                  // 密钥派生错误
-    LD_ERR_KM_DERIVE_SESSION_KEY,          // 会话密钥派生错误
-    LD_ERR_KM_CREATE_DB,                   // 创建数据库或者数据表错误
-    LD_ERR_KM_QUERY,                       // 查询数据库错误
-    LD_ERR_KM_ALTERDB,                     // 修改数据库错误
-    LD_ERR_KM_GET_HANDLE,                  // 获取密钥句柄错误
-    LD_ERR_KM_UPDATE_SESSIONKEY,           // 更新会话密钥错误
-    LD_ERR_KM_INSTALL_KEY,                 // 安装密钥错误
+    LD_ERR_KM_CREATE_FILE,
+    LD_ERR_KM_DELETE_FILE,
+    LD_ERR_KM_ROOTKEY_VERIFY,     // 根密钥验证错误
+    LD_ERR_KM_MASTERKEY_VERIFY,   // 主密钥验证错误
+    LD_ERR_KM_DERIVE_KEY,         // 密钥派生错误
+    LD_ERR_KM_DERIVE_SESSION_KEY, // 会话密钥派生错误
+    LD_ERR_KM_CREATE_DB,          // 创建数据库或者数据表错误
+    LD_ERR_KM_QUERY,              // 查询数据库错误
+    LD_ERR_KM_ALTERDB,            // 修改数据库错误
+    LD_ERR_KM_GET_HANDLE,         // 获取密钥句柄错误
+    LD_ERR_KM_UPDATE_SESSIONKEY,  // 更新会话密钥错误
+    LD_ERR_KM_INSTALL_KEY,        // 安装密钥错误
 } l_km_err;
 
 #ifndef USE_GMSSL
@@ -124,14 +135,6 @@ typedef struct KeyMetaData
                          // uint8_t counter;
 } km_keymetadata_t;
 
-// 初始化密钥元数据
-km_keymetadata_t *km_key_metadata_new(
-    const char *owner_1,
-    const char *owner_2,
-    enum KEY_TYPE key_type,
-    uint32_t key_len,
-    uint16_t update_day);
-
 // 密钥包 用于密钥的存储和分发
 typedef struct KeyPkg
 {
@@ -146,6 +149,14 @@ typedef struct KeyPkg
     uint8_t chck_value[MAX_CHCK_LEN]; // 长度为chck_len的校验值
 } km_keypkg_t;
 
+// 初始化密钥元数据
+km_keymetadata_t *km_key_metadata_new(
+    const char *owner_1,
+    const char *owner_2,
+    enum KEY_TYPE key_type,
+    uint32_t key_len,
+    uint16_t update_day);
+
 /**
  * @brief 初始化密钥包描述信息。如果传入明文密钥，对密钥加密存储。
  * @param[in] meta 描述信息
@@ -154,7 +165,8 @@ typedef struct KeyPkg
  */
 km_keypkg_t *km_key_pkg_new(
     km_keymetadata_t *meta,
-    uint8_t *key);
+    uint8_t *key,
+    bool is_encrypt);
 
 // 释放密钥包空间
 void key_pkg_free(
@@ -257,74 +269,65 @@ l_km_err km_import_key_with_kek(
     uint32_t key_length,
     int kek_index,
     CCARD_HANDLE *key_handle);
+
+/**
+ * @brief 对比对数据做的校验值是否与给定MAC相同
+ * @param[in] 校验算法
+ * @param[in] mac 对比的MAC值
+ * @param[in] mac_length
+ * @param[in] iv
+ * @param[in] iv_len
+ * @param[in] data
+ * @param[in] data_len
+ * @return 对比通过返回TRUE，否则返回FALSE
+ */
+bool km_checkvalue_is_same(
+    uint32_t alg_id,
+    uint8_t *mac,
+    uint32_t mac_length,
+    uint8_t *iv,
+    uint8_t *data,
+    uint32_t data_len);
+
 /*************************************************************************
  *                      业务逻辑接口：密钥生成和派生                       *
  *************************************************************************/
+/**
+ * @brief 根密钥生成、保存和导出
+ * @param[in] sac_name 服务访问客户端标识
+ * @param[in] sac_name 网关标识
+ * @param[in] key_len 根密钥长度
+ * @param[in] validity_period 根密钥有效期（单位：天）
+ * @param[in] dbname 数据库名称，用于存储根密钥
+ * @param[in] tablename 数据库中的表名，用于存储根密钥
+ * @param[in] export_file_path 导出根密钥的文件路径
+ * @return 成功返回LD_KM_OK，失败返回其他错误码
+ * */
+l_km_err root_key_gen(
+    const char *as_name,
+    const char *sgw_name,
+    uint32_t key_len,
+    uint32_t validity_period,
+    const char *dbname,
+    const char *tablename,
+    const char *export_file_path);
 
 /**
  * @brief 单个密钥的派生
- * @param[in] kdk_handle 密钥加密密钥句柄
+ * @param[in] id 密钥id
  * @param[in] key_type 所需的密钥类型
  * @param[in] key_len 所需密钥的长度
- * @param[in] owner1 密钥所有者，如果是本地使用的密钥，此处放本地身份
- * @param[in] owner2 另外一方密钥所有者
  * @param[in] rand 随机数
  * @param[in] rand_len 随机数长度
- * @param[out] key_handle 生成的密钥的句柄
- * @return 返回密钥包结构体
+ * @return 报错码
  */
-km_keypkg_t *km_derive_key(
-    CCARD_HANDLE kdk_handle,
+l_km_err km_derive_key(
+    uint8_t *db_name,
+    uint8_t *table_name,
+    uint8_t *id,
     enum KEY_TYPE key_type,
     uint32_t key_len,
-    const char *owner1,
-    const char *owner2,
-    uint8_t *rand,
-    uint32_t rand_len,
-    CCARD_HANDLE *key_handle);
-
-/**
- * @brief 主密钥KAS-GS的派生和存储
- * @param[in] dbname   密钥库名
- * @param[in] tablename 密钥表名
- * @param[in] handle_kassgw AS和SGW之间主密钥句柄
- * @param[in] key_len 所需密钥的长度
- * @param[in] sac_as  AS标识
- * @param[in] sac_gs  GS标识
- * @param[in] rand 随机数
- * @param[in] rand_len 随机数长度
- * @param[out] key_handle KAS-GS密钥的句柄
- * @return 返回报错码/成功码LD_KM_OK
- */
-l_km_err *km_derive_masterkey_asgs(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    CCARD_HANDLE handle_kassgw,
-    uint32_t key_len,
-    const char *sac_as,
-    const char *sac_gs,
-    uint8_t *rand,
-    uint32_t rand_len,
-    CCARD_HANDLE *key_handle);
-
-/**
- * @brief 主密钥派生并存储所有会话密钥
- * @param[in] dbname   密钥库名
- * @param[in] tablename 密钥表名
- * @param[in] handle_mk 主密钥句柄
- * @param[in] key_len 所需密钥的长度
- * @param[in] sac_as  AS标识
- * @param[in] sac_gs GS标识
- * @param[in] rand 随机数
- * @param[in] rand_len 随机数长度
- */
-l_km_err km_derive_all_session_key(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    CCARD_HANDLE handle_mk,
-    uint32_t key_len,
-    const char *sac_as,
-    const char *sac_gs,
+    uint8_t *gs_name,
     uint8_t *rand,
     uint32_t rand_len);
 
@@ -359,15 +362,16 @@ l_km_err km_update_masterkey(
     uint8_t *nonce);
 
 /**
- * @brief 撤销主密钥及其派生的会话密钥
+ * @brief 撤销密钥及其派生密钥
  * @param[in] dbname   密钥库名
  * @param[in] tablename 密钥表名
- * @param[in] id_mk 主密钥标识
+ * @param[in] id 密钥标识
+ * @return 报错码
  */
 l_km_err km_revoke_key(
     uint8_t *dbname,
     uint8_t *tablename,
-    uint8_t *id_mk);
+    uint8_t *id);
 
 /**
  * @brief GS端安装主密钥 派生会话密钥
@@ -397,8 +401,8 @@ l_km_err km_install_key(
 // 网关导出根密钥包到文件rootkey.bin中(给AS的) 本地存储根密钥于rootkey.txt中
 km_keypkg_t *km_export_rootkey(
     struct KeyMetaData *keymeta,
-    const char *export_bin_path,
-    const char *export_raw_path);
+    const char *export_path,
+    const char *backup_path);
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
 l_km_err km_writefile_to_cryptocard(
@@ -421,9 +425,15 @@ l_km_err km_get_rootkey_handle(
     CCARD_HANDLE *rootkey_handle,
     const char *filepath);
 
+// 密码卡内创建文件
+l_km_err km_create_ccard_file(const char *filename, size_t file_size);
+
 /* ************************************************************************
  *                          测试用：输出和显示格式控制                          *
  *************************************************************************/
+// 报错码解析
+const char *km_error_to_string(
+    l_km_err err_code);
 
 // 打印字符数组
 l_km_err printbuff(
@@ -447,5 +457,16 @@ l_km_err write_keypkg_to_file(
 km_keypkg_t *read_keypkg_from_file(
     const char *filename);
 
+l_km_err delete_file(
+    const char *filePath);
+
+// Function to convert uint16_t SAC_AS to uint8_t* type pointer
+const uint8_t *uint16_to_uint8_ptr(
+    uint16_t SAC_AS);
+
+// Function to convert uint8_t* type pointer back to uint16_t
+uint16_t uint8_ptr_to_uint16(
+    const uint8_t *ptr,
+    size_t size);
 #endif
 #endif

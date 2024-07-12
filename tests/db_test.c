@@ -5,33 +5,32 @@
  */
 
 #include "key_manage.h"
-#include "database.h"
+#include "kmdb.h"
+static field_desc test_km_fields[] = {
+    // 密钥结构体字段描述
+    {ft_uuid, 0, "id", NULL},
+    {ft_enum, 0, "key_type", NULL},
+    {ft_uint8t_pointer, 0, "owner1", NULL},
+    {ft_uint8t_pointer, 0, "owner2", NULL},
+    {ft_uint8t_pointer, 0, "key_cipher", NULL},
+    {ft_uint32t, 0, "key_len", NULL},
+    {ft_enum, 0, "key_state", NULL},
+    {ft_timet, 128, "creatime", NULL},
+    {ft_uint16t, 0, "updatecycle", NULL},
+    {ft_uint32t, 0, "kek_len", NULL},
+    {ft_uint8t_pointer, 0, "kek_cipher", NULL},
+    {ft_uint8t_pointer, 0, "iv", NULL},
+    {ft_uint16t, 0, "iv_len", NULL},
+    {ft_enum, 0, "chck_algo", NULL},
+    {ft_uint16t, 0, "check_len", NULL},
+    {ft_uint8t_pointer, 0, "chck_value", NULL},
+    {ft_uint16t, 0, "update_count", NULL},
+    {ft_end, 0, NULL, NULL},
+};
 
+struct_desc static test_km_desc = {"km_pkg", test_km_fields};
 int main()
 {
-    static field_desc test_km_fields[] = {
-        // 密钥结构体字段描述
-        {ft_uuid, 0, "id", NULL},
-        {ft_enum, 0, "key_type", NULL},
-        {ft_uint8t_pointer, 0, "owner1", NULL},
-        {ft_uint8t_pointer, 0, "owner2", NULL},
-        {ft_uint8t_pointer, 0, "key_cipher", NULL},
-        {ft_uint32t, 0, "key_len", NULL},
-        {ft_enum, 0, "key_state", NULL},
-        {ft_timet, 128, "creatime", NULL},
-        {ft_uint16t, 0, "updatecycle", NULL},
-        {ft_uint32t, 0, "kek_len", NULL},
-        {ft_uint8t_pointer, 0, "kek_cipher", NULL},
-        {ft_uint8t_pointer, 0, "iv", NULL},
-        {ft_uint16t, 0, "iv_len", NULL},
-        {ft_enum, 0, "chck_algo", NULL},
-        {ft_uint16t, 0, "check_len", NULL},
-        {ft_uint8t_pointer, 0, "chck_value", NULL},
-        {ft_uint16t, 0, "update_count", NULL},
-        {ft_end, 0, NULL, NULL},
-    };
-
-    struct_desc static test_km_desc = {"km_pkg", test_km_fields};
 
     struct KeyMetaData mt = {
         // 指定该密钥的信息 封装成结构体keypkg
@@ -82,7 +81,7 @@ int main()
             return 0;
         }
     */
-    
+
     // 测试枚举转字符串
     /*
     enum KEY_TYPE keytype =  str_to_ktype("ROOT_KEY");
@@ -130,14 +129,7 @@ int main()
     */
 
     // 查询密钥
-    /*
-        QueryResult_for_keyvalue result = query_keyvalue(dbname, tablename, id);
-        if (!result.key)
-        {
-            printf("Key not found or error occurred.\n");
-        }
-        printbuff("key",result.key, result.key_len);
-    */
+
     // 修改密钥值
     /*
     uint16_t key_len = 16;

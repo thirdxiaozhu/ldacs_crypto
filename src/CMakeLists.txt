@@ -18,7 +18,7 @@ ELSE ()
     set(IS_USE_GMSSL ON)
 ENDIF ()
 
-add_library(km_src SHARED key_manage.c database.c)
+add_library(km_src SHARED key_manage.c kmdb.c )
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread uuid sqlite3)
 
 IF (${IS_USE_SDF})

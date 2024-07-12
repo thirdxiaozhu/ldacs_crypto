@@ -6,23 +6,28 @@ set(CMAKE_C_STANDARD 99)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(tests
-        # kgen
-        # rkey_export
-        # rkey_import
+        rkey_export
+        rkey_import
         # kdistribute
         # sql_insert
-        db         # 密钥库增删改查相关
-        kupdate    # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
+        # db         # 密钥库增删改查相关
+        # kupdate    # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
         kestablish # 密钥建立 包括AS GS SGW的密钥生成 分发和存储
         # hex_conv
         # rand
+        rk_gen
+        # kderive
         # importk_with_kek
-        # krevoke
+        krevoke
         # newpkg
         # kinstall
         # prehandle
         # sql_dyn_insert
-        queryid
+        # queryid
+        # query_subid
+        query_keytype
+        # query_key
+        # kenable
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 

@@ -1,6 +1,6 @@
 /**
  * 20240514 by wencheng
- * 根密钥预置完成后，密钥建立过程样例：AS GS SGW的密钥生成和分发
+ * 根密钥预置完成后，单机版密钥建立过程样例：AS GS SGW的密钥生成和分发
  */
 #include <stdio.h>
 #include <string.h>
