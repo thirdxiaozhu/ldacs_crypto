@@ -4,7 +4,7 @@
  * @date 2024/06/18
  */
 #include "key_manage.h"
-#include "database.h"
+#include "kmdb.h"
 
 static field_desc test_km_fields[] = {
     // 密钥结构体字段描述

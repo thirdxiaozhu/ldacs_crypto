@@ -162,18 +162,46 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-tests/CMakeFiles/rkey_exporttest.dir/rule:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_exporttest.dir/rule
-.PHONY : tests/CMakeFiles/rkey_exporttest.dir/rule
+tests/CMakeFiles/krevoketest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/krevoketest.dir/rule
+.PHONY : tests/CMakeFiles/krevoketest.dir/rule
 
 # Convenience name for target.
-rkey_exporttest: tests/CMakeFiles/rkey_exporttest.dir/rule
-.PHONY : rkey_exporttest
+krevoketest: tests/CMakeFiles/krevoketest.dir/rule
+.PHONY : krevoketest
 
 # fast build rule for target.
-rkey_exporttest/fast:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/build
-.PHONY : rkey_exporttest/fast
+krevoketest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/build
+.PHONY : krevoketest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/rkey_gentest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_gentest.dir/rule
+.PHONY : tests/CMakeFiles/rkey_gentest.dir/rule
+
+# Convenience name for target.
+rkey_gentest: tests/CMakeFiles/rkey_gentest.dir/rule
+.PHONY : rkey_gentest
+
+# fast build rule for target.
+rkey_gentest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/build
+.PHONY : rkey_gentest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/rkey_to_ccardtest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_to_ccardtest.dir/rule
+.PHONY : tests/CMakeFiles/rkey_to_ccardtest.dir/rule
+
+# Convenience name for target.
+rkey_to_ccardtest: tests/CMakeFiles/rkey_to_ccardtest.dir/rule
+.PHONY : rkey_to_ccardtest
+
+# fast build rule for target.
+rkey_to_ccardtest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/build
+.PHONY : rkey_to_ccardtest/fast
 
 # Convenience name for target.
 tests/CMakeFiles/rkey_importtest.dir/rule:
@@ -190,84 +218,246 @@ rkey_importtest/fast:
 .PHONY : rkey_importtest/fast
 
 # Convenience name for target.
-tests/CMakeFiles/kestablishtest.dir/rule:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablishtest.dir/rule
-.PHONY : tests/CMakeFiles/kestablishtest.dir/rule
+tests/CMakeFiles/kenabletest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kenabletest.dir/rule
+.PHONY : tests/CMakeFiles/kenabletest.dir/rule
 
 # Convenience name for target.
-kestablishtest: tests/CMakeFiles/kestablishtest.dir/rule
-.PHONY : kestablishtest
+kenabletest: tests/CMakeFiles/kenabletest.dir/rule
+.PHONY : kenabletest
 
 # fast build rule for target.
-kestablishtest/fast:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/build
-.PHONY : kestablishtest/fast
+kenabletest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/build
+.PHONY : kenabletest/fast
 
 # Convenience name for target.
-tests/CMakeFiles/rk_gentest.dir/rule:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rk_gentest.dir/rule
-.PHONY : tests/CMakeFiles/rk_gentest.dir/rule
+tests/CMakeFiles/kestablish_sgwtest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_sgwtest.dir/rule
+.PHONY : tests/CMakeFiles/kestablish_sgwtest.dir/rule
 
 # Convenience name for target.
-rk_gentest: tests/CMakeFiles/rk_gentest.dir/rule
-.PHONY : rk_gentest
+kestablish_sgwtest: tests/CMakeFiles/kestablish_sgwtest.dir/rule
+.PHONY : kestablish_sgwtest
 
 # fast build rule for target.
-rk_gentest/fast:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/build
-.PHONY : rk_gentest/fast
+kestablish_sgwtest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/build
+.PHONY : kestablish_sgwtest/fast
 
 # Convenience name for target.
-tests/CMakeFiles/krevoketest.dir/rule:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/krevoketest.dir/rule
-.PHONY : tests/CMakeFiles/krevoketest.dir/rule
+tests/CMakeFiles/kestablish_astest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_astest.dir/rule
+.PHONY : tests/CMakeFiles/kestablish_astest.dir/rule
 
 # Convenience name for target.
-krevoketest: tests/CMakeFiles/krevoketest.dir/rule
-.PHONY : krevoketest
+kestablish_astest: tests/CMakeFiles/kestablish_astest.dir/rule
+.PHONY : kestablish_astest
 
 # fast build rule for target.
-krevoketest/fast:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/build
-.PHONY : krevoketest/fast
+kestablish_astest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/build
+.PHONY : kestablish_astest/fast
 
 # Convenience name for target.
-tests/CMakeFiles/query_keytypetest.dir/rule:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_keytypetest.dir/rule
-.PHONY : tests/CMakeFiles/query_keytypetest.dir/rule
+tests/CMakeFiles/kestablish_gstest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_gstest.dir/rule
+.PHONY : tests/CMakeFiles/kestablish_gstest.dir/rule
 
 # Convenience name for target.
-query_keytypetest: tests/CMakeFiles/query_keytypetest.dir/rule
-.PHONY : query_keytypetest
+kestablish_gstest: tests/CMakeFiles/kestablish_gstest.dir/rule
+.PHONY : kestablish_gstest
 
 # fast build rule for target.
-query_keytypetest/fast:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/build
-.PHONY : query_keytypetest/fast
+kestablish_gstest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/build
+.PHONY : kestablish_gstest/fast
 
-kestablish_test.o: kestablish_test.c.o
-.PHONY : kestablish_test.o
+# Convenience name for target.
+tests/CMakeFiles/kget_gstest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kget_gstest.dir/rule
+.PHONY : tests/CMakeFiles/kget_gstest.dir/rule
+
+# Convenience name for target.
+kget_gstest: tests/CMakeFiles/kget_gstest.dir/rule
+.PHONY : kget_gstest
+
+# fast build rule for target.
+kget_gstest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/build
+.PHONY : kget_gstest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/kget_astest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kget_astest.dir/rule
+.PHONY : tests/CMakeFiles/kget_astest.dir/rule
+
+# Convenience name for target.
+kget_astest: tests/CMakeFiles/kget_astest.dir/rule
+.PHONY : kget_astest
+
+# fast build rule for target.
+kget_astest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/build
+.PHONY : kget_astest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/kupdatetest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kupdatetest.dir/rule
+.PHONY : tests/CMakeFiles/kupdatetest.dir/rule
+
+# Convenience name for target.
+kupdatetest: tests/CMakeFiles/kupdatetest.dir/rule
+.PHONY : kupdatetest
+
+# fast build rule for target.
+kupdatetest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/build
+.PHONY : kupdatetest/fast
+
+kenable_test.o: kenable_test.c.o
+.PHONY : kenable_test.o
 
 # target to build an object file
-kestablish_test.c.o:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/kestablish_test.c.o
-.PHONY : kestablish_test.c.o
+kenable_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/kenable_test.c.o
+.PHONY : kenable_test.c.o
 
-kestablish_test.i: kestablish_test.c.i
-.PHONY : kestablish_test.i
+kenable_test.i: kenable_test.c.i
+.PHONY : kenable_test.i
 
 # target to preprocess a source file
-kestablish_test.c.i:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/kestablish_test.c.i
-.PHONY : kestablish_test.c.i
+kenable_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/kenable_test.c.i
+.PHONY : kenable_test.c.i
 
-kestablish_test.s: kestablish_test.c.s
-.PHONY : kestablish_test.s
+kenable_test.s: kenable_test.c.s
+.PHONY : kenable_test.s
 
 # target to generate assembly for a file
-kestablish_test.c.s:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/kestablish_test.c.s
-.PHONY : kestablish_test.c.s
+kenable_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/kenable_test.c.s
+.PHONY : kenable_test.c.s
+
+kestablish_as_test.o: kestablish_as_test.c.o
+.PHONY : kestablish_as_test.o
+
+# target to build an object file
+kestablish_as_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/kestablish_as_test.c.o
+.PHONY : kestablish_as_test.c.o
+
+kestablish_as_test.i: kestablish_as_test.c.i
+.PHONY : kestablish_as_test.i
+
+# target to preprocess a source file
+kestablish_as_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/kestablish_as_test.c.i
+.PHONY : kestablish_as_test.c.i
+
+kestablish_as_test.s: kestablish_as_test.c.s
+.PHONY : kestablish_as_test.s
+
+# target to generate assembly for a file
+kestablish_as_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/kestablish_as_test.c.s
+.PHONY : kestablish_as_test.c.s
+
+kestablish_gs_test.o: kestablish_gs_test.c.o
+.PHONY : kestablish_gs_test.o
+
+# target to build an object file
+kestablish_gs_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/kestablish_gs_test.c.o
+.PHONY : kestablish_gs_test.c.o
+
+kestablish_gs_test.i: kestablish_gs_test.c.i
+.PHONY : kestablish_gs_test.i
+
+# target to preprocess a source file
+kestablish_gs_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/kestablish_gs_test.c.i
+.PHONY : kestablish_gs_test.c.i
+
+kestablish_gs_test.s: kestablish_gs_test.c.s
+.PHONY : kestablish_gs_test.s
+
+# target to generate assembly for a file
+kestablish_gs_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/kestablish_gs_test.c.s
+.PHONY : kestablish_gs_test.c.s
+
+kestablish_sgw_test.o: kestablish_sgw_test.c.o
+.PHONY : kestablish_sgw_test.o
+
+# target to build an object file
+kestablish_sgw_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/kestablish_sgw_test.c.o
+.PHONY : kestablish_sgw_test.c.o
+
+kestablish_sgw_test.i: kestablish_sgw_test.c.i
+.PHONY : kestablish_sgw_test.i
+
+# target to preprocess a source file
+kestablish_sgw_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/kestablish_sgw_test.c.i
+.PHONY : kestablish_sgw_test.c.i
+
+kestablish_sgw_test.s: kestablish_sgw_test.c.s
+.PHONY : kestablish_sgw_test.s
+
+# target to generate assembly for a file
+kestablish_sgw_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/kestablish_sgw_test.c.s
+.PHONY : kestablish_sgw_test.c.s
+
+kget_as_test.o: kget_as_test.c.o
+.PHONY : kget_as_test.o
+
+# target to build an object file
+kget_as_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/kget_as_test.c.o
+.PHONY : kget_as_test.c.o
+
+kget_as_test.i: kget_as_test.c.i
+.PHONY : kget_as_test.i
+
+# target to preprocess a source file
+kget_as_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/kget_as_test.c.i
+.PHONY : kget_as_test.c.i
+
+kget_as_test.s: kget_as_test.c.s
+.PHONY : kget_as_test.s
+
+# target to generate assembly for a file
+kget_as_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/kget_as_test.c.s
+.PHONY : kget_as_test.c.s
+
+kget_gs_test.o: kget_gs_test.c.o
+.PHONY : kget_gs_test.o
+
+# target to build an object file
+kget_gs_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/kget_gs_test.c.o
+.PHONY : kget_gs_test.c.o
+
+kget_gs_test.i: kget_gs_test.c.i
+.PHONY : kget_gs_test.i
+
+# target to preprocess a source file
+kget_gs_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/kget_gs_test.c.i
+.PHONY : kget_gs_test.c.i
+
+kget_gs_test.s: kget_gs_test.c.s
+.PHONY : kget_gs_test.s
+
+# target to generate assembly for a file
+kget_gs_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/kget_gs_test.c.s
+.PHONY : kget_gs_test.c.s
 
 krevoke_test.o: krevoke_test.c.o
 .PHONY : krevoke_test.o
@@ -293,77 +483,53 @@ krevoke_test.c.s:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/krevoke_test.c.s
 .PHONY : krevoke_test.c.s
 
-query_keytype_test.o: query_keytype_test.c.o
-.PHONY : query_keytype_test.o
+kupdate_test.o: kupdate_test.c.o
+.PHONY : kupdate_test.o
 
 # target to build an object file
-query_keytype_test.c.o:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.o
-.PHONY : query_keytype_test.c.o
+kupdate_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/kupdate_test.c.o
+.PHONY : kupdate_test.c.o
 
-query_keytype_test.i: query_keytype_test.c.i
-.PHONY : query_keytype_test.i
+kupdate_test.i: kupdate_test.c.i
+.PHONY : kupdate_test.i
 
 # target to preprocess a source file
-query_keytype_test.c.i:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.i
-.PHONY : query_keytype_test.c.i
+kupdate_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/kupdate_test.c.i
+.PHONY : kupdate_test.c.i
 
-query_keytype_test.s: query_keytype_test.c.s
-.PHONY : query_keytype_test.s
+kupdate_test.s: kupdate_test.c.s
+.PHONY : kupdate_test.s
 
 # target to generate assembly for a file
-query_keytype_test.c.s:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.s
-.PHONY : query_keytype_test.c.s
+kupdate_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/kupdate_test.c.s
+.PHONY : kupdate_test.c.s
 
-rk_gen_test.o: rk_gen_test.c.o
-.PHONY : rk_gen_test.o
+rkey_gen_test.o: rkey_gen_test.c.o
+.PHONY : rkey_gen_test.o
 
 # target to build an object file
-rk_gen_test.c.o:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/rk_gen_test.c.o
-.PHONY : rk_gen_test.c.o
+rkey_gen_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/rkey_gen_test.c.o
+.PHONY : rkey_gen_test.c.o
 
-rk_gen_test.i: rk_gen_test.c.i
-.PHONY : rk_gen_test.i
-
-# target to preprocess a source file
-rk_gen_test.c.i:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/rk_gen_test.c.i
-.PHONY : rk_gen_test.c.i
-
-rk_gen_test.s: rk_gen_test.c.s
-.PHONY : rk_gen_test.s
-
-# target to generate assembly for a file
-rk_gen_test.c.s:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/rk_gen_test.c.s
-.PHONY : rk_gen_test.c.s
-
-rkey_export_test.o: rkey_export_test.c.o
-.PHONY : rkey_export_test.o
-
-# target to build an object file
-rkey_export_test.c.o:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o
-.PHONY : rkey_export_test.c.o
-
-rkey_export_test.i: rkey_export_test.c.i
-.PHONY : rkey_export_test.i
+rkey_gen_test.i: rkey_gen_test.c.i
+.PHONY : rkey_gen_test.i
 
 # target to preprocess a source file
-rkey_export_test.c.i:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.i
-.PHONY : rkey_export_test.c.i
+rkey_gen_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/rkey_gen_test.c.i
+.PHONY : rkey_gen_test.c.i
 
-rkey_export_test.s: rkey_export_test.c.s
-.PHONY : rkey_export_test.s
+rkey_gen_test.s: rkey_gen_test.c.s
+.PHONY : rkey_gen_test.s
 
 # target to generate assembly for a file
-rkey_export_test.c.s:
-	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.s
-.PHONY : rkey_export_test.c.s
+rkey_gen_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/rkey_gen_test.c.s
+.PHONY : rkey_gen_test.c.s
 
 rkey_import_test.o: rkey_import_test.c.o
 .PHONY : rkey_import_test.o
@@ -389,6 +555,30 @@ rkey_import_test.c.s:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/rkey_import_test.c.s
 .PHONY : rkey_import_test.c.s
 
+rkey_to_ccard_test.o: rkey_to_ccard_test.c.o
+.PHONY : rkey_to_ccard_test.o
+
+# target to build an object file
+rkey_to_ccard_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/rkey_to_ccard_test.c.o
+.PHONY : rkey_to_ccard_test.c.o
+
+rkey_to_ccard_test.i: rkey_to_ccard_test.c.i
+.PHONY : rkey_to_ccard_test.i
+
+# target to preprocess a source file
+rkey_to_ccard_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/rkey_to_ccard_test.c.i
+.PHONY : rkey_to_ccard_test.c.i
+
+rkey_to_ccard_test.s: rkey_to_ccard_test.c.s
+.PHONY : rkey_to_ccard_test.s
+
+# target to generate assembly for a file
+rkey_to_ccard_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/rkey_to_ccard_test.c.s
+.PHONY : rkey_to_ccard_test.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -401,30 +591,50 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... kestablishtest"
+	@echo "... kenabletest"
+	@echo "... kestablish_astest"
+	@echo "... kestablish_gstest"
+	@echo "... kestablish_sgwtest"
+	@echo "... kget_astest"
+	@echo "... kget_gstest"
 	@echo "... krevoketest"
-	@echo "... query_keytypetest"
-	@echo "... rk_gentest"
-	@echo "... rkey_exporttest"
+	@echo "... kupdatetest"
+	@echo "... rkey_gentest"
 	@echo "... rkey_importtest"
-	@echo "... kestablish_test.o"
-	@echo "... kestablish_test.i"
-	@echo "... kestablish_test.s"
+	@echo "... rkey_to_ccardtest"
+	@echo "... kenable_test.o"
+	@echo "... kenable_test.i"
+	@echo "... kenable_test.s"
+	@echo "... kestablish_as_test.o"
+	@echo "... kestablish_as_test.i"
+	@echo "... kestablish_as_test.s"
+	@echo "... kestablish_gs_test.o"
+	@echo "... kestablish_gs_test.i"
+	@echo "... kestablish_gs_test.s"
+	@echo "... kestablish_sgw_test.o"
+	@echo "... kestablish_sgw_test.i"
+	@echo "... kestablish_sgw_test.s"
+	@echo "... kget_as_test.o"
+	@echo "... kget_as_test.i"
+	@echo "... kget_as_test.s"
+	@echo "... kget_gs_test.o"
+	@echo "... kget_gs_test.i"
+	@echo "... kget_gs_test.s"
 	@echo "... krevoke_test.o"
 	@echo "... krevoke_test.i"
 	@echo "... krevoke_test.s"
-	@echo "... query_keytype_test.o"
-	@echo "... query_keytype_test.i"
-	@echo "... query_keytype_test.s"
-	@echo "... rk_gen_test.o"
-	@echo "... rk_gen_test.i"
-	@echo "... rk_gen_test.s"
-	@echo "... rkey_export_test.o"
-	@echo "... rkey_export_test.i"
-	@echo "... rkey_export_test.s"
+	@echo "... kupdate_test.o"
+	@echo "... kupdate_test.i"
+	@echo "... kupdate_test.s"
+	@echo "... rkey_gen_test.o"
+	@echo "... rkey_gen_test.i"
+	@echo "... rkey_gen_test.s"
 	@echo "... rkey_import_test.o"
 	@echo "... rkey_import_test.i"
 	@echo "... rkey_import_test.s"
+	@echo "... rkey_to_ccard_test.o"
+	@echo "... rkey_to_ccard_test.i"
+	@echo "... rkey_to_ccard_test.s"
 .PHONY : help
 
 

@@ -9,17 +9,12 @@
 #include <stdint.h>
 #include <string.h>
 #include <uuid/uuid.h>
+#include <ldacs/ldacs_sim/ldacs_def.h>
 
 // 暂时之计
 #include <sdf/libsdf.h>
 #include <sdfkmt/sdfe-func.h>
 #include <sdfkmt/sdfe-type.h>
-
-typedef enum
-{
-    TRUE = 1,
-    FALSE = 0
-} bool;
 
 /*
 ************************************************************************
@@ -110,6 +105,19 @@ enum KEY_TYPE
 
 };
 
+static const char *type_names[] = {
+    "ROOT_KEY",
+    "MASTER_KEY_AS_SGW",
+    "MASTER_KEY_AS_GS",
+    "NH_KEY",
+    "SESSION_KEY_USR_ENC",
+    "SESSION_KEY_USR_INT",
+    "SESSION_KEY_CONTROL_ENC",
+    "SESSION_KEY_CONTROL_INT",
+    "GROUP_KEY_BC",
+    "GROUP_KEY_CC",
+};
+
 // 密钥状态 用于控制密钥的使用
 enum STATE
 {
@@ -149,6 +157,11 @@ typedef struct KeyPkg
     uint8_t chck_value[MAX_CHCK_LEN]; // 长度为chck_len的校验值
 } km_keypkg_t;
 
+/*
+************************************************************************
+*                 外部接口:密钥结构体相关                               *
+************************************************************************
+*/
 // 初始化密钥元数据
 km_keymetadata_t *km_key_metadata_new(
     const char *owner_1,
@@ -174,7 +187,7 @@ void key_pkg_free(
 
 /*
 ************************************************************************
-*                           基础密码运算功能                             *
+*                 外部接口:基础密码运算功能                             *
 ************************************************************************
 */
 // 随机数生成
@@ -208,8 +221,7 @@ l_km_err km_hash(
     uint8_t *data,
     size_t data_len,
     uint8_t *output);
-
-// mac （支持SGD_SM4_CFB）
+    
 l_km_err km_mac(
     CCARD_HANDLE key_handle,
     uint32_t alg_id,
@@ -237,7 +249,7 @@ l_km_err km_hmac_with_keyhandle(
     uint32_t *hmac_len);
 
 /************************************************************************
- *                           基础密钥管理功能                             *
+ *                  内部接口：基础密钥管理功能                            *
  ************************************************************************/
 // 导入明文密钥
 l_km_err km_import_key(
@@ -270,30 +282,32 @@ l_km_err km_import_key_with_kek(
     int kek_index,
     CCARD_HANDLE *key_handle);
 
-/**
- * @brief 对比对数据做的校验值是否与给定MAC相同
- * @param[in] 校验算法
- * @param[in] mac 对比的MAC值
- * @param[in] mac_length
- * @param[in] iv
- * @param[in] iv_len
- * @param[in] data
- * @param[in] data_len
- * @return 对比通过返回TRUE，否则返回FALSE
- */
-bool km_checkvalue_is_same(
-    uint32_t alg_id,
-    uint8_t *mac,
-    uint32_t mac_length,
-    uint8_t *iv,
-    uint8_t *data,
-    uint32_t data_len);
-
 /*************************************************************************
- *                      业务逻辑接口：密钥生成和派生                       *
+ *                      外部接口：业务逻辑-密钥生成和派生                  *
  *************************************************************************/
 /**
- * @brief 根密钥生成、保存和导出
+ * @brief 外部接口：根密钥生成、保存和导出
+ * @param[in] dbname 数据库名称，用于存储根密钥
+ * @param[in] tablename 数据库中的表名，用于存储根密钥
+ * @param[in] rkey_filename_in_ccard 在密码卡中根密钥文件名
+ * @return 成功返回LD_KM_OK，失败返回其他错误码
+ * */
+l_km_err km_rkey_import(
+    const char *db_name,
+    const char *table_name,
+    const char *rkey_filename_in_ccard);
+
+/**
+ * @brief 外部接口：将文件存入密码卡文件区
+ * @param[in] filepath 指定输入文件的路径
+ * @param[in] filename 存入密码卡时的文件名
+ */
+l_km_err km_writefile_to_cryptocard(
+    uint8_t *filepath,
+    uint8_t *filename);
+
+/**
+ * @brief 外部接口：根密钥生成、保存和导出
  * @param[in] sac_name 服务访问客户端标识
  * @param[in] sac_name 网关标识
  * @param[in] key_len 根密钥长度
@@ -303,7 +317,7 @@ bool km_checkvalue_is_same(
  * @param[in] export_file_path 导出根密钥的文件路径
  * @return 成功返回LD_KM_OK，失败返回其他错误码
  * */
-l_km_err root_key_gen(
+l_km_err km_rkey_gen_export(
     const char *as_name,
     const char *sgw_name,
     uint32_t key_len,
@@ -313,8 +327,8 @@ l_km_err root_key_gen(
     const char *export_file_path);
 
 /**
- * @brief 单个密钥的派生
- * @param[in] id 密钥id
+ * @brief 外部接口：单个密钥的派生
+ * @param[in] id 根密钥id/主密钥id
  * @param[in] key_type 所需的密钥类型
  * @param[in] key_len 所需密钥的长度
  * @param[in] rand 随机数
@@ -325,22 +339,17 @@ l_km_err km_derive_key(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id,
-    enum KEY_TYPE key_type,
     uint32_t key_len,
     uint8_t *gs_name,
     uint8_t *rand,
     uint32_t rand_len);
 
-// 输入密钥包 获取密钥句柄
-l_km_err km_get_keyhandle(
-    struct KeyPkg *pkg,
-    CCARD_HANDLE *key_handle);
 
 /*************************************************************************
- *                      业务逻辑接口：密钥更新                            *
+ *                      外部接口：业务逻辑-密钥更新                       *
  *************************************************************************/
 /**
- * @brief 网关和AS端更新主密钥 KAS-GS
+ * @brief 外部接口：网关和AS端更新主密钥 KAS-GS
  * @param[in] sac_sgw 本地身份
  * @param[in] sac_gs_s 源GS标识
  * @param[in] sac_gs_t 目的GS标识
@@ -362,7 +371,7 @@ l_km_err km_update_masterkey(
     uint8_t *nonce);
 
 /**
- * @brief 撤销密钥及其派生密钥
+ * @brief 外部接口：撤销密钥及其派生密钥
  * @param[in] dbname   密钥库名
  * @param[in] tablename 密钥表名
  * @param[in] id 密钥标识
@@ -374,7 +383,7 @@ l_km_err km_revoke_key(
     uint8_t *id);
 
 /**
- * @brief GS端安装主密钥 派生会话密钥
+ * @brief 外部接口：GS端安装主密钥 派生会话密钥
  * @param[in] dbname   密钥库名
  * @param[in] tablename 密钥表名
  * @param[in] key 主密钥
@@ -392,44 +401,21 @@ l_km_err km_install_key(
     uint8_t *nonce);
 
 /*************************************************************************
- *                      业务逻辑接口：密钥存储                            *
+ *                      内部接口：业务逻辑-密钥存储                       *
  *************************************************************************/
+// 输入密钥包 获取密钥句柄
+l_km_err km_get_keyhandle(
+    struct KeyPkg *pkg,
+    CCARD_HANDLE *key_handle);
 
-/**************************************************************************
- *                        业务逻辑接口：预置根密钥                           *
- **************************************************************************/
-// 网关导出根密钥包到文件rootkey.bin中(给AS的) 本地存储根密钥于rootkey.txt中
-km_keypkg_t *km_export_rootkey(
-    struct KeyMetaData *keymeta,
-    const char *export_path,
-    const char *backup_path);
-
-// 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
-l_km_err km_writefile_to_cryptocard(
-    uint8_t *filepath,
-    uint8_t *filename);
-
-// 验证文件中的根密钥 存储于密码卡 返回密钥包结构体
-km_keypkg_t *km_import_rootkey(
-    CCARD_HANDLE *rootkey_handle,
-    const char *import_bin_path,
-    const char *import_raw_path);
 
 // 从密码卡读取文件 放到指定位置
 l_km_err km_readfile_from_cryptocard(
-    uint8_t *filename,
-    uint8_t *filepath);
-
-// 从文件中获取根密钥  输出根密钥句柄
-l_km_err km_get_rootkey_handle(
-    CCARD_HANDLE *rootkey_handle,
+    const char *filename,
     const char *filepath);
 
-// 密码卡内创建文件
-l_km_err km_create_ccard_file(const char *filename, size_t file_size);
-
 /* ************************************************************************
- *                          测试用：输出和显示格式控制                          *
+ *                  内部测试用：输出和显示格式控制                          *
  *************************************************************************/
 // 报错码解析
 const char *km_error_to_string(
@@ -457,16 +443,57 @@ l_km_err write_keypkg_to_file(
 km_keypkg_t *read_keypkg_from_file(
     const char *filename);
 
-l_km_err delete_file(
-    const char *filePath);
+/**
+ * @brief 字节序列转换为十六进制字符串
+ * @param[in] bytes_len
+ * @param[in] bytes
+ * @return 十六进制串
+ */
+uint8_t *bytes_to_hex(
+    uint16_t bytes_len,
+    uint8_t *bytes);
 
-// Function to convert uint16_t SAC_AS to uint8_t* type pointer
-const uint8_t *uint16_to_uint8_ptr(
-    uint16_t SAC_AS);
+/**
+ * @brief 字节序列转换为十六进制字符串
+ * @param[in] bytes_len
+ * @param[in] bytes
+ * @return 十六进制串
+ */
+uint8_t *bytes_to_hex(
+    uint16_t bytes_len,
+    uint8_t *bytes);
 
-// Function to convert uint8_t* type pointer back to uint16_t
-uint16_t uint8_ptr_to_uint16(
-    const uint8_t *ptr,
-    size_t size);
+/**
+ * 输入枚举类型的密钥类型 返回对应的字符串
+ * @param[in] type 密钥类型
+ * @return 密钥类型对应的字符串
+ */
+uint8_t *ktype_str(
+    enum KEY_TYPE type);
+
+/**
+ * 输入枚举类型的字符串 返回对应的密钥类型
+ * @param[in] type_str 密钥类型
+ * @return 密钥类型
+ */
+enum KEY_TYPE str_to_ktype(
+    const char *type_str);
+
+/**
+ * @brief 返回密钥状态 枚举转字符串
+ * @param[in] state 密钥状态 枚举类型
+ * @return 密钥状态字符串
+ */
+uint8_t *kstate_str(
+    enum STATE state);
+
+/**
+ * @brief 校验算法解析
+ * @param[in] chck_algo 校验算法(int类型)
+ * @return 校验算法
+ */
+uint8_t *chck_algo_str(
+    uint16_t chck_algo);
+
 #endif
 #endif

@@ -44,10 +44,15 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "src/CMakeFiles/km_src.dir/DependInfo.cmake"
-  "tests/CMakeFiles/rkey_exporttest.dir/DependInfo.cmake"
-  "tests/CMakeFiles/rkey_importtest.dir/DependInfo.cmake"
-  "tests/CMakeFiles/kestablishtest.dir/DependInfo.cmake"
-  "tests/CMakeFiles/rk_gentest.dir/DependInfo.cmake"
   "tests/CMakeFiles/krevoketest.dir/DependInfo.cmake"
-  "tests/CMakeFiles/query_keytypetest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/rkey_gentest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/rkey_to_ccardtest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/rkey_importtest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kenabletest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kestablish_sgwtest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kestablish_astest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kestablish_gstest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kget_gstest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kget_astest.dir/DependInfo.cmake"
+  "tests/CMakeFiles/kupdatetest.dir/DependInfo.cmake"
   )

@@ -27,14 +27,14 @@ int main()
         km_generate_random(rand, 16);
 
         /* 网关端密钥更新 */
-        /*
+        
         if (km_update_masterkey(dbname, sgw_tablename, sac_sgw, sac_gs_s, sac_gs_t, sac_as, rand_len, rand) != LD_KM_OK)
         {
         printf("sgw update masterkey failed\n");
         break;
         }
         printf("[**sgw update key OK. **]\n");
-        */
+        
 
         // 查询新密钥id
         QueryResult_for_queryid qr_mkid = query_id(dbname, sgw_tablename, sac_as, sac_gs_t, MASTER_KEY_AS_GS, ACTIVE);
@@ -49,8 +49,7 @@ int main()
             break;
         }
         // printf("[**sgw query_id OK. **]\n");
-
-        // 查询密钥值
+        // 查询密钥值(发送给GS)
         QueryResult_for_keyvalue result = query_keyvalue(dbname, sgw_tablename, qr_mkid.ids[0]);
         if (!result.key)
         {
@@ -60,36 +59,31 @@ int main()
         // printf("[**sgw  query keyvalue OK]\n");
 
         /* AS端密钥更新 */
-        /*
         if (km_update_masterkey(dbname, as_tablename, sac_sgw, sac_gs_s, sac_gs_t, sac_as, rand_len, rand) != LD_KM_OK)
         {
             printf("sgw update masterkey failed\n");
             break;
         }
         printf("[**as update key OK. **]\n");
-        */
+        
 
         /* 源GS端撤销密钥 */
-        /*
-        // 查询密钥id
-        QueryResult_for_queryid qr_gskid = query_id(dbname, gs_s_tablename, sac_gs_s, sac_as, MASTER_KEY_AS_GS, ACTIVE);
+        QueryResult_for_queryid qr_gskid = query_id(dbname, gs_s_tablename, sac_as, sac_gs_s, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_gskid.count != 1)
         {
             printf("Query NULL or more than one.\n");
             break;
         }
         // printf("s-gs masterkey id: %s\n", id_gs);
-
         if (km_revoke_key(dbname, gs_s_tablename, qr_gskid.ids[0]) != LD_KM_OK)
         {
             printf("gs revoke key err\n");
             break;
         }
         printf("[**source gs revoke key OK. **]\n");
-        */
+        
 
         /* 目标GS端接收密钥 */
-        
         if (km_install_key(dbname, gs_t_tablename, result.key_len, result.key, sac_as, sac_gs_t, rand_len, rand) != LD_KM_OK)
         {
             printf("target gs install key err\n");

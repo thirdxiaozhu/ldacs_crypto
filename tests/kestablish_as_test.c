@@ -1,6 +1,6 @@
 /**
- * 20240514 by wencheng
- * 根密钥预置完成后，密钥建立过程样例：AS GS SGW的密钥生成和分发
+ * 20240717 by wencheng
+ * 根密钥预置完成后，密钥建立过程：AS
  */
 #include <stdio.h>
 #include <string.h>
@@ -38,116 +38,51 @@ int main()
     int ret;
     uint8_t *dbname = "keystore.db";
     uint8_t *as_tablename = "as_keystore";
-    uint8_t *gs_tablename = "gs_s_keystore";
-    uint8_t *sgw_tablename = "sgw_keystore";
     uint8_t *primary_key = "id";
     uint8_t *sac_sgw = "SGW"; // 测试本地标识
     uint8_t *sac_gs = "GS1";
     uint8_t *sac_as = "Berry";
 
-    // 创建表
-    create_table_if_not_exist(&test_km_desc, dbname, as_tablename, primary_key);  // 根据描述创建表
-    create_table_if_not_exist(&test_km_desc, dbname, gs_tablename, primary_key);  // 根据描述创建表
-    create_table_if_not_exist(&test_km_desc, dbname, sgw_tablename, primary_key); // 根据描述创建表
-
     /**************************************************
-     *                    SGW端                        *
+     *                    AS端                        *
      **************************************************/
     // 生成共享信息shareinfo
     uint32_t sharedinfo_len = 32;
-    uint8_t *sharedinfo = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
+    uint8_t sharedinfo[32] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
 
-    // 生成随机数N3,用于后续密钥派生
-    uint16_t rand_len = 16;
-    uint8_t *rand = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
-
-    // 获取根密钥
-    QueryResult_for_queryid rk_id = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
-    if (rk_id.count == 0)
+    // 查询根密钥id
+    QueryResult_for_queryid qr_rk = query_id(dbname, as_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
+    if (qr_rk.count != 1)
     {
-        printf("NULL Query.\n");
-        return 0;
-    }
-    else if (rk_id.count > 1)
-    {
-        printf("query id not unique.\n");
-        return 0;
+        printf("Query rkid failed.\n");
+        return LD_ERR_KM_QUERY;
     }
 
-    // 派生主密钥：密钥KAS-SGW=KDF(rootkey,sharedinfo)派生
-    uint16_t len_kassgw = 16; // 主密钥长度
-    if (km_derive_key(dbname, sgw_tablename, rk_id.ids[0], MASTER_KEY_AS_SGW, len_kassgw, NULL, sharedinfo, sharedinfo_len) != LD_KM_OK)
+    // 派生主密钥
+    uint32_t len_kassgw = 16;
+    if (km_derive_key(dbname, as_tablename, qr_rk.ids[0], len_kassgw, sac_gs, sharedinfo, sharedinfo_len) != LD_KM_OK)
     {
         printf("[**sgw derive_key kas-sgw error**]\n");
         return 0;
     }
 
-    // 密钥KAS-GS派生 和AS同理：NH = KDF(KAS-SGW,rand)
-    uint16_t len_kasgs = 16; // 主密钥长度
-    if (km_derive_key(dbname, sgw_tablename, rk_id.ids[0], MASTER_KEY_AS_GS, len_kasgs, NULL, sharedinfo, sharedinfo_len) != LD_KM_OK)
+    // 查询AS-GS之间主密钥
+    QueryResult_for_queryid qr_mk = query_id(dbname, as_tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
+    if (qr_mk.count != 1)
     {
-        printf("[**sgw derive_key kas-gs error**]\n");
-        return 0;
+        printf("Query rkid failed.\n");
+        return LD_ERR_KM_QUERY;
     }
 
-    // 会话密钥派生
-    uint16_t len_session_key = 16;
-    if (km_derive_all_session_key(dbname, as_tablename, handle_kasgs, len_session_key, sac_as, sac_gs, rand, rand_len) != LD_KM_OK)
+    // 派生会话密钥
+    uint32_t rand_len = 32;
+    uint8_t rand[32] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+    uint32_t len_sessionkey = 16;
+    if (km_derive_key(dbname, as_tablename, qr_mk.ids[0], len_sessionkey, sac_gs, rand, rand_len) != LD_KM_OK)
     {
-        printf("session key derive failed\n");
+        printf("[**sgw derive_key kas-sgw error**]\n");
         return 0;
     }
-    printf("[** AS derive session key OK]\n");
-
-    /**************************************************
-     *                    SGW端                        *
-     **************************************************/
-
-    // 省略：密钥校验
-    // 密钥KAS-GS派生 和AS同理：NH = KDF(KAS-SGW,rand)
-    CCARD_HANDLE handle_kasgs2;
-    if (km_derive_masterkey_asgs(dbname, sgw_tablename, handle_kassgw, len_kasgs, sac_as, sac_gs, rand, rand_len, &handle_kasgs2) != LD_KM_OK)
-    {
-        printf("[**SGW derive master KAS-GS failed]\n");
-        return 0;
-    }
-    printf("[**SGW derive_key KAS-GS OK  **]\n");
-
-    // 查询新密钥id
-    QueryResult_for_queryid qr = query_id(dbname, sgw_tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
-    if (qr.count == 0)
-    {
-        printf("NULL Query.\n");
-        return 0;
-    }
-    else if (qr.count > 1)
-    {
-        printf("query id not unique.\n");
-        return 0;
-    }
-
-    // 查询密钥值
-    QueryResult_for_keyvalue result = query_keyvalue(dbname, sgw_tablename, qr.ids[0]);
-    if (!result.key)
-    {
-        printf("Key not found or error occurred.\n");
-        return 0;
-    }
-
-    // 省略：给GS分发KAS-GS rand rand_len
-    printf("SGW sending kas-gs to GS.........\n");
-
-    /**************************************************
-     *                    GS端                        *
-     **************************************************/
-
-    // 安装密钥：安装主密钥并派生会话密钥
-    if (km_install_key(dbname, gs_tablename, result.key_len, result.key, sac_as, sac_gs, rand_len, rand) != LD_KM_OK)
-    {
-        printf("km install key err\n");
-        return 0;
-    }
-    printf("[**GS intstall key OK**]\n");
 
     return 0;
 }

@@ -18,7 +18,12 @@ ELSE ()
     set(IS_USE_GMSSL ON)
 ENDIF ()
 
-add_library(km_src SHARED key_manage.c kmdb.c )
+add_library(km_src STATIC key_manage.c kmdb.c )
+
+target_include_directories(km_src PUBLIC /usr/local/include/ldacs)
+target_link_directories(km_src PUBLIC /usr/local/lib/ldacs)
+target_link_libraries(km_src LINK_PUBLIC ldacsutilcore)
+
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread uuid sqlite3)
 
 IF (${IS_USE_SDF})
@@ -37,3 +42,4 @@ install(TARGETS km_src DESTINATION ${CMAKE_SOURCE_DIR}/build) #指定安装共�
 # install(FILES keymanage.h DESTINATION /) #将头文件安装到指定路径
 INSTALL(TARGETS km_src ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include/km)
+

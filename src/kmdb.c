@@ -1,5 +1,7 @@
 #include "kmdb.h"
 #include "key_manage.h"
+#include <stdlib.h>
+#include <stdio.h>
 #include <sqlite3.h>
 
 #ifdef USE_SDF
@@ -18,157 +20,9 @@
 #define SQL_QUERY_SIZE 512
 
 /**
- * 输入枚举类型的密钥类型 返回对应的字符串
- * @param[in] type 密钥类型
- * @return 密钥类型对应的字符串
- */
-uint8_t *ktype_str(enum KEY_TYPE type)
-{
-    switch (type) // 判断结构体中密钥类型
-    {
-    case ROOT_KEY:
-        return ("ROOT_KEY");
-        break;
-    case MASTER_KEY_AS_SGW:
-        return ("MASTER_KEY_AS_SGW");
-        break;
-    case MASTER_KEY_AS_GS:
-        return ("MASTER_KEY_AS_GS");
-        break;
-    case SESSION_KEY_USR_ENC:
-        return ("SESSION_KEY_USR_ENC");
-        break;
-    case SESSION_KEY_USR_INT:
-        return ("SESSION_KEY_USR_INT");
-        break;
-    case SESSION_KEY_CONTROL_ENC:
-        return ("SESSION_KEY_CONTROL_ENC");
-        break;
-    case SESSION_KEY_CONTROL_INT:
-        return ("SESSION_KEY_CONTROL_INT");
-        break;
-    case GROUP_KEY_BC:
-        return ("GROUP_KEY_KBC");
-        break;
-    case GROUP_KEY_CC:
-        return ("GROUP_KEY_KCC");
-        break;
-    case NH_KEY:
-        return ("NH KEY");
-        break;
-    default:
-        return ("Unknown KEY_TYPE");
-    }
-}
-
-// 字符串转key_type
-enum KEY_TYPE str_to_ktype(uint8_t *str)
-{
-    if (strcmp(str, "ROOT_KEY") == 0)
-    {
-        return ROOT_KEY;
-    }
-    else if (strcmp(str, "MASTER_KEY_AS_SGW") == 0)
-    {
-        return MASTER_KEY_AS_SGW;
-    }
-    else if (strcmp(str, "MASTER_KEY_AS_GS") == 0)
-    {
-        return MASTER_KEY_AS_GS;
-    }
-    else if (strcmp(str, "SESSION_KEY_USR_ENC") == 0)
-    {
-        return SESSION_KEY_USR_ENC;
-    }
-    else if (strcmp(str, "SESSION_KEY_USR_INT") == 0)
-    {
-        return SESSION_KEY_USR_INT;
-    }
-    else if (strcmp(str, "SESSION_KEY_CONTROL_ENC") == 0)
-    {
-        return SESSION_KEY_CONTROL_ENC;
-    }
-    else if (strcmp(str, "SESSION_KEY_CONTROL_INT") == 0)
-    {
-        return SESSION_KEY_CONTROL_INT;
-    }
-    else if (strcmp(str, "GROUP_KEY_KBC") == 0)
-    {
-        return GROUP_KEY_BC;
-    }
-    else if (strcmp(str, "GROUP_KEY_KCC") == 0)
-    {
-        return GROUP_KEY_CC;
-    }
-    else if (strcmp(str, "NH KEY") == 0)
-    {
-        return NH_KEY;
-    }
-}
-
-/**
- * @brief 返回密钥状态 枚举转字符串
- * @param[in] state 密钥状态 枚举类型
- * @return 密钥状态字符串
- */
-uint8_t *kstate_str(enum STATE state)
-{
-    switch (state)
-    {
-    case PRE_ACTIVATION:
-        return ("PRE_ACTIVATION");
-        break;
-    case ACTIVE:
-        return ("ACTIVE");
-        break;
-    case SUSPENDED:
-        return ("SUSPENDED");
-        break;
-    case DEACTIVATED:
-        return ("DEACTIVATED");
-        break;
-    case COMPROMISED:
-        return ("COMPROMISED");
-        break;
-    case DESTROYED:
-        return ("DESTROYED");
-        break;
-    default:
-        return ("Unknownn");
-    }
-}
-
-/**
- * @brief 校验算法解析
- * @param[in] chck_algo 校验算法(int类型)
- * @return 校验算法
- */
-uint8_t *chck_algo_str(uint16_t chck_algo)
-{
-    switch (chck_algo)
-    {
-    case ALGO_ENC_AND_DEC:
-        return ("SGD_SM4_CFB");
-        break;
-    case ALGO_MAC:
-        return ("SGD_SM4_MAC");
-        break;
-    case ALGO_WITH_KEK:
-        return ("SGD_SM4_ECB");
-        break;
-    case ALGO_HASH:
-        return ("SGD_SM3");
-        break;
-    default:
-        return ("unknown");
-        break;
-    }
-}
-
-/**
  * @brief 按照描述编码和组装结构体 插入指定数据库表
  */
-l_km_err store_key(uint8_t *db_name, uint8_t *table_name, struct KeyPkg *pkg, struct_desc *sd)
+l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *pkg, struct_desc *sd)
 {
 
     sqlite3 *db;
@@ -454,7 +308,7 @@ const char *sql_type(enum field_type type)
 /**
  * @bref 基于描述创建密钥表
  */
-l_km_err create_table_if_not_exist(struct_desc *sd, uint8_t *db_name, uint8_t *table_name, uint8_t *primary_key)
+l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const char *table_name, uint8_t *primary_key)
 {
     const field_desc *current_field = sd->fields;
 
@@ -499,39 +353,6 @@ l_km_err create_table_if_not_exist(struct_desc *sd, uint8_t *db_name, uint8_t *t
     return LD_KM_OK;
 }
 
-/**
- * @brief 十六进制字符串转换回字节序列
- * @param[in] hex_str
- * @return 字节序列
- */
-uint8_t *hex_to_bytes(const char *hex_str)
-{
-
-    size_t len = strlen(hex_str);
-    uint8_t *bytes = malloc(sizeof(uint8_t) * len / 2); // 原始字节数据的长度是字符串长度的一半
-    for (size_t i = 0; i < len; i += 2)
-    {
-        sscanf(hex_str + i, "%2hhX", &bytes[i / 2]);
-    }
-    return bytes;
-}
-
-/**
- * @brief 字节序列转换为十六进制字符串
- * @param[in] bytes_len
- * @param[in] bytes
- * @return 十六进制串
- */
-uint8_t *bytes_to_hex(uint16_t bytes_len, uint8_t *bytes)
-{
-    uint8_t *hex_str;
-    hex_str = malloc(sizeof(uint8_t) * bytes_len * 2);
-    for (int i = 0; i < bytes_len; i++)
-    {
-        sprintf(hex_str + i * 2, "%02X", bytes[i]);
-    }
-    return hex_str;
-}
 
 // 回调函数，用于处理查询结果 密钥更新时调用
 int query_callback_for_handle(void *data, int argc, char **argv, char **azColName)
@@ -954,7 +775,7 @@ QueryResult_for_update query_for_update(uint8_t *db_name, uint8_t *table_name, u
  * @param[in] state 想要改成的密钥状态
  * @return 成功与否
  */
-l_km_err alter_keystate(uint8_t *db_name, uint8_t *table_name, uint8_t *id, enum STATE state)
+l_km_err alter_keystate(const char *db_name, const char *table_name, uint8_t *id, enum STATE state)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -995,7 +816,7 @@ l_km_err alter_keystate(uint8_t *db_name, uint8_t *table_name, uint8_t *id, enum
 l_km_err enable_key(const char *db_name, const char *table_name, const char *id)
 {
     // 修改状态为ACTIVE
-    if (alter_keystate(db_name, table_name, id, ACTIVE) != LD_KM_OK)
+    if (alter_keystate(db_name, table_name, (uint8_t*)id, ACTIVE) != LD_KM_OK)
     {
         return LD_ERR_KM_ALTERDB;
     }
@@ -1103,8 +924,8 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     // 返回密钥明文和密钥长度
     result->key_len = key_len;
     result->key = (uint8_t *)malloc(result->key_len); // 分配空间
-    result->key = key;
-
+    memcpy(result->key, key, result->key_len);
+   
     return 0;
 }
 
@@ -1300,58 +1121,49 @@ enum KEY_TYPE query_keytype(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
     sqlite3 *db;
     sqlite3_stmt *stmt;
-    char *zErrMsg = 0;
+    char *sql;
     int rc;
-    enum KEY_TYPE key_type; // Initialize to unknown key type
+    enum KEY_TYPE key_type = -1;
 
-    do
+    // 打开数据库连接
+    rc = sqlite3_open(db_name, &db);
+    if (rc)
     {
-        rc = sqlite3_open(db_name, &db);
-        if (rc != SQLITE_OK)
-        {
-            fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-            sqlite3_close(db);
-            break;
-        }
-
-        // Construct the SQL query
-        char query[512]; // Adjust size as needed
-        snprintf(query, sizeof(query), "SELECT key_type FROM %s WHERE id = ?", table_name);
-
-        rc = sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
-        if (rc != SQLITE_OK)
-        {
-            fprintf(stderr, "SQL error: %s\n", sqlite3_errmsg(db));
-            sqlite3_close(db);
-            break;
-        }
-
-        // Bind the id parameter
-        rc = sqlite3_bind_text(stmt, 1, (char *)id, -1, SQLITE_STATIC);
-        if (rc != SQLITE_OK)
-        {
-            fprintf(stderr, "SQL bind error: %s\n", sqlite3_errmsg(db));
-            sqlite3_finalize(stmt);
-            sqlite3_close(db);
-            break;
-        }
-
-        // Execute the query
-        rc = sqlite3_step(stmt);
-        if (rc == SQLITE_ROW)
-        {
-            const char *key_type_str = (const char *)sqlite3_column_text(stmt, 0);
-            return str_to_ktype(key_type_str);
-        }
-        else
-        {
-            fprintf(stderr, "No matching record found.\n");
-            break;
-        }
-
-        sqlite3_finalize(stmt);
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-    } while (0);
+        return key_type;
+    }
+
+    // 构建查询语句
+    asprintf(&sql, "SELECT key_type FROM %s WHERE id='%s'", table_name, id);
+
+    // 准备查询
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK)
+    {
+        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        free(sql);
+        return key_type;
+    }
+
+    // 执行查询
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW)
+    {
+        const char *key_type_str = (const char *)sqlite3_column_text(stmt, 0);
+        if (key_type_str != NULL)
+        {
+            // 根据查询结果设置密钥类型枚举值
+            key_type = str_to_ktype(key_type_str);
+            // 可以根据实际情况继续添加其他密钥类型的判断
+        }
+    }
+
+    // 清理资源
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+    free(sql);
 
     return key_type;
 }

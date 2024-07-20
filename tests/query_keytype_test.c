@@ -9,7 +9,6 @@
 
 int main()
 {
-    
 
     uint8_t *dbname = "keystore.db";
     uint8_t *primary_key = "id";
@@ -23,8 +22,15 @@ int main()
     uint8_t *sac_gs_t = "GSt";
     uint8_t *sac_as = "Berry";
 
-    // 查询密钥值
-    uint8_t *id = "c10ef786-c694-4798-becf-27f5c0f19980";
-    printf("kid =  %s, ktype %s....\n",id,ktype_str(query_keytype(dbname, as_tablename, id)));
-  
+    // 查询根密钥id
+    // QueryResult_for_queryid qr_mk = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
+    QueryResult_for_queryid qr_mk = query_id(dbname, as_tablename, sac_as, sac_sgw, MASTER_KEY_AS_SGW, ACTIVE);
+    if (qr_mk.count != 1)
+    {
+        printf("Query rkid failed.\n");
+        return LD_ERR_KM_QUERY;
+    }
+
+    // 查询密钥类型
+    printf("kid =  %s, ktype %s\n", qr_mk.ids[0], ktype_str(query_keytype(dbname, as_tablename, qr_mk.ids[0])));
 }

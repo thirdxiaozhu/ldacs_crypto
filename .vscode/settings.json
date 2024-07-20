@@ -9,6 +9,11 @@
         "sdfe-func.h": "c",
         "string.h": "c",
         "db.h": "c",
-        "key_manage.h": "c"
+        "key_manage.h": "c",
+        "kmdb.h": "c",
+        "stdbool.h": "c",
+        "uuid.h": "c",
+        "ld_sqlite.h": "c",
+        "ldacs_def.h": "c"
     }
 }

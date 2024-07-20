@@ -96,12 +96,17 @@ src/clean: src/CMakeFiles/km_src.dir/clean
 # Directory level rules for directory tests
 
 # Recursive "all" directory target.
-tests/all: tests/CMakeFiles/rkey_exporttest.dir/all
-tests/all: tests/CMakeFiles/rkey_importtest.dir/all
-tests/all: tests/CMakeFiles/kestablishtest.dir/all
-tests/all: tests/CMakeFiles/rk_gentest.dir/all
 tests/all: tests/CMakeFiles/krevoketest.dir/all
-tests/all: tests/CMakeFiles/query_keytypetest.dir/all
+tests/all: tests/CMakeFiles/rkey_gentest.dir/all
+tests/all: tests/CMakeFiles/rkey_to_ccardtest.dir/all
+tests/all: tests/CMakeFiles/rkey_importtest.dir/all
+tests/all: tests/CMakeFiles/kenabletest.dir/all
+tests/all: tests/CMakeFiles/kestablish_sgwtest.dir/all
+tests/all: tests/CMakeFiles/kestablish_astest.dir/all
+tests/all: tests/CMakeFiles/kestablish_gstest.dir/all
+tests/all: tests/CMakeFiles/kget_gstest.dir/all
+tests/all: tests/CMakeFiles/kget_astest.dir/all
+tests/all: tests/CMakeFiles/kupdatetest.dir/all
 .PHONY : tests/all
 
 # Recursive "preinstall" directory target.
@@ -109,12 +114,17 @@ tests/preinstall:
 .PHONY : tests/preinstall
 
 # Recursive "clean" directory target.
-tests/clean: tests/CMakeFiles/rkey_exporttest.dir/clean
-tests/clean: tests/CMakeFiles/rkey_importtest.dir/clean
-tests/clean: tests/CMakeFiles/kestablishtest.dir/clean
-tests/clean: tests/CMakeFiles/rk_gentest.dir/clean
 tests/clean: tests/CMakeFiles/krevoketest.dir/clean
-tests/clean: tests/CMakeFiles/query_keytypetest.dir/clean
+tests/clean: tests/CMakeFiles/rkey_gentest.dir/clean
+tests/clean: tests/CMakeFiles/rkey_to_ccardtest.dir/clean
+tests/clean: tests/CMakeFiles/rkey_importtest.dir/clean
+tests/clean: tests/CMakeFiles/kenabletest.dir/clean
+tests/clean: tests/CMakeFiles/kestablish_sgwtest.dir/clean
+tests/clean: tests/CMakeFiles/kestablish_astest.dir/clean
+tests/clean: tests/CMakeFiles/kestablish_gstest.dir/clean
+tests/clean: tests/CMakeFiles/kget_gstest.dir/clean
+tests/clean: tests/CMakeFiles/kget_astest.dir/clean
+tests/clean: tests/CMakeFiles/kupdatetest.dir/clean
 .PHONY : tests/clean
 
 #=============================================================================
@@ -124,7 +134,7 @@ tests/clean: tests/CMakeFiles/query_keytypetest.dir/clean
 src/CMakeFiles/km_src.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=3,4,5 "Built target km_src"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=13,14,15 "Built target km_src"
 .PHONY : src/CMakeFiles/km_src.dir/all
 
 # Build rule for subdir invocation for target.
@@ -144,117 +154,13 @@ src/CMakeFiles/km_src.dir/clean:
 .PHONY : src/CMakeFiles/km_src.dir/clean
 
 #=============================================================================
-# Target rules for target tests/CMakeFiles/rkey_exporttest.dir
-
-# All Build rule for target.
-tests/CMakeFiles/rkey_exporttest.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/depend
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=12,13 "Built target rkey_exporttest"
-.PHONY : tests/CMakeFiles/rkey_exporttest.dir/all
-
-# Build rule for subdir invocation for target.
-tests/CMakeFiles/rkey_exporttest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_exporttest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : tests/CMakeFiles/rkey_exporttest.dir/rule
-
-# Convenience name for target.
-rkey_exporttest: tests/CMakeFiles/rkey_exporttest.dir/rule
-.PHONY : rkey_exporttest
-
-# clean rule for target.
-tests/CMakeFiles/rkey_exporttest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_exporttest.dir/build.make tests/CMakeFiles/rkey_exporttest.dir/clean
-.PHONY : tests/CMakeFiles/rkey_exporttest.dir/clean
-
-#=============================================================================
-# Target rules for target tests/CMakeFiles/rkey_importtest.dir
-
-# All Build rule for target.
-tests/CMakeFiles/rkey_importtest.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/depend
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=14,15 "Built target rkey_importtest"
-.PHONY : tests/CMakeFiles/rkey_importtest.dir/all
-
-# Build rule for subdir invocation for target.
-tests/CMakeFiles/rkey_importtest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_importtest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : tests/CMakeFiles/rkey_importtest.dir/rule
-
-# Convenience name for target.
-rkey_importtest: tests/CMakeFiles/rkey_importtest.dir/rule
-.PHONY : rkey_importtest
-
-# clean rule for target.
-tests/CMakeFiles/rkey_importtest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/clean
-.PHONY : tests/CMakeFiles/rkey_importtest.dir/clean
-
-#=============================================================================
-# Target rules for target tests/CMakeFiles/kestablishtest.dir
-
-# All Build rule for target.
-tests/CMakeFiles/kestablishtest.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/depend
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=1,2 "Built target kestablishtest"
-.PHONY : tests/CMakeFiles/kestablishtest.dir/all
-
-# Build rule for subdir invocation for target.
-tests/CMakeFiles/kestablishtest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablishtest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : tests/CMakeFiles/kestablishtest.dir/rule
-
-# Convenience name for target.
-kestablishtest: tests/CMakeFiles/kestablishtest.dir/rule
-.PHONY : kestablishtest
-
-# clean rule for target.
-tests/CMakeFiles/kestablishtest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablishtest.dir/build.make tests/CMakeFiles/kestablishtest.dir/clean
-.PHONY : tests/CMakeFiles/kestablishtest.dir/clean
-
-#=============================================================================
-# Target rules for target tests/CMakeFiles/rk_gentest.dir
-
-# All Build rule for target.
-tests/CMakeFiles/rk_gentest.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/depend
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=10,11 "Built target rk_gentest"
-.PHONY : tests/CMakeFiles/rk_gentest.dir/all
-
-# Build rule for subdir invocation for target.
-tests/CMakeFiles/rk_gentest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rk_gentest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : tests/CMakeFiles/rk_gentest.dir/rule
-
-# Convenience name for target.
-rk_gentest: tests/CMakeFiles/rk_gentest.dir/rule
-.PHONY : rk_gentest
-
-# clean rule for target.
-tests/CMakeFiles/rk_gentest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rk_gentest.dir/build.make tests/CMakeFiles/rk_gentest.dir/clean
-.PHONY : tests/CMakeFiles/rk_gentest.dir/clean
-
-#=============================================================================
 # Target rules for target tests/CMakeFiles/krevoketest.dir
 
 # All Build rule for target.
 tests/CMakeFiles/krevoketest.dir/all: src/CMakeFiles/km_src.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=6,7 "Built target krevoketest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=16,17 "Built target krevoketest"
 .PHONY : tests/CMakeFiles/krevoketest.dir/all
 
 # Build rule for subdir invocation for target.
@@ -274,30 +180,264 @@ tests/CMakeFiles/krevoketest.dir/clean:
 .PHONY : tests/CMakeFiles/krevoketest.dir/clean
 
 #=============================================================================
-# Target rules for target tests/CMakeFiles/query_keytypetest.dir
+# Target rules for target tests/CMakeFiles/rkey_gentest.dir
 
 # All Build rule for target.
-tests/CMakeFiles/query_keytypetest.dir/all: src/CMakeFiles/km_src.dir/all
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/depend
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=8,9 "Built target query_keytypetest"
-.PHONY : tests/CMakeFiles/query_keytypetest.dir/all
+tests/CMakeFiles/rkey_gentest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=20,21 "Built target rkey_gentest"
+.PHONY : tests/CMakeFiles/rkey_gentest.dir/all
 
 # Build rule for subdir invocation for target.
-tests/CMakeFiles/query_keytypetest.dir/rule: cmake_check_build_system
+tests/CMakeFiles/rkey_gentest.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_keytypetest.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_gentest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
-.PHONY : tests/CMakeFiles/query_keytypetest.dir/rule
+.PHONY : tests/CMakeFiles/rkey_gentest.dir/rule
 
 # Convenience name for target.
-query_keytypetest: tests/CMakeFiles/query_keytypetest.dir/rule
-.PHONY : query_keytypetest
+rkey_gentest: tests/CMakeFiles/rkey_gentest.dir/rule
+.PHONY : rkey_gentest
 
 # clean rule for target.
-tests/CMakeFiles/query_keytypetest.dir/clean:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/clean
-.PHONY : tests/CMakeFiles/query_keytypetest.dir/clean
+tests/CMakeFiles/rkey_gentest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/clean
+.PHONY : tests/CMakeFiles/rkey_gentest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/rkey_to_ccardtest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/rkey_to_ccardtest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=24,25 "Built target rkey_to_ccardtest"
+.PHONY : tests/CMakeFiles/rkey_to_ccardtest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/rkey_to_ccardtest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_to_ccardtest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/rkey_to_ccardtest.dir/rule
+
+# Convenience name for target.
+rkey_to_ccardtest: tests/CMakeFiles/rkey_to_ccardtest.dir/rule
+.PHONY : rkey_to_ccardtest
+
+# clean rule for target.
+tests/CMakeFiles/rkey_to_ccardtest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/clean
+.PHONY : tests/CMakeFiles/rkey_to_ccardtest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/rkey_importtest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/rkey_importtest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=22,23 "Built target rkey_importtest"
+.PHONY : tests/CMakeFiles/rkey_importtest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/rkey_importtest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/rkey_importtest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/rkey_importtest.dir/rule
+
+# Convenience name for target.
+rkey_importtest: tests/CMakeFiles/rkey_importtest.dir/rule
+.PHONY : rkey_importtest
+
+# clean rule for target.
+tests/CMakeFiles/rkey_importtest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/clean
+.PHONY : tests/CMakeFiles/rkey_importtest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kenabletest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kenabletest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=1,2 "Built target kenabletest"
+.PHONY : tests/CMakeFiles/kenabletest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kenabletest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kenabletest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kenabletest.dir/rule
+
+# Convenience name for target.
+kenabletest: tests/CMakeFiles/kenabletest.dir/rule
+.PHONY : kenabletest
+
+# clean rule for target.
+tests/CMakeFiles/kenabletest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/clean
+.PHONY : tests/CMakeFiles/kenabletest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kestablish_sgwtest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kestablish_sgwtest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=7,8 "Built target kestablish_sgwtest"
+.PHONY : tests/CMakeFiles/kestablish_sgwtest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kestablish_sgwtest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_sgwtest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kestablish_sgwtest.dir/rule
+
+# Convenience name for target.
+kestablish_sgwtest: tests/CMakeFiles/kestablish_sgwtest.dir/rule
+.PHONY : kestablish_sgwtest
+
+# clean rule for target.
+tests/CMakeFiles/kestablish_sgwtest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/clean
+.PHONY : tests/CMakeFiles/kestablish_sgwtest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kestablish_astest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kestablish_astest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=3,4 "Built target kestablish_astest"
+.PHONY : tests/CMakeFiles/kestablish_astest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kestablish_astest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_astest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kestablish_astest.dir/rule
+
+# Convenience name for target.
+kestablish_astest: tests/CMakeFiles/kestablish_astest.dir/rule
+.PHONY : kestablish_astest
+
+# clean rule for target.
+tests/CMakeFiles/kestablish_astest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/clean
+.PHONY : tests/CMakeFiles/kestablish_astest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kestablish_gstest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kestablish_gstest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=5,6 "Built target kestablish_gstest"
+.PHONY : tests/CMakeFiles/kestablish_gstest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kestablish_gstest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kestablish_gstest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kestablish_gstest.dir/rule
+
+# Convenience name for target.
+kestablish_gstest: tests/CMakeFiles/kestablish_gstest.dir/rule
+.PHONY : kestablish_gstest
+
+# clean rule for target.
+tests/CMakeFiles/kestablish_gstest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/clean
+.PHONY : tests/CMakeFiles/kestablish_gstest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kget_gstest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kget_gstest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=11,12 "Built target kget_gstest"
+.PHONY : tests/CMakeFiles/kget_gstest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kget_gstest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kget_gstest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kget_gstest.dir/rule
+
+# Convenience name for target.
+kget_gstest: tests/CMakeFiles/kget_gstest.dir/rule
+.PHONY : kget_gstest
+
+# clean rule for target.
+tests/CMakeFiles/kget_gstest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_gstest.dir/build.make tests/CMakeFiles/kget_gstest.dir/clean
+.PHONY : tests/CMakeFiles/kget_gstest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kget_astest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kget_astest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=9,10 "Built target kget_astest"
+.PHONY : tests/CMakeFiles/kget_astest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kget_astest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kget_astest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kget_astest.dir/rule
+
+# Convenience name for target.
+kget_astest: tests/CMakeFiles/kget_astest.dir/rule
+.PHONY : kget_astest
+
+# clean rule for target.
+tests/CMakeFiles/kget_astest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kget_astest.dir/build.make tests/CMakeFiles/kget_astest.dir/clean
+.PHONY : tests/CMakeFiles/kget_astest.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/kupdatetest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/kupdatetest.dir/all: src/CMakeFiles/km_src.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/wencheng/crypto/key_management/build/CMakeFiles --progress-num=18,19 "Built target kupdatetest"
+.PHONY : tests/CMakeFiles/kupdatetest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/kupdatetest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/kupdatetest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wencheng/crypto/key_management/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/kupdatetest.dir/rule
+
+# Convenience name for target.
+kupdatetest: tests/CMakeFiles/kupdatetest.dir/rule
+.PHONY : kupdatetest
+
+# clean rule for target.
+tests/CMakeFiles/kupdatetest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/clean
+.PHONY : tests/CMakeFiles/kupdatetest.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

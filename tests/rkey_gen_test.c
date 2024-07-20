@@ -1,6 +1,8 @@
-//
-// Created by wencheng on 2024/07/01
-//
+/**
+ * @author wencheng
+ * @date 2024/07/01
+ * @brief rkey gen and export to file
+*/
 #include <stdio.h>
 #include <string.h>
 #include "key_manage.h"
@@ -15,10 +17,10 @@ int main()
     const char *sgw_name = "SGW";
     const char *as_name = "Berry";
     uint32_t rootkey_len = 16;
-    const char *export_dir = "/home/wencheng/key_management/build/rootkey.bin"; // 导出根密钥到文件
+    const char *export_dir = "/home/wencheng/crypto/key_management/keystore/rootkey.bin"; // 导出根密钥到文件
     uint32_t validity_period = 365;                                          // 更新周期365天
 
-    if (root_key_gen(as_name, sgw_name, rootkey_len, validity_period, dbname, sgw_tablename, export_dir))
+    if (km_rkey_gen_export(as_name, sgw_name, rootkey_len, validity_period, dbname, sgw_tablename, export_dir))
     {
         printf("根密钥生成、保存和导出失败。\n");
     }
