@@ -65,18 +65,14 @@ int main()
 
     // 获取根密钥
     CCARD_HANDLE handle_rootkey; 
-    QueryResult_for_queryid rk_id = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
-    if (rk_id.count == 0)
+    QueryResult_for_queryid* rk_id = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
+    if (rk_id == NULL)
     {
         printf("NULL Query.\n");
         return 0;
     }
-    else if (rk_id.count > 1)
-    {
-        printf("query id not unique.\n");
-        return 0;
-    }
-    ret = get_handle_from_db(dbname, sgw_tablename, rk_id.ids[0], &handle_rootkey); 
+
+    ret = get_handle_from_db(dbname, sgw_tablename, rk_id->ids[0], &handle_rootkey); 
     if (ret != LD_KM_OK)
     {
         printf("[**sgw get_rootkey_handle error**]\n");
@@ -170,7 +166,7 @@ int main()
     printf("[**SGW derive_key KAS-GS OK  **]\n");
 
     // 查询新密钥id
-    QueryResult_for_queryid qr = query_id(dbname, sgw_tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
+    QueryResult_for_queryid* qr = query_id(dbname, sgw_tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
     if (qr.count == 0)
     {
         printf("NULL Query.\n");
@@ -183,8 +179,8 @@ int main()
     }
 
     // 查询密钥值
-    QueryResult_for_keyvalue result = query_keyvalue(dbname, sgw_tablename, qr.ids[0]);
-    if (!result.key)
+    QueryResult_for_keyvalue* result = query_keyvalue(dbname, sgw_tablename, qr.ids[0]);
+    if (!result)
     {
         printf("Key not found or error occurred.\n");
         return 0;

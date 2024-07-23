@@ -214,15 +214,17 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
             case ft_uint16t:
                 if (!strcmp(current_field->name, "check_len"))
                 {
-                    size_t sqlLength = strlen((char *)sql);                                        // 计算字符串的长度
-                    size_t lastIndex = sqlLength - 1;                                              // 计算最后一个有效字符的位置
-                    snprintf(sql + lastIndex, sizeof(p_pkg->chck_len) * 2, "%u", p_pkg->chck_len); // TODO: why is "*2"
+                    size_t sqlLength = strlen((char *)sql); // 计算字符串的长度
+                    size_t lastIndex = sqlLength - 1;       // 计算最后一个有效字符的位置
+                    snprintf(sql + lastIndex, sizeof(p_pkg->chck_len) * 2, "%u",
+                             p_pkg->chck_len); // TODO: why is "*2"
                 }
                 else if (!strcmp(current_field->name, "updatecycle"))
                 {
                     size_t sqlLength = strlen((char *)sql); // 计算字符串的长度
                     size_t lastIndex = sqlLength - 1;       // 计算最后一个有效字符的位置
-                    snprintf(sql + lastIndex, sizeof(p_pkg->meta_data->update_cycle), "%u", p_pkg->meta_data->update_cycle);
+                    snprintf(sql + lastIndex, sizeof(p_pkg->meta_data->update_cycle), "%u",
+                             p_pkg->meta_data->update_cycle);
                 }
                 else if (!strcmp(current_field->name, "iv_len"))
                 {
@@ -353,153 +355,48 @@ l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const c
     return LD_KM_OK;
 }
 
-
-// 回调函数，用于处理查询结果 密钥更新时调用
-int query_callback_for_handle(void *data, int argc, char **argv, char **azColName)
-{
-    Result_Query_for_handle *result = (Result_Query_for_handle *)data;
-    if (argc > 0 && argv[0])
-    {
-        result->key_len = atoi(argv[0]);
-    }
-    if (argc > 1 && argv[1])
-    {
-        result->key_cipher = hex_to_bytes(argv[1]);
-    }
-    if (argc > 2 && argv[2])
-    {
-        result->kek_len = atoi(argv[2]);
-    }
-    if (argc > 3 && argv[3])
-    {
-        result->kek_cipher = hex_to_bytes(argv[3]);
-    }
-    if (argc > 4 && argv[4])
-    {
-        result->iv_len = atoi(argv[4]);
-    }
-    if (argc > 5 && argv[5])
-    {
-        result->iv = hex_to_bytes(argv[5]);
-    }
-    return 0;
-}
-
-/**
- * @brief 获取密钥句柄
- * @param[in] db_name
- * @param[in] table_name
- * @param[in] id 密钥id
- * @param[out] handle 密钥句柄
- * @return 是否执行成功
- */
-l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, CCARD_HANDLE *key_handle)
-{
-    /* 读取密钥 */
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
-    Result_Query_for_handle result;
-
-    // 打开数据库
-    rc = sqlite3_open(db_name, &db);
-    if (rc)
-    {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        return LD_ERR_KM_OPEN_DB;
-    }
-
-    // 构建查询语句
-    char query[MAX_QUERY_RESULT_LENGTH];
-    snprintf(query, MAX_QUERY_RESULT_LENGTH, "SELECT key_len, key_cipher, kek_len ,kek_cipher, iv_len, iv FROM %s WHERE id='%s'", table_name, id);
-
-    // 执行查询
-    rc = sqlite3_exec(db, query, query_callback_for_handle, &result, &zErrMsg);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-        sqlite3_close(db);
-        return LD_ERR_KM_EXE_DB;
-    }
-
-    // 关闭数据库
-    sqlite3_close(db);
-
-    /* 解密密钥  获取句柄*/
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
-    SDF_OpenDevice(&DeviceHandle);                  // 打开设备
-    SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
-
-    // 导入密钥加密密钥
-    uint32_t kek_index = 1;
-    void *kek_handle;
-    int ret;
-    ret = SDF_ImportKeyWithKEK(hSessionHandle, ALGO_WITH_KEK, kek_index, result.kek_cipher, result.kek_len, &kek_handle);
-    if (ret != LD_KM_OK)
-    {
-        printf("get key handle : import kek failed!\n");
-        return LD_ERR_KM_IMPORT_KEY_WITH_KEK;
-    }
-
-    // 解密密钥
-    uint8_t key[32]; // 明文密钥
-    uint32_t key_len;
-    ret = SDF_Decrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, result.iv, result.key_cipher, result.key_len, key, &key_len);
-    if (ret != LD_KM_OK)
-    {
-        printf("get masterkey handle: decrypt failed!\n");
-        return LD_ERR_KM_DECRYPT;
-    }
-
-    // 导入密钥
-    key_len = key_len > 16 ? 16 : key_len;
-    ret = SDF_ImportKey(hSessionHandle, key, key_len, key_handle);
-    if (ret != LD_KM_OK)
-    {
-        printf("get masterkey handle: import masterkey failed!\n");
-        return LD_ERR_KM_IMPORT_KEY;
-    }
-
-    SDF_CloseSession(hSessionHandle);
-    SDF_CloseDevice(DeviceHandle);
-
-    return LD_KM_OK;
-}
-
 // 回调函数，用于处理kek查询结果
 int query_callback_for_kekhandle(void *data, int argc, char **argv, char **azColName)
 {
     QueryResult_for_kekhandle *result = (QueryResult_for_kekhandle *)data;
-    uint32_t kek_len;
-    uint8_t *kek_cipher;
+    uint32_t kek_len, iv_len;
+    uint8_t *kek_cipher = NULL, *iv = NULL;
 
-    if (argc > 0 && argv[0]) // kek len
+    if (argc < 4 || !argv[0] || !argv[1] || !argv[2] || !argv[3])
     {
-        kek_len = atoi(argv[0]);
-    }
-    if (argc > 1 && argv[1]) // kek cipher
-    {
-        kek_cipher = malloc(sizeof(uint8_t) * kek_len);
-        kek_cipher = hex_to_bytes(argv[1]);
-    }
-    if (argc > 2 && argv[2]) // iv len
-    {
-        result->iv_len = atoi(argv[2]);
-    }
-    if (argc > 3 && argv[3]) // iv
-    {
-        result->iv = malloc(sizeof(uint8_t) * result->iv_len);
-        result->iv = hex_to_bytes(argv[3]);
+        printf("[query_callback_for_kekhandle] 参数无效\n");
+        return 1;
     }
 
-    // 导入kek
+    kek_len = atoi(argv[0]);
+    kek_cipher = hex_to_bytes(argv[1]); // 假设 hex_to_bytes 函数实现了 hex 字符串到字节数组的转换
+    iv_len = atoi(argv[2]);
+    iv = hex_to_bytes(argv[3]);
+
+    if (kek_cipher == NULL || iv == NULL)
+    {
+        printf("[query_callback_for_kekhandle] 内存分配失败\n");
+        if (kek_cipher != NULL)
+        {
+            free(kek_cipher);
+        }
+        if (iv != NULL)
+        {
+            free(iv);
+        }
+        return 1;
+    }
+
     if (km_import_key_with_kek(kek_cipher, kek_len, 1, &result->kek_handle) != LD_KM_OK)
     {
         printf("[query_callback_for_kekhandle] import key failed\n");
+        free(kek_cipher);
+        free(iv);
         return -1;
     }
+
+    result->iv_len = iv_len;
+    result->iv = iv;
 
     return 0;
 }
@@ -511,71 +408,110 @@ int query_callback_for_kekhandle(void *data, int argc, char **argv, char **azCol
  * @param[in] id 密钥id
  * @return 查询结果
  */
-QueryResult_for_kekhandle query_kekhandle(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+QueryResult_for_kekhandle *query_kekhandle(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
-
-    /* 读取密钥 */
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
-    QueryResult_for_kekhandle result;
-    do
+    QueryResult_for_kekhandle *result = (QueryResult_for_kekhandle *)malloc(sizeof(QueryResult_for_kekhandle));
+    if (result == NULL)
     {
-        // 打开数据库
-        rc = sqlite3_open(db_name, &db);
-        if (rc)
-        {
-            fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-            sqlite3_close(db);
-            break;
-        }
+        printf("内存分配失败\n");
+        return NULL;
+    }
 
-        // 构建查询语句
-        char query[MAX_QUERY_RESULT_LENGTH];
-        snprintf(query, MAX_QUERY_RESULT_LENGTH, "SELECT kek_len ,kek_cipher, iv_len, iv FROM %s WHERE id='%s'", table_name, id);
+    memset(result, 0, sizeof(QueryResult_for_kekhandle));
 
-        // 执行查询
-        rc = sqlite3_exec(db, query, query_callback_for_kekhandle, &result, &zErrMsg);
-        if (rc != SQLITE_OK)
-        {
-            fprintf(stderr, "SQL error: %s\n", zErrMsg);
-            sqlite3_free(zErrMsg);
-            sqlite3_close(db);
-            break;
-        }
-
-        // 关闭数据库
+    // 打开数据库
+    rc = sqlite3_open((const char *)db_name, &db);
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
+        return result; // 返回未初始化的结果
+    }
 
-    } while (0);
+    // 构建查询语句
+    char *sql_query = NULL;
+    asprintf(&sql_query, "SELECT kek_len, kek_cipher, iv_len, iv FROM %s WHERE id='%s'", table_name, id);
+
+    rc = sqlite3_exec(db, sql_query, query_callback_for_kekhandle, result, &zErrMsg);
+    free(sql_query);
+
+    if (rc != SQLITE_OK)
+    {
+        printf("查询失败: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        free(result);
+        return NULL;
+    }
+
+    // 在实际应用中，可能需要更多错误处理逻辑
+    if (result->kek_handle == NULL || result->iv == NULL)
+    {
+        free(result->kek_handle);
+        free(result->iv);
+        free(result);
+        return NULL;
+    }
 
     return result;
 }
 
+
+/**
+ * @brief 释放 QueryResult_for_kekhandle 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_kekhandle 结构体的指针
+ */
+void free_kekhandle_result(QueryResult_for_kekhandle *result) {
+    if (result != NULL) {
+        // 释放 iv 指向的内存
+        if (result->iv != NULL) {
+            free(result->iv);
+        }
+
+        // 释放结构体本身的内存
+        free(result);
+    }
+}
 /****************************************************************
  *                              查询                            *
  *****************************************************************/
-// 查询id结果结构体
-typedef struct
-{
-    uint8_t id[128];
-} Result_Query_id;
 
-// 回调函数，用于处理查询结果
-int query_callback_id(void *data, int argc, char **argv, char **azColName)
+/**
+ * @bref 基于所有者和密钥类型查询激活状态的密钥
+ * @param key_type 密钥类型
+ * @param owner1 所有者
+ * @param owner2 所有者
+ * @return id:密钥标识，count :查询到的id数量
+ *
+ */
+
+// 查询回调函数
+static int queryid_callback(void *data, int argc, char **argv, char **azColName)
 {
-    Result_Query_id *result = (Result_Query_id *)data;
-    if (argc > 0 && argv[0])
+    QueryResult_for_queryid *result = (QueryResult_for_queryid *)data;
+
+    if (result->count >= MAX_QUERY_RESULT_LENGTH)
     {
-        strncpy(result->id, argv[0], sizeof(result->id) - 1);
-        result->id[sizeof(result->id) - 1] = '\0';
+        // 达到最大ID数量限制，停止处理
+        return 1;
     }
-    else
+
+    if (argv[0] != NULL)
     {
-        printf("null query\n");
-        memset(result->id, 0, sizeof(result->id));
+        size_t id_len = strlen(argv[0]) + 1;
+        result->ids[result->count] = (char *)malloc(id_len);
+        if (result->ids[result->count] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1; // 触发错误处理
+        }
+        strcpy(result->ids[result->count], argv[0]);
+        result->count++;
     }
-    return 0;
+
+    return 0; // 继续处理下一个结果
 }
 
 /**
@@ -586,134 +522,78 @@ int query_callback_id(void *data, int argc, char **argv, char **azColName)
  * @return id:密钥标识，count :查询到的id数量
  *
  */
-QueryResult_for_queryid query_id(const char *db_name, const char *table_name, const char *owner1, const char *owner2, enum KEY_TYPE key_type, enum STATE state)
+QueryResult_for_queryid *query_id(const char *db_name, const char *table_name, const char *owner1, const char *owner2, enum KEY_TYPE key_type, enum STATE state)
 {
-    sqlite3 *db;
-    sqlite3_stmt *stmt;
-    int rc;
-    QueryResult_for_queryid results = {.count = 0}; // Initialize results with count as 0
+    QueryResult_for_queryid *result = (QueryResult_for_queryid *)malloc(sizeof(QueryResult_for_queryid));
+    if (result == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
 
-    // Open the database
-    rc = sqlite3_open((const char *)db_name, &db);
-    if (rc != SQLITE_OK)
+    memset(result, 0, sizeof(QueryResult_for_queryid));
+
+    sqlite3 *db;
+    char *err_msg = NULL;
+
+    // 打开数据库
+    if (sqlite3_open(db_name, &db) != SQLITE_OK)
     {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        return results;
+        free(result);
+        return NULL;
     }
 
-    // Prepare SQL statement
-    char sql_stmt[512];
+    char query[1024];
+    snprintf(query, sizeof(query),
+             "SELECT id FROM %s WHERE owner1='%s' AND owner2='%s' AND key_type='%s' AND key_state='%s'",
+             table_name, owner1, owner2, ktype_str(key_type), kstate_str(state));
 
-    snprintf(sql_stmt, sizeof(sql_stmt),
-             "SELECT id FROM %s WHERE owner1=? AND owner2=? AND key_type=? AND key_state=?",
-             table_name);
-
-    // Prepare the query
-    rc = sqlite3_prepare_v2(db, sql_stmt, -1, &stmt, NULL);
-    if (rc != SQLITE_OK)
+    // 执行查询
+    if (sqlite3_exec(db, query, queryid_callback, result, &err_msg) != SQLITE_OK)
     {
-        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
+        fprintf(stderr, "SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);
         sqlite3_close(db);
-        return results;
+        free(result);
+        return NULL;
     }
 
-    // Bind parameters
-    rc = sqlite3_bind_text(stmt, 1, (const char *)owner1, -1, SQLITE_STATIC);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "Failed to bind parameter 1: %s\n", sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        sqlite3_close(db);
-        return results;
-    }
-
-    rc = sqlite3_bind_text(stmt, 2, (const char *)owner2, -1, SQLITE_STATIC);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "Failed to bind parameter 2: %s\n", sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        sqlite3_close(db);
-        return results;
-    }
-
-    rc = sqlite3_bind_text(stmt, 3, ktype_str(key_type), -1, SQLITE_STATIC);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "Failed to bind parameter 3: %s\n", sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        sqlite3_close(db);
-        return results;
-    }
-
-    rc = sqlite3_bind_text(stmt, 4, kstate_str(state), -1, SQLITE_STATIC);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "Failed to bind parameter 4: %s\n", sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        sqlite3_close(db);
-        return results;
-    }
-
-    // Execute the query
-    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW)
-    {
-        if (results.count < MAX_ID_LEN)
-        {
-            // Allocate memory for each id
-            results.ids[results.count] = malloc(MAX_ID_LEN * sizeof(uint8_t));
-            if (results.ids[results.count] == NULL)
-            {
-                fprintf(stderr, "Failed to allocate memory\n");
-                sqlite3_finalize(stmt);
-                sqlite3_close(db);
-                return results;
-            }
-            // Copy the id into the array
-            strncpy((char *)results.ids[results.count], (const char *)sqlite3_column_text(stmt, 0), MAX_ID_LEN);
-            results.count++;
-        }
-        else
-        {
-            fprintf(stderr, "Exceeded maximum number of results\n");
-            sqlite3_finalize(stmt);
-            sqlite3_close(db);
-            return results;
-        }
-    }
-
-    // Check for errors or no results found
-    if (rc != SQLITE_DONE)
-    {
-        fprintf(stderr, "Error in fetching data: %s\n", sqlite3_errmsg(db));
-        sqlite3_finalize(stmt);
-        sqlite3_close(db);
-        return results;
-    }
-
-    // Finalize statement and close database
-    sqlite3_finalize(stmt);
+    // 关闭数据库
     sqlite3_close(db);
+    return result;
+}
 
-    return results;
+void free_queryid_result(QueryResult_for_queryid *result)
+{
+    if (result == NULL)
+    {
+        return; // 如果结构体指针为空，则什么也不做
+    }
+
+    do
+    {
+        for (uint32_t i = 0; i < result->count; ++i)
+        {
+            free(result->ids[i]);
+        }
+        free(result);
+
+    } while (0);
 }
 
 // 回调函数，用于处理查询结果 密钥更新时调用
 int query_callback_for_update(void *data, int argc, char **argv, char **azColName)
 {
     QueryResult_for_update *result = (QueryResult_for_update *)data;
-    if (argc > 0 && argv[0])
-    {
-        result->key_len = atoi(argv[0]);
+    
+    // 假设查询返回的数据按顺序是 key_len, update_cycle, update_count
+    if (argc == 3) {
+        result->key_len = (uint16_t)atoi(argv[0]);
+        result->update_cycle = (uint16_t)atoi(argv[1]);
+        result->update_count = (uint16_t)atoi(argv[2]);
     }
-    if (argc > 1 && argv[1])
-    {
-        result->update_cycle = atoi(argv[1]);
-    }
-    if (argc > 2 && argv[2])
-    {
-        result->update_count = atoi(argv[2]);
-    }
+    
     return 0;
 }
 
@@ -724,47 +604,51 @@ int query_callback_for_update(void *data, int argc, char **argv, char **azColNam
  * @param[in] id 密钥id
  * @return 结构体：含密钥长度 更新周期
  */
-QueryResult_for_update query_for_update(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+QueryResult_for_update* query_for_update(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
-    sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
-    QueryResult_for_update result;
-
-    // 打开数据库
-    rc = sqlite3_open(db_name, &db);
-    if (rc)
-    {
-        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        sqlite3_close(db);
-        result.key_len = 0;
-        result.update_cycle = 0;
-        result.update_count = 0;
-        return result;
+     sqlite3 *db;
+    char *err_msg = NULL;
+    QueryResult_for_update *result = (QueryResult_for_update *)malloc(sizeof(QueryResult_for_update));
+    
+    if (result == NULL) {
+        fprintf(stderr, "内存分配失败\n");
+        return NULL;
     }
 
-    // 构建查询语句
-    char query[MAX_QUERY_RESULT_LENGTH];
-    snprintf(query, MAX_QUERY_RESULT_LENGTH, "SELECT key_len, updatecycle , update_count FROM %s WHERE id='%s'", table_name, id);
-
-    // 执行查询
-    rc = sqlite3_exec(db, query, query_callback_for_update, &result, &zErrMsg);
-    if (rc != SQLITE_OK)
-    {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
+    // 打开数据库
+    int rc = sqlite3_open((const char *)db_name, &db);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "无法打开数据库: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-        result.key_len = 0;
-        result.update_cycle = 0;
-        result.update_count = 0;
-        return result;
+        free(result);
+        return NULL;
+    }
+
+    // 准备 SQL 查询语句
+    char sql[256];
+    snprintf(sql, sizeof(sql), "SELECT key_len, updatecycle, update_count FROM %s WHERE id = '%s';", table_name, id);
+    
+    // 执行 SQL 查询
+    rc = sqlite3_exec(db, sql, query_callback_for_update, result, &err_msg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL 查询失败: %s\n", err_msg);
+        sqlite3_free(err_msg);
+        sqlite3_close(db);
+        free(result);
+        return NULL;
     }
 
     // 关闭数据库
     sqlite3_close(db);
-
-    // 返回查询结果
+    
     return result;
+}
+
+void free_update_result(QueryResult_for_update *result) {
+    if (result != NULL) {
+        // 释放结构体本身的内存
+        free(result);
+    }
 }
 
 /**
@@ -792,7 +676,8 @@ l_km_err alter_keystate(const char *db_name, const char *table_name, uint8_t *id
 
     // 构建更新语句
     char query[512];
-    snprintf(query, sizeof(query), "UPDATE '%s' SET key_state = '%s' WHERE id = '%s'", table_name, kstate_str(state), id);
+    snprintf(query, sizeof(query), "UPDATE '%s' SET key_state = '%s' WHERE id = '%s'", table_name, kstate_str(state),
+             id);
 
     // 执行更新操作
     rc = sqlite3_exec(db, query, NULL, 0, &zErrMsg);
@@ -816,7 +701,7 @@ l_km_err alter_keystate(const char *db_name, const char *table_name, uint8_t *id
 l_km_err enable_key(const char *db_name, const char *table_name, const char *id)
 {
     // 修改状态为ACTIVE
-    if (alter_keystate(db_name, table_name, (uint8_t*)id, ACTIVE) != LD_KM_OK)
+    if (alter_keystate(db_name, table_name, (uint8_t *)id, ACTIVE) != LD_KM_OK)
     {
         return LD_ERR_KM_ALTERDB;
     }
@@ -925,7 +810,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     result->key_len = key_len;
     result->key = (uint8_t *)malloc(result->key_len); // 分配空间
     memcpy(result->key, key, result->key_len);
-   
+
     return 0;
 }
 
@@ -938,21 +823,21 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
  *
  */
 // 查询密钥值和密钥长度
-QueryResult_for_keyvalue query_keyvalue(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+QueryResult_for_keyvalue *query_keyvalue(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
     uint8_t *key_cipher = NULL;
-    QueryResult_for_keyvalue result;
+    QueryResult_for_keyvalue *result = malloc(sizeof(QueryResult_for_keyvalue));
 
     rc = sqlite3_open(db_name, &db); // 打开数据库
     if (rc)
     {
         fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-        result.key_len = 0;
-        result.key = NULL;
-        return result;
+        result->key_len = 0;
+        result->key = NULL;
+        return NULL;
     }
 
     // 构建 SQL 查询语句
@@ -960,14 +845,14 @@ QueryResult_for_keyvalue query_keyvalue(uint8_t *db_name, uint8_t *table_name, u
     snprintf(sql, sizeof(sql), "SELECT kek_len, kek_cipher, key_len, key_cipher, iv_len, iv FROM %s WHERE id='%s';", table_name, id);
 
     // 执行查询
-    rc = sqlite3_exec(db, sql, callback_for_query_keyvalue, &result, &zErrMsg);
+    rc = sqlite3_exec(db, sql, callback_for_query_keyvalue, result, &zErrMsg);
     if (rc != SQLITE_OK)
     {
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
         sqlite3_close(db);
-        result.key_len = 0;
-        result.key = NULL;
+        result->key_len = 0;
+        result->key = NULL;
         return result;
     }
 
@@ -976,21 +861,39 @@ QueryResult_for_keyvalue query_keyvalue(uint8_t *db_name, uint8_t *table_name, u
     return result;
 }
 
+/**
+ * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
+ */
+void free_keyvalue_result(QueryResult_for_keyvalue *result) {
+    if (result != NULL) {
+        // 释放 key 指向的内存
+        if (result->key != NULL) {
+            free(result->key);
+        }
+
+        // 释放结构体本身的内存
+        free(result);
+    }
+}
+
+
+
 // 查询密钥拥有者的函数接口
-QueryResult_for_owner query_owner(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+QueryResult_for_owner *query_owner(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
     sqlite3 *db;
     sqlite3_stmt *stmt;
     int rc;
 
-    QueryResult_for_owner result = {NULL, NULL};
+    QueryResult_for_owner *result = malloc(sizeof(QueryResult_for_owner));
 
     // 打开数据库连接
     rc = sqlite3_open((char *)db_name, &db);
     if (rc != SQLITE_OK)
     {
         fprintf(stderr, "无法打开数据库: %s\n", sqlite3_errmsg(db));
-        return result;
+        return NULL;
     }
 
     // 准备SQL查询语句，根据id查询owner1和owner2
@@ -1021,13 +924,13 @@ QueryResult_for_owner query_owner(uint8_t *db_name, uint8_t *table_name, uint8_t
         // 分配内存并复制查询结果
         if (owner1)
         {
-            result.owner1 = (uint8_t *)malloc(strlen((const char *)owner1) + 1);
-            strcpy((char *)result.owner1, (const char *)owner1);
+            result->owner1 = (uint8_t *)malloc(strlen((const char *)owner1) + 1);
+            strcpy((char *)result->owner1, (const char *)owner1);
         }
         if (owner2)
         {
-            result.owner2 = (uint8_t *)malloc(strlen((const char *)owner2) + 1);
-            strcpy((char *)result.owner2, (const char *)owner2);
+            result->owner2 = (uint8_t *)malloc(strlen((const char *)owner2) + 1);
+            strcpy((char *)result->owner2, (const char *)owner2);
         }
     }
 
@@ -1040,69 +943,127 @@ QueryResult_for_owner query_owner(uint8_t *db_name, uint8_t *table_name, uint8_t
     return result;
 }
 
+/**
+ * @brief 释放 QueryResult_for_owner 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_owner 结构体的指针
+ */
+void free_owner_result(QueryResult_for_owner *result) {
+    if (result != NULL) {
+        // 释放 owner1 的内存
+        if (result->owner1 != NULL) {
+            free(result->owner1);
+        }
+
+        // 释放 owner2 的内存
+        if (result->owner2 != NULL) {
+            free(result->owner2);
+        }
+
+        // 释放结构体本身的内存
+        free(result);
+    }
+}
+
 // 查询子密钥id接口定义
-QueryResult_for_subkey query_subkey(uint8_t *db_name, uint8_t *table_name, uint8_t *id, enum KEY_TYPE key_type)
+QueryResult_for_subkey *query_subkey(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
     sqlite3 *db;
     sqlite3_stmt *stmt;
-    QueryResult_for_subkey result = {0, NULL, NULL};
+    QueryResult_for_subkey *result = (QueryResult_for_subkey *)malloc(sizeof(QueryResult_for_subkey));
+    if (result == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return NULL;
+    }
+
+    result->count = 0;
+    result->subkey_ids = NULL;
+    result->key_types = NULL;
 
     // 打开数据库连接
-    int rc = sqlite3_open(db_name, &db);
+    int rc = sqlite3_open((const char *)db_name, &db);
     if (rc != SQLITE_OK)
     {
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
-        return result;
+        free(result);
+        return NULL;
     }
+
+    // 获取密钥类型
+    enum KEY_TYPE key_type = query_keytype(db_name, table_name, id);
 
     // 准备查询语句
     uint8_t sql[SQL_QUERY_SIZE];
     if (key_type == ROOT_KEY)
     {
-        strncpy((char *)sql, "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND id != ?", SQL_QUERY_SIZE);
+        snprintf((char *)sql,
+                 SQL_QUERY_SIZE,
+                 "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND id != ?",
+                 table_name, table_name);
     }
     else if (key_type == MASTER_KEY_AS_GS)
     {
-        strncpy((char *)sql, "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND owner2 = (SELECT owner2 FROM %s WHERE id = ?) AND id != ? AND key_type LIKE '%%SESSION%%' ", SQL_QUERY_SIZE);
+        snprintf((char *)sql,
+                 SQL_QUERY_SIZE,
+                 "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND owner2 = (SELECT owner2 FROM %s WHERE id = ?) AND id != ? AND key_type LIKE '%%SESSION%%'",
+                 table_name, table_name, table_name);
     }
     else if (key_type == MASTER_KEY_AS_SGW)
     {
-        strncpy((char *)sql, "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND id != ? AND (key_type LIKE '%%SESSION%%' or key_type = 'MASTER_KEY_AS_GS' or key_type = 'NH KEY')", SQL_QUERY_SIZE);
+        snprintf((char *)sql,
+                 SQL_QUERY_SIZE,
+                 "SELECT id, key_type FROM %s WHERE owner1 = (SELECT owner1 FROM %s WHERE id = ?) AND id != ? AND (key_type LIKE '%%SESSION%%' or key_type = 'MASTER_KEY_AS_GS' or key_type = 'NH KEY')",
+                 table_name, table_name);
     }
     else
     {
-        return result;
+        sqlite3_close(db);
+        free(result);
+        return NULL;
     }
 
-    sql[SQL_QUERY_SIZE - 1] = '\0'; // 确保字符串被正确终止
-    char query[512];
-    snprintf(query, sizeof(query), sql, table_name, table_name, table_name);
-
     // 准备SQL语句
-    rc = sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
+    rc = sqlite3_prepare_v2(db, (const char *)sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK)
     {
         fprintf(stderr, "Failed to prepare SQL statement: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-        return result;
+        free(result);
+        return NULL;
     }
 
     // 绑定参数
-    sqlite3_bind_text(stmt, 1, id, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, id, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, id, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, (const char *)id, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, (const char *)id, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, (const char *)id, -1, SQLITE_STATIC);
 
     // 执行查询
-    result.count = 0;
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        result.count++;
-        result.subkey_ids = realloc(result.subkey_ids, result.count * sizeof(char *));
-        result.key_types = realloc(result.key_types, result.count * sizeof(char *));
+        result->count++;
+        result->subkey_ids = realloc(result->subkey_ids, result->count * sizeof(char *));
+        result->key_types = realloc(result->key_types, result->count * sizeof(char *));
+
+        if (result->subkey_ids == NULL || result->key_types == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            // 释放之前分配的内存
+            for (int i = 0; i < result->count - 1; i++)
+            {
+                free(result->subkey_ids[i]);
+                free(result->key_types[i]);
+            }
+            free(result->subkey_ids);
+            free(result->key_types);
+            sqlite3_finalize(stmt);
+            sqlite3_close(db);
+            free(result);
+            return NULL;
+        }
 
         // 获取查询结果
-        result.subkey_ids[result.count - 1] = strdup((const char *)sqlite3_column_text(stmt, 0));
-        result.key_types[result.count - 1] = strdup((const char *)sqlite3_column_text(stmt, 1));
+        result->subkey_ids[result->count - 1] = strdup((const char *)sqlite3_column_text(stmt, 0));
+        result->key_types[result->count - 1] = strdup((const char *)sqlite3_column_text(stmt, 1));
     }
 
     // 释放资源
@@ -1110,6 +1071,35 @@ QueryResult_for_subkey query_subkey(uint8_t *db_name, uint8_t *table_name, uint8
     sqlite3_close(db);
 
     return result;
+}
+
+// 释放 QueryResult_for_subkey 内存的函数
+void free_query_result_for_subkey(QueryResult_for_subkey *result)
+{
+    if (result == NULL)
+    {
+        return;
+    }
+
+    if (result->subkey_ids != NULL)
+    {
+        for (int i = 0; i < result->count; i++)
+        {
+            free(result->subkey_ids[i]);
+        }
+        free(result->subkey_ids);
+    }
+
+    if (result->key_types != NULL)
+    {
+        for (int i = 0; i < result->count; i++)
+        {
+            free(result->key_types[i]);
+        }
+        free(result->key_types);
+    }
+
+    free(result);
 }
 
 /**
@@ -1192,8 +1182,8 @@ l_km_err alter_keyvalue(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint
     }
 
     // 获取kek和iv TODO: 未完成
-    QueryResult_for_keyvalue result = query_keyvalue(db_name, table_name, id);
-    if (!result.key)
+    QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, id);
+    if (!result)
     {
         printf("Key not found or error occurred.\n");
     }

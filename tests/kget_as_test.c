@@ -16,19 +16,19 @@ int main()
     uint8_t *sac_gs_t = "GSt";
     uint8_t *sac_as = "Berry";
     enum KEY_TYPE type = SESSION_KEY_USR_ENC;
-    QueryResult_for_queryid qr_sk = query_id(dbname, as_tablename, sac_as, sac_gs_t, type, ACTIVE);
-    if (qr_sk.count != 1)
+    QueryResult_for_queryid* qr_sk = query_id(dbname, as_tablename, sac_as, sac_gs_t, type, ACTIVE);
+    if (qr_sk == NULL)
     {
         printf("Query rkid failed.\n");
         return LD_ERR_KM_QUERY;
     }
 
-    QueryResult_for_keyvalue result = query_keyvalue(dbname, as_tablename, qr_sk.ids[0]);
-    if (!result.key)
+    QueryResult_for_keyvalue* result = query_keyvalue(dbname, as_tablename, qr_sk->ids[0]);
+    if (!result)
     {
         printf("Key not found or error occurred.\n");
         return LD_ERR_KM_QUERY;
     }
     printf("%s ", ktype_str(type));
-    printbuff("value ", result.key, result.key_len);
+    printbuff("value ", result->key, result->key_len);
 }

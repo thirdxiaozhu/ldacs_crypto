@@ -175,6 +175,123 @@ km_src/fast:
 .PHONY : km_src/fast
 
 #=============================================================================
+# Target rules for targets named km_src_static
+
+# Build rule for target.
+km_src_static: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 km_src_static
+.PHONY : km_src_static
+
+# fast build rule for target.
+km_src_static/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/build
+.PHONY : km_src_static/fast
+
+#=============================================================================
+# Target rules for targets named query_idtest
+
+# Build rule for target.
+query_idtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_idtest
+.PHONY : query_idtest
+
+# fast build rule for target.
+query_idtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/build
+.PHONY : query_idtest/fast
+
+#=============================================================================
+# Target rules for targets named query_keytest
+
+# Build rule for target.
+query_keytest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_keytest
+.PHONY : query_keytest
+
+# fast build rule for target.
+query_keytest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytest.dir/build.make tests/CMakeFiles/query_keytest.dir/build
+.PHONY : query_keytest/fast
+
+#=============================================================================
+# Target rules for targets named query_kekhandletest
+
+# Build rule for target.
+query_kekhandletest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_kekhandletest
+.PHONY : query_kekhandletest
+
+# fast build rule for target.
+query_kekhandletest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_kekhandletest.dir/build.make tests/CMakeFiles/query_kekhandletest.dir/build
+.PHONY : query_kekhandletest/fast
+
+#=============================================================================
+# Target rules for targets named query_subidtest
+
+# Build rule for target.
+query_subidtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_subidtest
+.PHONY : query_subidtest
+
+# fast build rule for target.
+query_subidtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_subidtest.dir/build.make tests/CMakeFiles/query_subidtest.dir/build
+.PHONY : query_subidtest/fast
+
+#=============================================================================
+# Target rules for targets named query_keytypetest
+
+# Build rule for target.
+query_keytypetest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_keytypetest
+.PHONY : query_keytypetest
+
+# fast build rule for target.
+query_keytypetest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/build
+.PHONY : query_keytypetest/fast
+
+#=============================================================================
+# Target rules for targets named query_ownertest
+
+# Build rule for target.
+query_ownertest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_ownertest
+.PHONY : query_ownertest
+
+# fast build rule for target.
+query_ownertest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_ownertest.dir/build.make tests/CMakeFiles/query_ownertest.dir/build
+.PHONY : query_ownertest/fast
+
+#=============================================================================
+# Target rules for targets named get_handletest
+
+# Build rule for target.
+get_handletest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 get_handletest
+.PHONY : get_handletest
+
+# fast build rule for target.
+get_handletest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/get_handletest.dir/build.make tests/CMakeFiles/get_handletest.dir/build
+.PHONY : get_handletest/fast
+
+#=============================================================================
+# Target rules for targets named query_for_updatetest
+
+# Build rule for target.
+query_for_updatetest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_for_updatetest
+.PHONY : query_for_updatetest
+
+# fast build rule for target.
+query_for_updatetest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_for_updatetest.dir/build.make tests/CMakeFiles/query_for_updatetest.dir/build
+.PHONY : query_for_updatetest/fast
+
+#=============================================================================
 # Target rules for targets named krevoketest
 
 # Build rule for target.
@@ -329,6 +446,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... get_handletest"
 	@echo "... kenabletest"
 	@echo "... kestablish_astest"
 	@echo "... kestablish_gstest"
@@ -336,8 +454,16 @@ help:
 	@echo "... kget_astest"
 	@echo "... kget_gstest"
 	@echo "... km_src"
+	@echo "... km_src_static"
 	@echo "... krevoketest"
 	@echo "... kupdatetest"
+	@echo "... query_for_updatetest"
+	@echo "... query_idtest"
+	@echo "... query_kekhandletest"
+	@echo "... query_keytest"
+	@echo "... query_keytypetest"
+	@echo "... query_ownertest"
+	@echo "... query_subidtest"
 	@echo "... rkey_gentest"
 	@echo "... rkey_importtest"
 	@echo "... rkey_to_ccardtest"

@@ -19,9 +19,10 @@ typedef struct struct_desc_s
 
 /*
 ************************************************************************
-*                              外部接口                                *
+*                              新建                                *
 ************************************************************************
 */
+/****************创建表*****************/
 /**
  * @brief 外部接口：基于描述创建密钥表
  * @param sd 理想的数据表描述
@@ -36,6 +37,8 @@ l_km_err create_table_if_not_exist(
     const char *table_name,
     uint8_t *primary_key);
 
+/*************存储密钥*****************/
+
 /**
  * @bref 存储密钥：按照描述编码和组装结构体 插入指定数据库表
  * @param pkg 密钥结构体
@@ -47,6 +50,13 @@ l_km_err store_key(
     const char *table_name,
     struct KeyPkg *pkg,
     struct_desc *sd);
+
+/*
+************************************************************************
+*                              查询                                     *
+************************************************************************
+*/
+/***************查询id*****************/
 
 typedef struct
 {
@@ -62,13 +72,18 @@ typedef struct
  * @return id:密钥标识，NULL :未查询到结果
  *
  */
-QueryResult_for_queryid query_id(
+QueryResult_for_queryid *query_id(
     const char *db_name,
     const char *table_name,
     const char *owner1,
     const char *owner2,
     enum KEY_TYPE key_type,
     enum STATE state);
+
+void free_queryid_result(
+    QueryResult_for_queryid *result);
+
+/***************查询密钥明文****************/
 
 // 结构体用于存储查询密钥
 typedef struct
@@ -85,37 +100,19 @@ typedef struct
  * @return key:密钥值，NULL :未查询到结果
  *
  */
-QueryResult_for_keyvalue query_keyvalue(
+QueryResult_for_keyvalue *query_keyvalue(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id);
 
-
-/*
-************************************************************************
-*                               内部接口                               *
-************************************************************************
-*/
-/******************** 查询数据库 **************************/
-typedef struct
-{
-    uint16_t key_len;
-    uint8_t *key_cipher;
-    uint16_t kek_len;
-    uint8_t *kek_cipher;
-    uint16_t iv_len;
-    uint8_t *iv;
-} Result_Query_for_handle;
-
 /**
- * @brief 查询密钥句柄
- * @param[in] db_name
- * @param[in] table_name
- * @param[in] id 密钥id
- * @param[out] handle 密钥句柄
- * @return 是否执行成功
+ * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
  */
-l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, CCARD_HANDLE *handle);
+void free_keyvalue_result(
+    QueryResult_for_keyvalue *result);
+
+/******************** 查询kek**************************/
 
 typedef struct
 {
@@ -131,10 +128,19 @@ typedef struct
  * @param[in] id 密钥id
  * @return 查询结果
  */
-QueryResult_for_kekhandle query_kekhandle(
+QueryResult_for_kekhandle *query_kekhandle(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id);
+
+/**
+ * @brief 释放 QueryResult_for_kekhandle 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_kekhandle 结构体的指针
+ */
+void free_kekhandle_result(
+    QueryResult_for_kekhandle *result);
+
+/*************查询更新相关*****************/
 
 // 查询结果结构体
 typedef struct
@@ -144,10 +150,15 @@ typedef struct
     uint16_t update_count;
 } QueryResult_for_update;
 
-QueryResult_for_update query_for_update(
+QueryResult_for_update *query_for_update(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id);
+
+void free_update_result(
+    QueryResult_for_update *result);
+
+/**************查询所有者*****************/
 
 // 结构体用于存储密钥所有者
 typedef struct
@@ -164,15 +175,20 @@ typedef struct
  * @return 密钥所有者
  *
  */
-QueryResult_for_owner query_owner(
+QueryResult_for_owner *query_owner(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id);
 
+void free_owner_result(
+    QueryResult_for_owner *result);
+
+/************查询子密钥*****************/
+
 // 结果集结构体定义
 typedef struct
 {
-    int count;         // 结果数量
+    int count;            // 结果数量
     uint8_t **subkey_ids; // 子密钥id数组
     uint8_t **key_types;  // key_type数组
 } QueryResult_for_subkey;
@@ -185,11 +201,15 @@ typedef struct
  * @param[in] key_type 密钥类型
  * @return 子密钥id
  */
-QueryResult_for_subkey query_subkey(
+QueryResult_for_subkey *query_subkey(
     uint8_t *db_name,
     uint8_t *table_name,
-    uint8_t *id,
-    enum KEY_TYPE key_type);
+    uint8_t *id);
+
+void free_query_result_for_subkey(
+    QueryResult_for_subkey *result);
+
+/**************查询密钥类型*****************/
 
 /**
  * @brief 查询密钥类型
@@ -202,7 +222,13 @@ enum KEY_TYPE query_keytype(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id);
-/******************** 修改数据库 **************************/
+
+/*
+************************************************************************
+*                              修改                                    *
+************************************************************************
+*/
+
 /**
  * @brief 修改密钥状态
  * @param[in] dbname
@@ -256,5 +282,3 @@ l_km_err alter_keyvalue(
     uint8_t *id,
     uint16_t key_len,
     uint8_t *key);
-
-

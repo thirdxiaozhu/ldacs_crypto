@@ -9,7 +9,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
     add_compile_definitions(USE_SDF)
-    set(IS_USE_SDF ON) 
+    set(IS_USE_SDF ON)
 ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as")
     add_compile_definitions(USE_PIICO)
     set(IS_USE_PIICO ON)
@@ -18,7 +18,12 @@ ELSE ()
     set(IS_USE_GMSSL ON)
 ENDIF ()
 
-add_library(km_src STATIC key_manage.c kmdb.c )
+set(SOURCES
+    key_manage.c 
+    kmdb.c
+)
+add_library(km_src SHARED ${SOURCES})   # 生成共享库
+add_library(km_src_static STATIC ${SOURCES})  # 生成静态库
 
 target_include_directories(km_src PUBLIC /usr/local/include/ldacs)
 target_link_directories(km_src PUBLIC /usr/local/lib/ldacs)
@@ -39,7 +44,6 @@ ENDIF ()
 
 # 设置安装路径
 install(TARGETS km_src DESTINATION ${CMAKE_SOURCE_DIR}/build) #指定安装共享库的目标路径
-# install(FILES keymanage.h DESTINATION /) #将头文件安装到指定路径
 INSTALL(TARGETS km_src ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include/km)
 

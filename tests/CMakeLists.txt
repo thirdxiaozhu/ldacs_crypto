@@ -10,26 +10,34 @@ set(tests
         # db         # 密钥库增删改查相关
         # sql_insert
         # sql_dyn_insert
-        # queryid
-        # query_subid
-        # query_keytype
-        
+
         # hex_conv
         # rand
         # importk_with_kek
-        krevoke
         # newpkg
         # kinstall
         # prehandle
         # kderive
         # query_key
         # kenable
+
+
+        query_id
+        query_key
+        query_kekhandle
+        query_subid
+        query_keytype
+        query_owner
+        get_handle
+        query_for_update
+        
+        krevoke
         rkey_gen #根密钥预置和激活
         rkey_to_ccard
         rkey_import
         kenable
-        kestablish_sgw # 多级密钥派生 
-        kestablish_as 
+        kestablish_sgw # 多级密钥派生
+        kestablish_as
         kestablish_gs
         kget_gs # 测试密钥对比
         kget_as

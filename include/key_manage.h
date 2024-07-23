@@ -49,6 +49,7 @@ typedef enum
     LD_ERR_KM_OPEN_DB,                     //  打开数据库失败
     LD_ERR_KM_EXE_DB,                      // 执行sql语句失败
     LD_ERR_KM_MALLOC,                      // 分配空间失败
+    LD_ERR_KM_FREE,                        // 释放空间失败
     LD_ERR_KM_GENERATE_RANDOM,             // 生成随机数失败
     LD_ERR_KM_HashInit,                    // hash init失败
     LD_ERR_KM_HashUpdate,                  //  hash update失败
@@ -221,7 +222,7 @@ l_km_err km_hash(
     uint8_t *data,
     size_t data_len,
     uint8_t *output);
-    
+
 l_km_err km_mac(
     CCARD_HANDLE key_handle,
     uint32_t alg_id,
@@ -344,6 +345,23 @@ l_km_err km_derive_key(
     uint8_t *rand,
     uint32_t rand_len);
 
+/*************************************************************************
+ *                      外部接口：业务逻辑-密钥使用                        *
+ *************************************************************************/
+
+/**
+ * @brief 外部接口：查询密钥句柄
+ * @param[in] db_name
+ * @param[in] table_name
+ * @param[in] id 密钥id
+ * @param[out] handle 密钥句柄
+ * @return 是否执行成功
+ */
+l_km_err get_handle_from_db(
+    uint8_t *db_name, 
+    uint8_t *table_name, 
+    uint8_t *id, 
+    CCARD_HANDLE *handle);
 
 /*************************************************************************
  *                      外部接口：业务逻辑-密钥更新                       *
@@ -408,7 +426,6 @@ l_km_err km_get_keyhandle(
     struct KeyPkg *pkg,
     CCARD_HANDLE *key_handle);
 
-
 // 从密码卡读取文件 放到指定位置
 l_km_err km_readfile_from_cryptocard(
     const char *filename,
@@ -455,13 +472,11 @@ uint8_t *bytes_to_hex(
 
 /**
  * @brief 字节序列转换为十六进制字符串
- * @param[in] bytes_len
- * @param[in] bytes
- * @return 十六进制串
+ * @param[in] hex_str
+ * @return 字节串
  */
-uint8_t *bytes_to_hex(
-    uint16_t bytes_len,
-    uint8_t *bytes);
+uint8_t *hex_to_bytes(
+    const char *hex_str);
 
 /**
  * 输入枚举类型的密钥类型 返回对应的字符串

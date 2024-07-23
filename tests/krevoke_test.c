@@ -12,20 +12,20 @@ int main()
     uint8_t *dbname = "keystore.db";
     uint8_t *tablename = "as_keystore";
     enum KEY_TYPE type = SESSION_KEY_USR_ENC;
-    QueryResult_for_queryid qr = query_id(dbname, tablename, "Berry", "GS1", type, ACTIVE);
+    QueryResult_for_queryid* qr = query_id(dbname, tablename, "Berry", "GS1", type, ACTIVE);
     do
     {
-        if (qr.count != 1)
+        if (qr == NULL)
         {
             printf("Query failed.\n");
             break;
         }
 
-        if (km_revoke_key(dbname, tablename, qr.ids[0]) != LD_KM_OK)
+        if (km_revoke_key(dbname, tablename, qr->ids[0]) != LD_KM_OK)
         {
-            printf("key %s revoke failed\n", qr.ids[0]);
+            printf("key %s revoke failed\n", qr->ids[0]);
             break;
         }
-        printf("revoke %s %s and it's subkey OK\n",ktype_str(type), qr.ids[0]);
+        printf("revoke %s %s and it's subkey OK\n",ktype_str(type), qr->ids[0]);
     } while (0);
 }

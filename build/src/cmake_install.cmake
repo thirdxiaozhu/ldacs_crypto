@@ -43,19 +43,57 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so"
+         RPATH "")
+  endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/wencheng/crypto/key_management/build/libkm_src.a")
+   "/home/wencheng/crypto/key_management/build/libkm_src.so")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/wencheng/crypto/key_management/build" TYPE STATIC_LIBRARY FILES "/home/wencheng/crypto/key_management/build/src/libkm_src.a")
+  file(INSTALL DESTINATION "/home/wencheng/crypto/key_management/build" TYPE SHARED_LIBRARY FILES "/home/wencheng/crypto/key_management/build/src/libkm_src.so")
+  if(EXISTS "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so"
+         OLD_RPATH "/usr/local/lib/ldacs:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/wencheng/crypto/key_management/build/libkm_src.so")
+    endif()
+  endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/wencheng/crypto/key_management/build/src/libkm_src.a")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so"
+         RPATH "")
+  endif()
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/wencheng/crypto/key_management/build/src/libkm_src.so")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so"
+         OLD_RPATH "/usr/local/lib/ldacs:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libkm_src.so")
+    endif()
+  endif()
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)

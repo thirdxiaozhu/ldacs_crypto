@@ -162,6 +162,118 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+tests/CMakeFiles/query_idtest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_idtest.dir/rule
+.PHONY : tests/CMakeFiles/query_idtest.dir/rule
+
+# Convenience name for target.
+query_idtest: tests/CMakeFiles/query_idtest.dir/rule
+.PHONY : query_idtest
+
+# fast build rule for target.
+query_idtest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/build
+.PHONY : query_idtest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_keytest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_keytest.dir/rule
+.PHONY : tests/CMakeFiles/query_keytest.dir/rule
+
+# Convenience name for target.
+query_keytest: tests/CMakeFiles/query_keytest.dir/rule
+.PHONY : query_keytest
+
+# fast build rule for target.
+query_keytest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytest.dir/build.make tests/CMakeFiles/query_keytest.dir/build
+.PHONY : query_keytest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_kekhandletest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_kekhandletest.dir/rule
+.PHONY : tests/CMakeFiles/query_kekhandletest.dir/rule
+
+# Convenience name for target.
+query_kekhandletest: tests/CMakeFiles/query_kekhandletest.dir/rule
+.PHONY : query_kekhandletest
+
+# fast build rule for target.
+query_kekhandletest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_kekhandletest.dir/build.make tests/CMakeFiles/query_kekhandletest.dir/build
+.PHONY : query_kekhandletest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_subidtest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_subidtest.dir/rule
+.PHONY : tests/CMakeFiles/query_subidtest.dir/rule
+
+# Convenience name for target.
+query_subidtest: tests/CMakeFiles/query_subidtest.dir/rule
+.PHONY : query_subidtest
+
+# fast build rule for target.
+query_subidtest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_subidtest.dir/build.make tests/CMakeFiles/query_subidtest.dir/build
+.PHONY : query_subidtest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_keytypetest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_keytypetest.dir/rule
+.PHONY : tests/CMakeFiles/query_keytypetest.dir/rule
+
+# Convenience name for target.
+query_keytypetest: tests/CMakeFiles/query_keytypetest.dir/rule
+.PHONY : query_keytypetest
+
+# fast build rule for target.
+query_keytypetest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/build
+.PHONY : query_keytypetest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_ownertest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_ownertest.dir/rule
+.PHONY : tests/CMakeFiles/query_ownertest.dir/rule
+
+# Convenience name for target.
+query_ownertest: tests/CMakeFiles/query_ownertest.dir/rule
+.PHONY : query_ownertest
+
+# fast build rule for target.
+query_ownertest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_ownertest.dir/build.make tests/CMakeFiles/query_ownertest.dir/build
+.PHONY : query_ownertest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/get_handletest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/get_handletest.dir/rule
+.PHONY : tests/CMakeFiles/get_handletest.dir/rule
+
+# Convenience name for target.
+get_handletest: tests/CMakeFiles/get_handletest.dir/rule
+.PHONY : get_handletest
+
+# fast build rule for target.
+get_handletest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/get_handletest.dir/build.make tests/CMakeFiles/get_handletest.dir/build
+.PHONY : get_handletest/fast
+
+# Convenience name for target.
+tests/CMakeFiles/query_for_updatetest.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/query_for_updatetest.dir/rule
+.PHONY : tests/CMakeFiles/query_for_updatetest.dir/rule
+
+# Convenience name for target.
+query_for_updatetest: tests/CMakeFiles/query_for_updatetest.dir/rule
+.PHONY : query_for_updatetest
+
+# fast build rule for target.
+query_for_updatetest/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_for_updatetest.dir/build.make tests/CMakeFiles/query_for_updatetest.dir/build
+.PHONY : query_for_updatetest/fast
+
+# Convenience name for target.
 tests/CMakeFiles/krevoketest.dir/rule:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/krevoketest.dir/rule
 .PHONY : tests/CMakeFiles/krevoketest.dir/rule
@@ -314,6 +426,30 @@ kupdatetest: tests/CMakeFiles/kupdatetest.dir/rule
 kupdatetest/fast:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/build
 .PHONY : kupdatetest/fast
+
+get_handle_test.o: get_handle_test.c.o
+.PHONY : get_handle_test.o
+
+# target to build an object file
+get_handle_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/get_handletest.dir/build.make tests/CMakeFiles/get_handletest.dir/get_handle_test.c.o
+.PHONY : get_handle_test.c.o
+
+get_handle_test.i: get_handle_test.c.i
+.PHONY : get_handle_test.i
+
+# target to preprocess a source file
+get_handle_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/get_handletest.dir/build.make tests/CMakeFiles/get_handletest.dir/get_handle_test.c.i
+.PHONY : get_handle_test.c.i
+
+get_handle_test.s: get_handle_test.c.s
+.PHONY : get_handle_test.s
+
+# target to generate assembly for a file
+get_handle_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/get_handletest.dir/build.make tests/CMakeFiles/get_handletest.dir/get_handle_test.c.s
+.PHONY : get_handle_test.c.s
 
 kenable_test.o: kenable_test.c.o
 .PHONY : kenable_test.o
@@ -507,6 +643,174 @@ kupdate_test.c.s:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/kupdate_test.c.s
 .PHONY : kupdate_test.c.s
 
+query_for_update_test.o: query_for_update_test.c.o
+.PHONY : query_for_update_test.o
+
+# target to build an object file
+query_for_update_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_for_updatetest.dir/build.make tests/CMakeFiles/query_for_updatetest.dir/query_for_update_test.c.o
+.PHONY : query_for_update_test.c.o
+
+query_for_update_test.i: query_for_update_test.c.i
+.PHONY : query_for_update_test.i
+
+# target to preprocess a source file
+query_for_update_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_for_updatetest.dir/build.make tests/CMakeFiles/query_for_updatetest.dir/query_for_update_test.c.i
+.PHONY : query_for_update_test.c.i
+
+query_for_update_test.s: query_for_update_test.c.s
+.PHONY : query_for_update_test.s
+
+# target to generate assembly for a file
+query_for_update_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_for_updatetest.dir/build.make tests/CMakeFiles/query_for_updatetest.dir/query_for_update_test.c.s
+.PHONY : query_for_update_test.c.s
+
+query_id_test.o: query_id_test.c.o
+.PHONY : query_id_test.o
+
+# target to build an object file
+query_id_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/query_id_test.c.o
+.PHONY : query_id_test.c.o
+
+query_id_test.i: query_id_test.c.i
+.PHONY : query_id_test.i
+
+# target to preprocess a source file
+query_id_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/query_id_test.c.i
+.PHONY : query_id_test.c.i
+
+query_id_test.s: query_id_test.c.s
+.PHONY : query_id_test.s
+
+# target to generate assembly for a file
+query_id_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/query_id_test.c.s
+.PHONY : query_id_test.c.s
+
+query_kekhandle_test.o: query_kekhandle_test.c.o
+.PHONY : query_kekhandle_test.o
+
+# target to build an object file
+query_kekhandle_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_kekhandletest.dir/build.make tests/CMakeFiles/query_kekhandletest.dir/query_kekhandle_test.c.o
+.PHONY : query_kekhandle_test.c.o
+
+query_kekhandle_test.i: query_kekhandle_test.c.i
+.PHONY : query_kekhandle_test.i
+
+# target to preprocess a source file
+query_kekhandle_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_kekhandletest.dir/build.make tests/CMakeFiles/query_kekhandletest.dir/query_kekhandle_test.c.i
+.PHONY : query_kekhandle_test.c.i
+
+query_kekhandle_test.s: query_kekhandle_test.c.s
+.PHONY : query_kekhandle_test.s
+
+# target to generate assembly for a file
+query_kekhandle_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_kekhandletest.dir/build.make tests/CMakeFiles/query_kekhandletest.dir/query_kekhandle_test.c.s
+.PHONY : query_kekhandle_test.c.s
+
+query_key_test.o: query_key_test.c.o
+.PHONY : query_key_test.o
+
+# target to build an object file
+query_key_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytest.dir/build.make tests/CMakeFiles/query_keytest.dir/query_key_test.c.o
+.PHONY : query_key_test.c.o
+
+query_key_test.i: query_key_test.c.i
+.PHONY : query_key_test.i
+
+# target to preprocess a source file
+query_key_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytest.dir/build.make tests/CMakeFiles/query_keytest.dir/query_key_test.c.i
+.PHONY : query_key_test.c.i
+
+query_key_test.s: query_key_test.c.s
+.PHONY : query_key_test.s
+
+# target to generate assembly for a file
+query_key_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytest.dir/build.make tests/CMakeFiles/query_keytest.dir/query_key_test.c.s
+.PHONY : query_key_test.c.s
+
+query_keytype_test.o: query_keytype_test.c.o
+.PHONY : query_keytype_test.o
+
+# target to build an object file
+query_keytype_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.o
+.PHONY : query_keytype_test.c.o
+
+query_keytype_test.i: query_keytype_test.c.i
+.PHONY : query_keytype_test.i
+
+# target to preprocess a source file
+query_keytype_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.i
+.PHONY : query_keytype_test.c.i
+
+query_keytype_test.s: query_keytype_test.c.s
+.PHONY : query_keytype_test.s
+
+# target to generate assembly for a file
+query_keytype_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_keytypetest.dir/build.make tests/CMakeFiles/query_keytypetest.dir/query_keytype_test.c.s
+.PHONY : query_keytype_test.c.s
+
+query_owner_test.o: query_owner_test.c.o
+.PHONY : query_owner_test.o
+
+# target to build an object file
+query_owner_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_ownertest.dir/build.make tests/CMakeFiles/query_ownertest.dir/query_owner_test.c.o
+.PHONY : query_owner_test.c.o
+
+query_owner_test.i: query_owner_test.c.i
+.PHONY : query_owner_test.i
+
+# target to preprocess a source file
+query_owner_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_ownertest.dir/build.make tests/CMakeFiles/query_ownertest.dir/query_owner_test.c.i
+.PHONY : query_owner_test.c.i
+
+query_owner_test.s: query_owner_test.c.s
+.PHONY : query_owner_test.s
+
+# target to generate assembly for a file
+query_owner_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_ownertest.dir/build.make tests/CMakeFiles/query_ownertest.dir/query_owner_test.c.s
+.PHONY : query_owner_test.c.s
+
+query_subid_test.o: query_subid_test.c.o
+.PHONY : query_subid_test.o
+
+# target to build an object file
+query_subid_test.c.o:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_subidtest.dir/build.make tests/CMakeFiles/query_subidtest.dir/query_subid_test.c.o
+.PHONY : query_subid_test.c.o
+
+query_subid_test.i: query_subid_test.c.i
+.PHONY : query_subid_test.i
+
+# target to preprocess a source file
+query_subid_test.c.i:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_subidtest.dir/build.make tests/CMakeFiles/query_subidtest.dir/query_subid_test.c.i
+.PHONY : query_subid_test.c.i
+
+query_subid_test.s: query_subid_test.c.s
+.PHONY : query_subid_test.s
+
+# target to generate assembly for a file
+query_subid_test.c.s:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_subidtest.dir/build.make tests/CMakeFiles/query_subidtest.dir/query_subid_test.c.s
+.PHONY : query_subid_test.c.s
+
 rkey_gen_test.o: rkey_gen_test.c.o
 .PHONY : rkey_gen_test.o
 
@@ -591,6 +895,7 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... get_handletest"
 	@echo "... kenabletest"
 	@echo "... kestablish_astest"
 	@echo "... kestablish_gstest"
@@ -599,9 +904,19 @@ help:
 	@echo "... kget_gstest"
 	@echo "... krevoketest"
 	@echo "... kupdatetest"
+	@echo "... query_for_updatetest"
+	@echo "... query_idtest"
+	@echo "... query_kekhandletest"
+	@echo "... query_keytest"
+	@echo "... query_keytypetest"
+	@echo "... query_ownertest"
+	@echo "... query_subidtest"
 	@echo "... rkey_gentest"
 	@echo "... rkey_importtest"
 	@echo "... rkey_to_ccardtest"
+	@echo "... get_handle_test.o"
+	@echo "... get_handle_test.i"
+	@echo "... get_handle_test.s"
 	@echo "... kenable_test.o"
 	@echo "... kenable_test.i"
 	@echo "... kenable_test.s"
@@ -626,6 +941,27 @@ help:
 	@echo "... kupdate_test.o"
 	@echo "... kupdate_test.i"
 	@echo "... kupdate_test.s"
+	@echo "... query_for_update_test.o"
+	@echo "... query_for_update_test.i"
+	@echo "... query_for_update_test.s"
+	@echo "... query_id_test.o"
+	@echo "... query_id_test.i"
+	@echo "... query_id_test.s"
+	@echo "... query_kekhandle_test.o"
+	@echo "... query_kekhandle_test.i"
+	@echo "... query_kekhandle_test.s"
+	@echo "... query_key_test.o"
+	@echo "... query_key_test.i"
+	@echo "... query_key_test.s"
+	@echo "... query_keytype_test.o"
+	@echo "... query_keytype_test.i"
+	@echo "... query_keytype_test.s"
+	@echo "... query_owner_test.o"
+	@echo "... query_owner_test.i"
+	@echo "... query_owner_test.s"
+	@echo "... query_subid_test.o"
+	@echo "... query_subid_test.i"
+	@echo "... query_subid_test.s"
 	@echo "... rkey_gen_test.o"
 	@echo "... rkey_gen_test.i"
 	@echo "... rkey_gen_test.s"

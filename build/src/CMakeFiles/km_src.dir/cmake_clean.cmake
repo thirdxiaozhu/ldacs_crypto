@@ -3,8 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/km_src.dir/key_manage.c.o.d"
   "CMakeFiles/km_src.dir/kmdb.c.o"
   "CMakeFiles/km_src.dir/kmdb.c.o.d"
-  "libkm_src.a"
   "libkm_src.pdb"
+  "libkm_src.so"
 )
 
 # Per-language clean rules from dependency scanning.

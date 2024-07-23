@@ -26,8 +26,6 @@
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
 
-
-
 static field_desc km_fields[] = {
     // 密钥结构体字段描述
     {ft_uuid, 0, "id", NULL},
@@ -513,7 +511,6 @@ l_km_err km_pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint
     return LD_KM_OK;
 }
 
-
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
 l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename)
 {
@@ -580,7 +577,7 @@ l_km_err km_create_ccard_file(const char *filename, size_t file_size)
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
     // 调用实际的文件创建函数
-    int createFileResult = SDF_CreateFile(pSessionHandle, (unsigned char*)filename, strlen(filename), file_size);
+    int createFileResult = SDF_CreateFile(pSessionHandle, (unsigned char *)filename, strlen(filename), file_size);
 
     // 检查函数调用结果
     if (createFileResult != SDR_OK)
@@ -608,7 +605,7 @@ l_km_err km_readfile_from_cryptocard(const char *filename, const char *filepath)
     uint32_t readLength = 268; // 根密钥文件的长度
     uint8_t restored_byteBuffer[readLength * 2];
 
-    int readFileResult = SDF_ReadFile(pSessionHandle, (unsigned char*)filename, strlen(filename), 0, &readLength, restored_byteBuffer);
+    int readFileResult = SDF_ReadFile(pSessionHandle, (unsigned char *)filename, strlen(filename), 0, &readLength, restored_byteBuffer);
     if (readFileResult != 0)
     {
         printf("Error reading from file\n");
@@ -711,7 +708,7 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
 
 /**
  * @brief 根密钥导入
-*/
+ */
 l_km_err km_rkey_import(const char *db_name, const char *table_name, const char *rkey_filename_in_ccard)
 {
 
@@ -779,13 +776,7 @@ km_keypkg_t *derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_
     {
 
         // 派生密钥
-        // TODO: ?? bug
         uint8_t hash_of_keytype[32] = {0};
-        //        uint8_t *string_key_type = (uint8_t *) &key_type;
-        //        if (km_hash(ALGO_HASH, string_key_type, sizeof(string_key_type), hash_of_keytype)) {
-        //            printf("Error in derive : km_hash failed!\n\n");
-        //            break;
-        //        }
         if (km_hash(ALGO_HASH, (uint8_t *)type_names[key_type], strlen(type_names[key_type]), hash_of_keytype))
         {
             printf("Error in derive : km_hash failed!\n\n");
@@ -1001,8 +992,8 @@ l_km_err km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint3
         }
 
         // get owner
-        QueryResult_for_owner qr_o = query_owner(db_name, table_name, id);
-        if (qr_o.owner1 == NULL || qr_o.owner2 == NULL)
+        QueryResult_for_owner *qr_o = query_owner(db_name, table_name, id);
+        if (qr_o == NULL)
         {
             printf("[** query_owner error**]\n");
             break;
@@ -1014,7 +1005,7 @@ l_km_err km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint3
         case ROOT_KEY:
         {
             // 派生主密钥kas-sgw
-            km_keypkg_t *pkg = derive_key(handle, MASTER_KEY_AS_SGW, key_len, qr_o.owner1, qr_o.owner2, rand, rand_len, NULL);
+            km_keypkg_t *pkg = derive_key(handle, MASTER_KEY_AS_SGW, key_len, qr_o->owner1, qr_o->owner2, rand, rand_len, NULL);
             if (pkg == NULL)
             {
                 printf("[**sgw derive_key kas-sgw error**]\n");
@@ -1034,7 +1025,7 @@ l_km_err km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint3
             }
 
             // 派生主密钥kas-gs
-            if (km_derive_masterkey_asgs(db_name, table_name, handle, key_len, qr_o.owner1, gs_name, rand, rand_len, NULL) != LD_KM_OK)
+            if (km_derive_masterkey_asgs(db_name, table_name, handle, key_len, qr_o->owner1, gs_name, rand, rand_len, NULL) != LD_KM_OK)
             {
                 printf("[**AS derive master KAS-GS failed]\n");
                 break;
@@ -1043,7 +1034,7 @@ l_km_err km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint3
         }
         case MASTER_KEY_AS_GS:
         {
-            if (km_derive_all_session_key(db_name, table_name, handle, key_len, qr_o.owner1, qr_o.owner2, rand, rand_len) != LD_KM_OK)
+            if (km_derive_all_session_key(db_name, table_name, handle, key_len, qr_o->owner1, qr_o->owner2, rand, rand_len) != LD_KM_OK)
             {
                 printf("session key derive failed\n");
                 break;
@@ -1128,28 +1119,62 @@ l_km_err km_get_keyhandle(struct KeyPkg *pkg, CCARD_HANDLE *key_handle)
     return LD_KM_OK;
 }
 
+/************
+ * 密钥使用 *
+ ***********/
+
+/**
+ * @brief 获取密钥句柄
+ * @param[in] db_name
+ * @param[in] table_name
+ * @param[in] id 密钥id
+ * @param[out] handle 密钥句柄
+ * @return 是否执行成功
+ */
+l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, CCARD_HANDLE *key_handle)
+{
+    // 查询密钥明文
+    QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, id);
+    if (result->key == NULL)
+    {
+        printf("Key not found or error occurred.\n");
+        return LD_ERR_KM_QUERY;
+    }
+
+    // 导入密钥，获得句柄
+    if (km_import_key(result->key, result->key_len, key_handle) != LD_KM_OK)
+    {
+        printf("%s\n", km_error_to_string(LD_ERR_KM_IMPORT_KEY));
+        return LD_ERR_KM_IMPORT_KEY;
+    }
+
+    // 释放空间
+    free_keyvalue_result(result);
+    return LD_KM_OK;
+}
 
 /************
  * 密钥更新 *
  ***********/
+
 /**
  * @brief AS端 SGW更新会话密钥
  */
 l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_mk, uint8_t *sac_as, uint8_t *sac_gs_t, uint32_t nonce_len, uint8_t *nonce)
 {
     // 查询主密钥派生出来的所有会话密钥
-    QueryResult_for_subkey result = query_subkey(dbname, tablename, id_mk, MASTER_KEY_AS_GS);
+    QueryResult_for_subkey *result = query_subkey(dbname, tablename, id_mk);
 
     // 逐个更新
-    for (int i = 0; i < result.count; ++i)
+    for (int i = 0; i < result->count; ++i)
     {
         do
         {
-            printf("更新子密钥 %s\n", result.subkey_ids[i]);
+            printf("更新子密钥 %s\n", result->subkey_ids[i]);
             // 查询该密钥信息
             CCARD_HANDLE handle_mk;
-            QueryResult_for_update qr = query_for_update(dbname, tablename, result.subkey_ids[i]);
-            if (qr.key_len <= 0 || qr.update_cycle <= 0 || qr.update_count < 0)
+            QueryResult_for_update *qr = query_for_update(dbname, tablename, result->subkey_ids[i]);
+            if (qr == NULL)
             {
                 printf("Query failed.\n");
                 break;
@@ -1164,7 +1189,7 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
 
             // 生成新密钥
             km_keypkg_t *pkg;
-            pkg = derive_key(handle_mk, str_to_ktype(result.key_types[i]), qr.key_len, sac_as, sac_gs_t, nonce, nonce_len, NULL);
+            pkg = derive_key(handle_mk, str_to_ktype(result->key_types[i]), qr->key_len, sac_as, sac_gs_t, nonce, nonce_len, NULL);
             if (pkg == NULL)
             {
                 printf("dervie key failed\n");
@@ -1181,22 +1206,22 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
             // printf("store_key OK.\n");
 
             // 撤销旧密钥
-            if (alter_keystate(dbname, tablename, result.subkey_ids[i], SUSPENDED) != LD_KM_OK)
+            if (alter_keystate(dbname, tablename, result->subkey_ids[i], SUSPENDED) != LD_KM_OK)
             {
                 printf("alter_keystate failed.\n");
                 break;
             }
 
             // 释放变量空间
-            free(result.subkey_ids[i]);
-            free(result.key_types[i]);
+            free(result->subkey_ids[i]);
+            free(result->key_types[i]);
             free(pkg);
             free(handle_mk);
 
         } while (0);
     }
-    free(result.subkey_ids);
-    free(result.key_types);
+    free(result->subkey_ids);
+    free(result->key_types);
 
     return LD_KM_OK;
 }
@@ -1217,26 +1242,26 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
         }
 
         // 查询主密钥id
-        QueryResult_for_queryid qr_mk = query_id(dbname, tablename, sac_as, sac_gs_s, MASTER_KEY_AS_GS, ACTIVE);
-        if (qr_mk.count != 1)
+        QueryResult_for_queryid *qr_mk = query_id(dbname, tablename, sac_as, sac_gs_s, MASTER_KEY_AS_GS, ACTIVE);
+        if (qr_mk == NULL)
         {
             printf("Query mkid failed.\n");
             return LD_ERR_KM_QUERY;
         }
-        // printf("Query mkid OK.\n");
+        // printf("Query mkid OK,id:%s.\n", qr_mk->ids[0]);
 
         // 查询待更新密钥信息
-        QueryResult_for_update qfu_masterkey = query_for_update(dbname, tablename, qr_mk.ids[0]);
-        if (qfu_masterkey.key_len <= 0 || qfu_masterkey.update_cycle <= 0 || qfu_masterkey.update_count < 0)
+        QueryResult_for_update *qfu_masterkey = query_for_update(dbname, tablename, qr_mk->ids[0]);
+        if (qfu_masterkey == NULL)
         {
             printf("Query mk info failed.\n");
             return LD_ERR_KM_QUERY;
         }
-        // printf("Query mk info OK.\n");
+        // printf("Query mk info OK.%d\n", qfu_masterkey->key_len);
 
         // 查询NH密钥id
-        QueryResult_for_queryid qr_NH = query_id(dbname, tablename, sac_as, sac_gs_s, NH_KEY, ACTIVE);
-        if (qr_NH.count != 1)
+        QueryResult_for_queryid *qr_NH = query_id(dbname, tablename, sac_as, sac_gs_s, NH_KEY, ACTIVE);
+        if (qr_NH == NULL)
         {
             printf("Query id_NH failed.\n");
             return LD_ERR_KM_QUERY;
@@ -1244,8 +1269,8 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
         // printf("Query id_NH OK.\n");
 
         // 查询NH密钥值
-        QueryResult_for_keyvalue query_NH = query_keyvalue(dbname, tablename, qr_NH.ids[0]);
-        if (!query_NH.key)
+        QueryResult_for_keyvalue *query_NH = query_keyvalue(dbname, tablename, qr_NH->ids[0]);
+        if (!query_NH)
         {
             printf("Key NH value not found or error occurred.\n");
             return LD_ERR_KM_QUERY;
@@ -1257,18 +1282,18 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
 
         // 查询主密钥Kas-sgw的id
 
-        QueryResult_for_queryid qr_assgw = query_id(dbname, tablename, sac_as, sac_sgw, MASTER_KEY_AS_SGW, ACTIVE); // AS端
+        QueryResult_for_queryid *qr_assgw = query_id(dbname, tablename, sac_as, sac_sgw, MASTER_KEY_AS_SGW, ACTIVE); // AS端
 
-        if (qr_assgw.count != 1)
+        if (qr_assgw == NULL)
         {
             printf("Query kassgw failed.\n");
             return LD_ERR_KM_QUERY;
         }
-        // printf("qr_assgw OK. kid_assgw = %s\n", qr_assgw.ids[0]);
+        // printf("qr_assgw OK. kid_assgw = %s\n", qr_assgw->ids[0]);
 
         // 获取主密钥Kas-sgw句柄
         CCARD_HANDLE handle_asasw;
-        if (get_handle_from_db(dbname, tablename, qr_assgw.ids[0], &handle_asasw) != LD_KM_OK)
+        if (get_handle_from_db(dbname, tablename, qr_assgw->ids[0], &handle_asasw) != LD_KM_OK)
         {
             printf("get_handle_from_db failed\n");
             return LD_ERR_KM_GET_HANDLE;
@@ -1277,7 +1302,7 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
 
         // 重新计算NH
         km_keypkg_t *keypkg_NH; // 更新的NH
-        keypkg_NH = derive_key(handle_asasw, NH_KEY, query_NH.key_len, sac_sgw, sac_as, query_NH.key, query_NH.key_len, NULL);
+        keypkg_NH = derive_key(handle_asasw, NH_KEY, query_NH->key_len, sac_sgw, sac_as, query_NH->key, query_NH->key_len, NULL);
         if (keypkg_NH == NULL)
         {
             printf("derive keypkg_NH failed\n");
@@ -1286,7 +1311,7 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
         // printf("derive keypkg_NH OK\n");
 
         // 存储NH密钥值
-        if (alter_keyvalue(dbname, tablename, qr_NH.ids[0], keypkg_NH->meta_data->length, keypkg_NH->key_cipher) != LD_KM_OK)
+        if (alter_keyvalue(dbname, tablename, qr_NH->ids[0], keypkg_NH->meta_data->length, keypkg_NH->key_cipher) != LD_KM_OK)
         {
             printf("alter keyvalue failed\n");
             return LD_ERR_KM_ALTERDB;
@@ -1294,14 +1319,14 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
         // printf("store NH keyvalue OK\n");
 
         // NH 更新计数器自增
-        if (increase_updatecount(dbname, tablename, qr_NH.ids[0]) != LD_KM_OK)
+        if (increase_updatecount(dbname, tablename, qr_NH->ids[0]) != LD_KM_OK)
         {
             printf("increase update count failed\n");
             return LD_ERR_KM_ALTERDB;
         }
         // printf("increase update count OK\n");
 
-        // 生成 kas-gs = kdf(NH, rand)
+        /* 生成 kas-gs = kdf(NH, rand)*/
         uint8_t rand[32];
         uint32_t rand_len;
         if (km_hmac(nonce, len_nonce, sac_gs_t, sizeof(sac_gs_t), rand, &rand_len) != LD_KM_OK) // rand = hmac(sacgs-t,nonce)
@@ -1309,22 +1334,25 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
             printf("km_hmac failed\n");
             return LD_ERR_KM_HMAC;
         }
+        // printf("km hmac OK\n");
 
         CCARD_HANDLE handle_NH;
-        if (get_handle_from_db(dbname, tablename, qr_NH.ids[0], &handle_NH) != LD_KM_OK)
+        if (get_handle_from_db(dbname, tablename, qr_NH->ids[0], &handle_NH) != LD_KM_OK)
         {
             printf("get keyhandle from db failed\n");
             return LD_ERR_KM_QUERY;
         }
+        // printf("get handle from db OK\n");
+        // printf("%p \n", handle_NH);
 
         km_keypkg_t *keypkg_Kasgs;
-        keypkg_Kasgs = derive_key(handle_NH, MASTER_KEY_AS_GS, qfu_masterkey.key_len, sac_as, sac_gs_t, rand, rand_len, NULL);
+        keypkg_Kasgs = derive_key(handle_NH, MASTER_KEY_AS_GS, qfu_masterkey->key_len, sac_as, sac_gs_t, rand, rand_len, NULL);
         if (keypkg_Kasgs == NULL)
         {
             printf("kasgs derive failed\n");
             return LD_ERR_KM_DERIVE_KEY;
         }
-        // printf("kasgs derive OK\n");
+        printf("kasgs derive OK\n");
 
         // 存储更新的主密钥
         if (store_key(dbname, tablename, keypkg_Kasgs, &test_km_desc) != LD_KM_OK)
@@ -1332,29 +1360,28 @@ l_km_err km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sac_s
             printf("store_key failed.\n");
             return LD_ERR_KM_ALTERDB;
         }
-        // printf("store master key OK.\n");
+        printf("store master key OK.\n");
 
         // 会话密钥更新
-        if (km_update_sessionkey(dbname, tablename, qr_mk.ids[0], sac_as, sac_gs_t, len_nonce, nonce) != LD_KM_OK)
+        if (km_update_sessionkey(dbname, tablename, qr_mk->ids[0], sac_as, sac_gs_t, len_nonce, nonce) != LD_KM_OK)
         {
-            printf("update masterkey %s's sessionkey failed\n", qr_mk.ids[0]);
+            printf("update masterkey %s's sessionkey failed\n", qr_mk->ids[0]);
             return LD_ERR_KM_UPDATE_SESSIONKEY;
         }
-        printf("update masterkey %s's sessionkey OK\n", qr_mk.ids[0]);
+        printf("update masterkey %s's sessionkey OK\n", qr_mk->ids[0]);
 
         // 将原密钥的状态改为已经撤销
-        if (alter_keystate(dbname, tablename, qr_mk.ids[0], SUSPENDED) != LD_KM_OK)
+        if (alter_keystate(dbname, tablename, qr_mk->ids[0], SUSPENDED) != LD_KM_OK)
         {
             printf("alter keystate failed\n");
             return LD_ERR_KM_ALTERDB;
         }
-        // printf("alter masterkey state OK\n");
+        printf("alter masterkey state OK\n");
 
     } while (0);
 
     return LD_KM_OK;
 }
-
 
 /**
  * @brief 撤销密钥及其派生密钥
@@ -1363,15 +1390,15 @@ l_km_err km_revoke_key(uint8_t *dbname, uint8_t *tablename, uint8_t *id)
 {
 
     // 查询子密钥
-    QueryResult_for_subkey result = query_subkey(dbname, tablename, id, query_keytype(dbname, tablename, id));
-    for (int i = 0; i < result.count; ++i)
+    QueryResult_for_subkey *result = query_subkey(dbname, tablename, id);
+    for (int i = 0; i < result->count; ++i)
     {
-        if (alter_keystate(dbname, tablename, result.subkey_ids[i], SUSPENDED) != LD_KM_OK)
+        if (alter_keystate(dbname, tablename, result->subkey_ids[i], SUSPENDED) != LD_KM_OK)
         {
             return LD_ERR_KM_ALTERDB;
         }
-        printf("revoke key %s succeeded.\n", result.subkey_ids[i]);
-        free(result.subkey_ids[i]);
+        printf("revoke key %s succeeded.\n", result->subkey_ids[i]);
+        free(result->subkey_ids[i]);
     }
 
     // 撤销密钥
@@ -1414,21 +1441,16 @@ l_km_err km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, u
         key_pkg_free(pkg);
 
         // 查询主密钥id
-        QueryResult_for_queryid qr_mk = query_id(dbname, tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
-        if (qr_mk.count == 0)
+        QueryResult_for_queryid *qr_mk = query_id(dbname, tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
+        if (qr_mk == NULL)
         {
             printf("NULL Query.\n");
-            return 0;
-        }
-        else if (qr_mk.count > 1)
-        {
-            printf("query id not unique.\n");
             return 0;
         }
 
         // 查询主密钥句柄
         CCARD_HANDLE handle_mk;
-        if (get_handle_from_db(dbname, tablename, qr_mk.ids[0], &handle_mk) != LD_KM_OK)
+        if (get_handle_from_db(dbname, tablename, qr_mk->ids[0], &handle_mk) != LD_KM_OK)
         {
             printf("get_handle_from_db failed\n");
             break;
@@ -1464,7 +1486,6 @@ l_km_err km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, u
 
     return LD_ERR_KM_INSTALL_KEY;
 }
-
 
 /************
  * 密钥存储 *
@@ -1805,7 +1826,6 @@ l_km_err print_key_pkg(struct KeyPkg *key_pkg)
     return LD_KM_OK;
 }
 
-
 /**
  * 输入枚举类型的密钥类型 返回对应的字符串
  * @param[in] type 密钥类型
@@ -1953,7 +1973,6 @@ uint8_t *chck_algo_str(uint16_t chck_algo)
         break;
     }
 }
-
 
 /**
  * @brief 十六进制字符串转换回字节序列
@@ -2117,9 +2136,8 @@ void key_pkg_free(km_keypkg_t *pkg)
     free(pkg);
 }
 
-
 /*
-// 
+//
 //  * @brief 对比对数据做的校验值是否与给定MAC相同
 //  * @param[in] 校验算法
 //  * @param[in] mac 对比的MAC值
@@ -2129,7 +2147,7 @@ void key_pkg_free(km_keypkg_t *pkg)
 //  * @param[in] data
 //  * @param[in] data_len
 //  * @return 对比通过返回TRUE，否则返回FALSE
-//  
+//
 bool km_checkvalue_is_same(
     uint32_t alg_id,
     uint8_t *mac,
@@ -2213,7 +2231,7 @@ static l_km_err output_enc_key(CCARD_HANDLE hSessionHandle, km_keypkg_t *keypkg,
 //   @param[out] rootkey_handle
 //   @param[in] import_bin_path 从网关获取的根密钥文件
 //   @param[in] import_raw_path 使用本地密码卡加密后输出的根密钥文件
- 
+
 km_keypkg_t *km_import_rootkey(CCARD_HANDLE *rootkey_handle, const char *import_bin_path, const char *import_raw_path)
 {
     // 输出参数赋予空间

@@ -23,17 +23,13 @@ int main()
     uint8_t *sac_as = "Berry";
 
     // 查询子密钥id
-    uint8_t *id = "51f3abd5-8ce2-4536-986f-9658e622d247";
-    enum KEY_TYPE key_type = MASTER_KEY_AS_SGW;
-    QueryResult_for_subkey result = query_subkey(dbname, as_tablename, id, key_type);
+    uint8_t *id = "5b790a0a-15bb-4ac0-ad24-e739dfe08d0f";
+    QueryResult_for_subkey* result = query_subkey(dbname, sgw_tablename, id);
     // 打印查询结果
-    printf("%s %s ,%d subkeys is founded.\n", ktype_str(key_type), id, result.count);
-    for (int i = 0; i < result.count; i++)
+    printf("%s %s ,%d subkeys is founded.\n", ktype_str(query_keytype(dbname, sgw_tablename, id)), id, result->count);
+    for(int i=0; i<result->count; i++)
     {
-        printf("Subkey ID %d: %s, Key Type: %s\n", i + 1, result.subkey_ids[i], result.key_types[i]);
-        free(result.subkey_ids[i]);
-        free(result.key_types[i]);
+        printf("id[%d]:%s\n", i, result->subkey_ids[i]);
     }
-    free(result.subkey_ids);
-    free(result.key_types);
+    free_query_result_for_subkey(result);
 }
