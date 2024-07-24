@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <uuid/uuid.h>
-#include <stdbool.h>
 
 /*
 ************************************************************************
