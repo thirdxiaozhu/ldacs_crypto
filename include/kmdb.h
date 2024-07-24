@@ -11,6 +11,7 @@
 
 #define MAX_ID_LEN 128
 
+#ifndef USE_GMSSL
 typedef struct struct_desc_s
 {
     const char *name;
@@ -282,3 +283,5 @@ l_km_err alter_keyvalue(
     uint8_t *id,
     uint16_t key_len,
     uint8_t *key);
+
+#endif

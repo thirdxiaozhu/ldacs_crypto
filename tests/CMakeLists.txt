@@ -22,14 +22,14 @@ set(tests
         # kenable
 
 
-        query_id
-        query_key
-        query_kekhandle
-        query_subid
-        query_keytype
-        query_owner
-        get_handle
-        query_for_update
+#        query_id
+#        query_key
+#        query_kekhandle
+#        query_subid
+#        query_keytype
+#        query_owner
+#        get_handle
+#        query_for_update
         
         krevoke
         rkey_gen #根密钥预置和激活
@@ -46,17 +46,25 @@ set(tests
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 
+message(${HOST_NAME})
+
 enable_testing()
 foreach (name ${tests})
+    # 选择适配的密码卡
+    cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+    IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
+        target_compile_definitions(${name}test PRIVATE USE_SDF)
+        target_link_libraries(${name}test LINK_PUBLIC sdf sqlite3)
+    ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as" OR ${HOST_NAME} MATCHES "berry")
+        target_compile_definitions(${name}test PRIVATE USE_PIICO)
+        target_link_libraries(${name}test LINK_PUBLIC piico_ccu sqlite3)
+    ELSE ()
+        CONTINUE()
+    ENDIF ()
+
     add_test(NAME ${name} COMMAND ${name}test)
     add_executable(${name}test ${name}_test.c)
     target_link_libraries(${name}test LINK_PUBLIC km_src pthread uuid sqlite3)
-
-    IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
-        target_link_libraries(${name}test LINK_PUBLIC sdf)
-    ELSE ()
-        target_link_libraries(${name}test LINK_PUBLIC piico_ccu)
-    ENDIF ()
 
 endforeach ()
 

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sqlite3.h>
 
+#ifndef USE_GMSSL
 #ifdef USE_SDF
 
 #include <sdf/libsdf.h>
@@ -1252,3 +1253,4 @@ l_km_err alter_keyvalue(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint
 
     return LD_KM_OK;
 }
+#endif

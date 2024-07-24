@@ -5,19 +5,6 @@ set(CMAKE_C_STANDARD 99)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
-# 选择适配的密码卡
-cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
-IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
-    add_compile_definitions(USE_SDF)
-    set(IS_USE_SDF ON)
-ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as")
-    add_compile_definitions(USE_PIICO)
-    set(IS_USE_PIICO ON)
-ELSE ()
-    add_compile_definitions(USE_GMSSL)
-    set(IS_USE_GMSSL ON)
-ENDIF ()
-
 set(SOURCES
     key_manage.c 
     kmdb.c
@@ -31,13 +18,16 @@ target_link_libraries(km_src LINK_PUBLIC ldacsutilcore)
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread uuid sqlite3)
 
-IF (${IS_USE_SDF})
+# 选择适配的密码卡
+cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_SDF)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf sqlite3)
-ENDIF ()
-IF (${IS_USE_PIICO})
+ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as" OR ${HOST_NAME} MATCHES "berry")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_PIICO)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccu sqlite3)
-ENDIF ()
-IF (${IS_USE_GMSSL})
+ELSE ()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE USE_GMSSL)
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC gmssl sqlite3)
 ENDIF ()
 
