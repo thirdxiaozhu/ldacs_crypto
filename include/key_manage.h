@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <uuid/uuid.h>
+#include <stdbool.h>
+#define TRUE true
+#define FALSE false
 
 /*
 ************************************************************************

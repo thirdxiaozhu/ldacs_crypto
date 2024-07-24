@@ -6,13 +6,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdbool.h>
 #include "kmdb.h"
 #include "km_field.h"
 #include "key_manage.h"
 
-#define TRUE true
-#define FALSE false
 
 
 #ifndef USE_GMSSL
