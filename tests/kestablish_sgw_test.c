@@ -8,7 +8,7 @@
 #include "kmdb.h"
 #include <uuid/uuid.h>
 
-static field_desc km_fields[] = {
+static km_field_desc km_fields[] = {
     // 密钥结构体字段描述
     {ft_uuid, 0, "id", NULL},
     {ft_enum, 0, "key_type", NULL},

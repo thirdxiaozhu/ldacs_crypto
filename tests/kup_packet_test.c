@@ -60,7 +60,7 @@ struct KupdateRemind *kupdate_remind_new(uint16_t g_type, uint16_t ver, uint16_t
     return kr;
 }
 
-static field_desc kupdate_remind_field[] = {
+static km_field_desc kupdate_remind_field[] = {
     // 密钥更新提醒字段描述
     {ft_enum, 8, "G_TYPE", NULL},
     {ft_enum, 4, "VER", NULL},
@@ -114,7 +114,7 @@ struct KupdateRequest *kupdate_request_new(uint16_t s_type, uint16_t ver, uint16
     return kr;
 }
 
-static field_desc kupdate_request_field[] = {
+static km_field_desc kupdate_request_field[] = {
     // 密钥更新请求字段描述
     {ft_enum, 8, "S_TYPE", NULL},
     {ft_enum, 4, "VER", NULL},
@@ -139,7 +139,7 @@ struct KupdateResponse
     buffer_t ncc;
 };
 
-static field_desc kupdate_response_field[] = {
+static km_field_desc kupdate_response_field[] = {
     // 密钥更新响应字段描述
     {ft_enum, 8, "S_TYPE", NULL},
     {ft_enum, 4, "VER", NULL},
@@ -163,7 +163,7 @@ struct KupdateTransport
     buffer_t nonce;
 };
 
-static field_desc kupdate_keytransport_field[] = {
+static km_field_desc kupdate_keytransport_field[] = {
     // 密钥更新-下发密钥字段描述
     {ft_enum, 8, "G_TYPE", NULL},
     {ft_enum, 4, "VER", NULL},

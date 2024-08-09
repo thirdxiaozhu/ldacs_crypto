@@ -6,7 +6,7 @@
 #include "key_manage.h"
 #include "kmdb.h"
 
-static field_desc test_km_fields[] = {
+static km_field_desc test_km_fields[] = {
     // 密钥结构体字段描述
     {ft_uuid, 0, "id", NULL},
     {ft_enum, 0, "key_type", NULL},

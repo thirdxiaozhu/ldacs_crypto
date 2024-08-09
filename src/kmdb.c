@@ -30,8 +30,8 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
     int rc;
     struct KeyPkg *p_pkg; // 指向结构体的指针 指示当前位置
     p_pkg = pkg;
-    const field_desc *current_field = sd->fields; // 构建描述指针
-    const field_desc *next_field;
+    const km_field_desc *current_field = sd->fields; // 构建描述指针
+    const km_field_desc *next_field;
 
     int maxSQLLength = 2048; // 分配内存，用于存储 SQL 语句
     char *sql = (char *)malloc(maxSQLLength * sizeof(char));
@@ -46,12 +46,12 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
      *****************************/
     sprintf(sql, "INSERT INTO %s (", table_name);
     // 添加字段名
-    while (current_field->field_type != ft_end)
+    while (current_field->km_field_type != ft_end)
     {
         next_field = current_field;
         next_field++; // 指向下一个描述域
         strcat(sql, current_field->name);
-        if (next_field->field_type != ft_end)
+        if (next_field->km_field_type != ft_end)
         {
             strcat(sql, ", ");
         }
@@ -61,12 +61,12 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
     // 添加字段值
     current_field = sd->fields;
     strcat(sql, ") VALUES (");
-    while (current_field->field_type != ft_end)
+    while (current_field->km_field_type != ft_end)
     {
         uint8_t uuid[16];
         uint8_t str_uuid[16];
         uint8_t emptyArray[MAX_OWENER_LEN] = {0};
-        switch (current_field->field_type) // 按照描述解析和重排结构体
+        switch (current_field->km_field_type) // 按照描述解析和重排结构体
         {
             {
             case ft_uuid:
@@ -249,7 +249,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
         }
         next_field = current_field;
         next_field++; // 指向下一个描述域
-        if (next_field->field_type != ft_end)
+        if (next_field->km_field_type != ft_end)
         {
             strcat(sql, ", ");
         }
@@ -286,7 +286,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
 /**
  * @brief 根据字段类型返回对应的 SQL 类型字符串
  */
-const char *sql_type(enum field_type type)
+const char *sql_type(enum km_field_type type)
 {
     switch (type)
     {
@@ -312,7 +312,7 @@ const char *sql_type(enum field_type type)
  */
 l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const char *table_name, uint8_t *primary_key)
 {
-    const field_desc *current_field = sd->fields;
+    const km_field_desc *current_field = sd->fields;
 
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -331,9 +331,9 @@ l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const c
 
     // 根据描述，组装创建表的sql语句
     fprintf(stream, "CREATE TABLE IF NOT EXISTS %s (\n", table_name);
-    while (current_field->field_type != ft_end)
+    while (current_field->km_field_type != ft_end)
     {
-        fprintf(stream, "    %s %s", current_field->name, sql_type(current_field->field_type));
+        fprintf(stream, "    %s %s", current_field->name, sql_type(current_field->km_field_type));
         fprintf(stream, ",\n");
         current_field++;
     }

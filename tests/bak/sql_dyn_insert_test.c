@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum field_type
+enum km_field_type
 {
     /*
      * key management relevant
@@ -17,21 +17,21 @@ enum field_type
 };
 
 // 定义结构体描述字段
-typedef struct field_desc
+typedef struct km_field_desc
 { // struct field descriptor
-    enum field_type field_type;
+    enum km_field_type km_field_type;
     const int size; /* size, in bits, of field */
     const char *name;
     const void *desc; /*未使用： enum_names for enum or char *[] for bits */
-} field_desc;
+} km_field_desc;
 
 typedef struct struct_desc_s
 {
     const char *name;
-    struct field_desc *fields;
+    struct km_field_desc *fields;
 } struct_desc;
 
-static field_desc test_km_fields[] = {
+static km_field_desc test_km_fields[] = {
     // 密钥结构体字段描述
     {ft_uuid, 256, "id", NULL},
     {ft_enum, 64, "key_type", NULL},
@@ -65,7 +65,7 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
 {
     int maxSQLLength = 1024;
 
-    const field_desc *current_field = sd->fields;
+    const km_field_desc *current_field = sd->fields;
     // 分配内存存储 SQL 语句
     char *sql = (char *)malloc(maxSQLLength * sizeof(char));
     if (sql == NULL)
@@ -78,13 +78,13 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
     sprintf(sql, "INSERT INTO %s (", tableName);
 
     // 添加字段名
-    const field_desc *next_field;
-    while (current_field->field_type != ft_end)
+    const km_field_desc *next_field;
+    while (current_field->km_field_type != ft_end)
     {
         next_field = current_field;
         next_field++; // 指向下一个描述域
         strcat(sql, current_field->name);
-        if (next_field->field_type != ft_end)
+        if (next_field->km_field_type != ft_end)
         {
             strcat(sql, ", ");
         }
@@ -94,9 +94,9 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
     // 添加字段值
     current_field = sd->fields;
     strcat(sql, ") VALUES (");
-    while (current_field->field_type != ft_end)
+    while (current_field->km_field_type != ft_end)
     {
-        if (current_field->field_type == ft_uint16t)
+        if (current_field->km_field_type == ft_uint16t)
         {
             strcat(sql, current_field->name); // TODO: 根据类型决定拷贝什么和类型判断
         }
@@ -109,7 +109,7 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
 
         next_field = current_field;
         next_field++; // 指向下一个描述域
-        if (next_field->field_type != ft_end)
+        if (next_field->km_field_type != ft_end)
         {
             strcat(sql, ", ");
         }

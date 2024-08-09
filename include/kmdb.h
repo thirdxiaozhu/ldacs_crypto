@@ -14,7 +14,7 @@
 typedef struct struct_desc_s
 {
     const char *name;
-    struct field_desc *fields;
+    struct km_field_desc *fields;
 } struct_desc;
 
 /*
