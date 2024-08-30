@@ -84,6 +84,7 @@ typedef enum
     LD_ERR_KM_GET_HANDLE,         // 获取密钥句柄错误
     LD_ERR_KM_UPDATE_SESSIONKEY,  // 更新会话密钥错误
     LD_ERR_KM_INSTALL_KEY,        // 安装密钥错误
+    LD_ERR_KM_KEY_STATE,          // 密钥状态错误
 } l_km_err;
 
 #ifndef USE_GMSSL
@@ -206,9 +207,32 @@ l_km_err km_encrypt(
     uint8_t *cipher_data,
     uint32_t *cipher_data_len);
 
-// 国密解密（支持SM4_OFB/CFB/CBC/ECB）
+// 国密加密（支持SM4_OFB/CFB/CBC/ECB）
+l_km_err km_sym_encrypt(
+    const char *db_name,
+    const char *table_name,
+    const char *key_id,
+    uint32_t alg_id,
+    uint8_t *iv,
+    uint8_t *data,
+    uint32_t data_length,
+    uint8_t *cipher_data,
+    uint32_t *cipher_data_len);
+
 l_km_err km_decrypt(
     void *key_handle,
+    uint32_t alg_id,
+    uint8_t *iv,
+    uint8_t *cipher_data,
+    uint32_t cipher_data_len,
+    uint8_t *plain_data,
+    uint32_t *plain_data_len);
+
+// 国密解密（支持SM4_OFB/CFB/CBC/ECB）
+l_km_err km_sym_decrypt(
+    const char *db_name,
+    const char *table_name,
+    const char *key_id,
     uint32_t alg_id,
     uint8_t *iv,
     uint8_t *cipher_data,
@@ -244,6 +268,15 @@ l_km_err km_hmac(
 // sm3 hmac key长度要求为32byte
 l_km_err km_hmac_with_keyhandle(
     CCARD_HANDLE handle,
+    uint8_t *data,
+    uint32_t data_len,
+    uint8_t *hmac_value,
+    uint32_t *hmac_len);
+
+l_km_err km_sm3_hmac(
+    const char *db_name,
+    const char *table_name,
+    const char *key_id,
     uint8_t *data,
     uint32_t data_len,
     uint8_t *hmac_value,
@@ -358,9 +391,9 @@ l_km_err km_derive_key(
  * @return 是否执行成功
  */
 l_km_err get_handle_from_db(
-    uint8_t *db_name, 
-    uint8_t *table_name, 
-    uint8_t *id, 
+    uint8_t *db_name,
+    uint8_t *table_name,
+    uint8_t *id,
     CCARD_HANDLE *handle);
 
 /*************************************************************************
@@ -422,7 +455,7 @@ l_km_err km_install_key(
  *                      内部接口：业务逻辑-密钥存储                       *
  *************************************************************************/
 // 输入密钥包 获取密钥句柄
-l_km_err km_get_keyhandle(
+l_km_err km_getkeyhandle(
     struct KeyPkg *pkg,
     CCARD_HANDLE *key_handle);
 
@@ -501,6 +534,8 @@ enum KEY_TYPE str_to_ktype(
  */
 uint8_t *kstate_str(
     enum STATE state);
+
+enum STATE str_kstate(const uint8_t *state_str);
 
 /**
  * @brief 校验算法解析

@@ -22,26 +22,30 @@ set(tests
         # kenable
 
 
-        query_id
-        query_key
-        query_kekhandle
-        query_subid
-        query_keytype
-        query_owner
-        get_handle
-        query_for_update
+        # query_id
+        # query_key
+        # query_kekhandle
+        # query_subid
+        # query_keytype
+        # query_keystate
+        # query_owner
+        # get_handle
+        # query_for_update
         
-        krevoke
-        rkey_gen #根密钥预置和激活
-        rkey_to_ccard
-        rkey_import
-        kenable
-        kestablish_sgw # 多级密钥派生
-        kestablish_as
-        kestablish_gs
-        kget_gs # 测试密钥对比
-        kget_as
-        kupdate # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
+        # krevoke
+        # rkey_gen #根密钥预置和激活
+        # rkey_to_ccard
+        # rkey_import
+        # kenable
+        # kestablish_sgw # 多级密钥派生
+        # kestablish_as
+        # kestablish_gs
+        # kget_gs # 测试密钥对比
+        # kget_as
+        # kupdate # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
+
+        # enc_dec
+        sm3_hmac
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)

@@ -223,6 +223,18 @@ enum KEY_TYPE query_keytype(
     uint8_t *table_name,
     uint8_t *id);
 
+/**
+ * @brief 查询密钥状态
+ * @param[in] dbname
+ * @param[in] tablename
+ * @param[in] id
+ * @return 密钥状态
+ */
+enum STATE query_state(
+    uint8_t *db_name,
+    uint8_t *table_name,
+    uint8_t *id);
+
 /*
 ************************************************************************
 *                              修改                                    *

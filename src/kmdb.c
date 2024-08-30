@@ -458,15 +458,17 @@ QueryResult_for_kekhandle *query_kekhandle(uint8_t *db_name, uint8_t *table_name
     return result;
 }
 
-
 /**
  * @brief 释放 QueryResult_for_kekhandle 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_kekhandle 结构体的指针
  */
-void free_kekhandle_result(QueryResult_for_kekhandle *result) {
-    if (result != NULL) {
+void free_kekhandle_result(QueryResult_for_kekhandle *result)
+{
+    if (result != NULL)
+    {
         // 释放 iv 指向的内存
-        if (result->iv != NULL) {
+        if (result->iv != NULL)
+        {
             free(result->iv);
         }
 
@@ -586,14 +588,15 @@ void free_queryid_result(QueryResult_for_queryid *result)
 int query_callback_for_update(void *data, int argc, char **argv, char **azColName)
 {
     QueryResult_for_update *result = (QueryResult_for_update *)data;
-    
+
     // 假设查询返回的数据按顺序是 key_len, update_cycle, update_count
-    if (argc == 3) {
+    if (argc == 3)
+    {
         result->key_len = (uint16_t)atoi(argv[0]);
         result->update_cycle = (uint16_t)atoi(argv[1]);
         result->update_count = (uint16_t)atoi(argv[2]);
     }
-    
+
     return 0;
 }
 
@@ -604,20 +607,22 @@ int query_callback_for_update(void *data, int argc, char **argv, char **azColNam
  * @param[in] id 密钥id
  * @return 结构体：含密钥长度 更新周期
  */
-QueryResult_for_update* query_for_update(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+QueryResult_for_update *query_for_update(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
 {
-     sqlite3 *db;
+    sqlite3 *db;
     char *err_msg = NULL;
     QueryResult_for_update *result = (QueryResult_for_update *)malloc(sizeof(QueryResult_for_update));
-    
-    if (result == NULL) {
+
+    if (result == NULL)
+    {
         fprintf(stderr, "内存分配失败\n");
         return NULL;
     }
 
     // 打开数据库
     int rc = sqlite3_open((const char *)db_name, &db);
-    if (rc != SQLITE_OK) {
+    if (rc != SQLITE_OK)
+    {
         fprintf(stderr, "无法打开数据库: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
         free(result);
@@ -627,10 +632,11 @@ QueryResult_for_update* query_for_update(uint8_t *db_name, uint8_t *table_name, 
     // 准备 SQL 查询语句
     char sql[256];
     snprintf(sql, sizeof(sql), "SELECT key_len, updatecycle, update_count FROM %s WHERE id = '%s';", table_name, id);
-    
+
     // 执行 SQL 查询
     rc = sqlite3_exec(db, sql, query_callback_for_update, result, &err_msg);
-    if (rc != SQLITE_OK) {
+    if (rc != SQLITE_OK)
+    {
         fprintf(stderr, "SQL 查询失败: %s\n", err_msg);
         sqlite3_free(err_msg);
         sqlite3_close(db);
@@ -640,12 +646,14 @@ QueryResult_for_update* query_for_update(uint8_t *db_name, uint8_t *table_name, 
 
     // 关闭数据库
     sqlite3_close(db);
-    
+
     return result;
 }
 
-void free_update_result(QueryResult_for_update *result) {
-    if (result != NULL) {
+void free_update_result(QueryResult_for_update *result)
+{
+    if (result != NULL)
+    {
         // 释放结构体本身的内存
         free(result);
     }
@@ -865,10 +873,13 @@ QueryResult_for_keyvalue *query_keyvalue(uint8_t *db_name, uint8_t *table_name, 
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
  */
-void free_keyvalue_result(QueryResult_for_keyvalue *result) {
-    if (result != NULL) {
+void free_keyvalue_result(QueryResult_for_keyvalue *result)
+{
+    if (result != NULL)
+    {
         // 释放 key 指向的内存
-        if (result->key != NULL) {
+        if (result->key != NULL)
+        {
             free(result->key);
         }
 
@@ -876,8 +887,6 @@ void free_keyvalue_result(QueryResult_for_keyvalue *result) {
         free(result);
     }
 }
-
-
 
 // 查询密钥拥有者的函数接口
 QueryResult_for_owner *query_owner(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
@@ -947,15 +956,19 @@ QueryResult_for_owner *query_owner(uint8_t *db_name, uint8_t *table_name, uint8_
  * @brief 释放 QueryResult_for_owner 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_owner 结构体的指针
  */
-void free_owner_result(QueryResult_for_owner *result) {
-    if (result != NULL) {
+void free_owner_result(QueryResult_for_owner *result)
+{
+    if (result != NULL)
+    {
         // 释放 owner1 的内存
-        if (result->owner1 != NULL) {
+        if (result->owner1 != NULL)
+        {
             free(result->owner1);
         }
 
         // 释放 owner2 的内存
-        if (result->owner2 != NULL) {
+        if (result->owner2 != NULL)
+        {
             free(result->owner2);
         }
 
@@ -1156,6 +1169,57 @@ enum KEY_TYPE query_keytype(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
     free(sql);
 
     return key_type;
+}
+
+enum STATE query_state(uint8_t *db_name, uint8_t *table_name, uint8_t *id)
+{
+    sqlite3 *db;
+    sqlite3_stmt *stmt;
+    char *sql;
+    int rc;
+    enum STATE state = -1;
+
+    // 打开数据库连接
+    rc = sqlite3_open(db_name, &db);
+    if (rc)
+    {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return state;
+    }
+
+    // 构建查询语句
+    asprintf(&sql, "SELECT key_state FROM %s WHERE id='%s'", table_name, id);
+
+    // 准备查询
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK)
+    {
+        fprintf(stderr, "Failed to prepare statement: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        free(sql);
+        return state;
+    }
+
+    // 执行查询
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW)
+    {
+        const char *key_state_str = (const char *)sqlite3_column_text(stmt, 0);
+        if (key_state_str != NULL)
+        {
+            // 根据查询结果设置密钥类型枚举值
+            state = str_kstate(key_state_str);
+            // 可以根据实际情况继续添加其他密钥状态的判断
+        }
+    }
+
+    // 清理资源
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+    free(sql);
+
+    return state;
 }
 
 /**
