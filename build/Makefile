@@ -188,17 +188,238 @@ km_src_static/fast:
 .PHONY : km_src_static/fast
 
 #=============================================================================
-# Target rules for targets named sm3_hmactest
+# Target rules for targets named km_src_static_test
 
 # Build rule for target.
-sm3_hmactest: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 sm3_hmactest
-.PHONY : sm3_hmactest
+km_src_static_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 km_src_static_test
+.PHONY : km_src_static_test
 
 # fast build rule for target.
-sm3_hmactest/fast:
-	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/sm3_hmactest.dir/build.make tests/CMakeFiles/sm3_hmactest.dir/build
-.PHONY : sm3_hmactest/fast
+km_src_static_test/fast:
+	$(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/build
+.PHONY : km_src_static_test/fast
+
+#=============================================================================
+# Target rules for targets named query_idtest
+
+# Build rule for target.
+query_idtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 query_idtest
+.PHONY : query_idtest
+
+# fast build rule for target.
+query_idtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/query_idtest.dir/build.make tests/CMakeFiles/query_idtest.dir/build
+.PHONY : query_idtest/fast
+
+#=============================================================================
+# Target rules for targets named krevoketest
+
+# Build rule for target.
+krevoketest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 krevoketest
+.PHONY : krevoketest
+
+# fast build rule for target.
+krevoketest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/krevoketest.dir/build.make tests/CMakeFiles/krevoketest.dir/build
+.PHONY : krevoketest/fast
+
+#=============================================================================
+# Target rules for targets named rkey_gentest
+
+# Build rule for target.
+rkey_gentest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rkey_gentest
+.PHONY : rkey_gentest
+
+# fast build rule for target.
+rkey_gentest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_gentest.dir/build.make tests/CMakeFiles/rkey_gentest.dir/build
+.PHONY : rkey_gentest/fast
+
+#=============================================================================
+# Target rules for targets named rkey_to_ccardtest
+
+# Build rule for target.
+rkey_to_ccardtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rkey_to_ccardtest
+.PHONY : rkey_to_ccardtest
+
+# fast build rule for target.
+rkey_to_ccardtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_to_ccardtest.dir/build.make tests/CMakeFiles/rkey_to_ccardtest.dir/build
+.PHONY : rkey_to_ccardtest/fast
+
+#=============================================================================
+# Target rules for targets named rkey_importtest
+
+# Build rule for target.
+rkey_importtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rkey_importtest
+.PHONY : rkey_importtest
+
+# fast build rule for target.
+rkey_importtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/rkey_importtest.dir/build.make tests/CMakeFiles/rkey_importtest.dir/build
+.PHONY : rkey_importtest/fast
+
+#=============================================================================
+# Target rules for targets named kenabletest
+
+# Build rule for target.
+kenabletest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kenabletest
+.PHONY : kenabletest
+
+# fast build rule for target.
+kenabletest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kenabletest.dir/build.make tests/CMakeFiles/kenabletest.dir/build
+.PHONY : kenabletest/fast
+
+#=============================================================================
+# Target rules for targets named kestablish_sgwtest
+
+# Build rule for target.
+kestablish_sgwtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kestablish_sgwtest
+.PHONY : kestablish_sgwtest
+
+# fast build rule for target.
+kestablish_sgwtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_sgwtest.dir/build.make tests/CMakeFiles/kestablish_sgwtest.dir/build
+.PHONY : kestablish_sgwtest/fast
+
+#=============================================================================
+# Target rules for targets named kestablish_astest
+
+# Build rule for target.
+kestablish_astest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kestablish_astest
+.PHONY : kestablish_astest
+
+# fast build rule for target.
+kestablish_astest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_astest.dir/build.make tests/CMakeFiles/kestablish_astest.dir/build
+.PHONY : kestablish_astest/fast
+
+#=============================================================================
+# Target rules for targets named kestablish_gstest
+
+# Build rule for target.
+kestablish_gstest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kestablish_gstest
+.PHONY : kestablish_gstest
+
+# fast build rule for target.
+kestablish_gstest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kestablish_gstest.dir/build.make tests/CMakeFiles/kestablish_gstest.dir/build
+.PHONY : kestablish_gstest/fast
+
+#=============================================================================
+# Target rules for targets named kcomtest
+
+# Build rule for target.
+kcomtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kcomtest
+.PHONY : kcomtest
+
+# fast build rule for target.
+kcomtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kcomtest.dir/build.make tests/CMakeFiles/kcomtest.dir/build
+.PHONY : kcomtest/fast
+
+#=============================================================================
+# Target rules for targets named kcom_based_idtest
+
+# Build rule for target.
+kcom_based_idtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kcom_based_idtest
+.PHONY : kcom_based_idtest
+
+# fast build rule for target.
+kcom_based_idtest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kcom_based_idtest.dir/build.make tests/CMakeFiles/kcom_based_idtest.dir/build
+.PHONY : kcom_based_idtest/fast
+
+#=============================================================================
+# Target rules for targets named kupdatetest
+
+# Build rule for target.
+kupdatetest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kupdatetest
+.PHONY : kupdatetest
+
+# fast build rule for target.
+kupdatetest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdatetest.dir/build.make tests/CMakeFiles/kupdatetest.dir/build
+.PHONY : kupdatetest/fast
+
+#=============================================================================
+# Target rules for targets named kupdate_2test
+
+# Build rule for target.
+kupdate_2test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kupdate_2test
+.PHONY : kupdate_2test
+
+# fast build rule for target.
+kupdate_2test/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdate_2test.dir/build.make tests/CMakeFiles/kupdate_2test.dir/build
+.PHONY : kupdate_2test/fast
+
+#=============================================================================
+# Target rules for targets named kupdate_3test
+
+# Build rule for target.
+kupdate_3test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 kupdate_3test
+.PHONY : kupdate_3test
+
+# fast build rule for target.
+kupdate_3test/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/kupdate_3test.dir/build.make tests/CMakeFiles/kupdate_3test.dir/build
+.PHONY : kupdate_3test/fast
+
+#=============================================================================
+# Target rules for targets named xortest
+
+# Build rule for target.
+xortest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 xortest
+.PHONY : xortest
+
+# fast build rule for target.
+xortest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/xortest.dir/build.make tests/CMakeFiles/xortest.dir/build
+.PHONY : xortest/fast
+
+#=============================================================================
+# Target rules for targets named km_hmactest
+
+# Build rule for target.
+km_hmactest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 km_hmactest
+.PHONY : km_hmactest
+
+# fast build rule for target.
+km_hmactest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/km_hmactest.dir/build.make tests/CMakeFiles/km_hmactest.dir/build
+.PHONY : km_hmactest/fast
+
+#=============================================================================
+# Target rules for targets named asantest
+
+# Build rule for target.
+asantest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 asantest
+.PHONY : asantest
+
+# fast build rule for target.
+asantest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/asantest.dir/build.make tests/CMakeFiles/asantest.dir/build
+.PHONY : asantest/fast
 
 # Help Target
 help:
@@ -212,9 +433,26 @@ help:
 	@echo "... install/strip"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... asantest"
+	@echo "... kcom_based_idtest"
+	@echo "... kcomtest"
+	@echo "... kenabletest"
+	@echo "... kestablish_astest"
+	@echo "... kestablish_gstest"
+	@echo "... kestablish_sgwtest"
+	@echo "... km_hmactest"
 	@echo "... km_src"
 	@echo "... km_src_static"
-	@echo "... sm3_hmactest"
+	@echo "... km_src_static_test"
+	@echo "... krevoketest"
+	@echo "... kupdate_2test"
+	@echo "... kupdate_3test"
+	@echo "... kupdatetest"
+	@echo "... query_idtest"
+	@echo "... rkey_gentest"
+	@echo "... rkey_importtest"
+	@echo "... rkey_to_ccardtest"
+	@echo "... xortest"
 .PHONY : help
 
 

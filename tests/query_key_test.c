@@ -22,12 +22,14 @@ int main()
     uint8_t *sac_as = "Berry";
 
     // 查询密钥值
-    uint8_t *id = "e95050ac-08be-493a-85dc-4e6f37136f51";
+    uint8_t *id = "1b686bba-bc08-4b7e-ae00-adf169d109f3";
     printf("query keyvalue where id =  %s....\n", id);
     QueryResult_for_keyvalue *result = query_keyvalue(dbname, sgw_tablename, id);
     if (!result)
     {
         printf("Key not found or error occurred.\n");
     }
-    printbuff("key value", result->key, result->key_len);
+    printbuff("key value",result->key,result->key_len);
+    free_keyvalue_result(result);
+
 }

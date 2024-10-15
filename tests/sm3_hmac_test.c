@@ -30,27 +30,32 @@ int main()
 
     // 查询根密钥id
     QueryResult_for_queryid *qr_mk = query_id(db_name, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
-    if (qr_mk->count != 1)
+    do
     {
-        printf("Query rkid failed.\n");
-        return LD_ERR_KM_QUERY;
-    }
+        if (qr_mk->count != 1)
+        {
+            printf("Query rkid failed.\n");
+            break;
+        }
 
-    // 调用 HMAC 接口
-    l_km_err hmac_err = km_sm3_hmac(db_name, sgw_tablename, qr_mk->ids[0], data, data_len, hmac_value, &hmac_len);
-    if (hmac_err != LD_KM_OK)
-    {
-        printf("HMAC computation failed with error code: %d\n", hmac_err);
-        return 1;
-    }
+        // 调用 HMAC 接口
+        l_km_err hmac_err = km_sm3_hmac(db_name, sgw_tablename, qr_mk->ids[0], data, data_len, hmac_value, &hmac_len);
+        if (hmac_err != LD_KM_OK)
+        {
+            printf("HMAC computation failed with error code: %d\n", hmac_err);
+            break;
+        }
 
-    // 打印 HMAC 值
-    printf("HMAC value: ");
-    for (uint32_t i = 0; i < hmac_len; i++)
-    {
-        printf("%02x", hmac_value[i]);
-    }
-    printf("\n");
+        // 打印 HMAC 值
+        printf("HMAC value: ");
+        for (uint32_t i = 0; i < hmac_len; i++)
+        {
+            printf("%02x", hmac_value[i]);
+        }
+        printf("\n");
+    } while (0);
+
+    free_queryid_result(qr_mk);
 
     return 0;
 }

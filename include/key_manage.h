@@ -85,6 +85,9 @@ typedef enum
     LD_ERR_KM_UPDATE_SESSIONKEY,  // 更新会话密钥错误
     LD_ERR_KM_INSTALL_KEY,        // 安装密钥错误
     LD_ERR_KM_KEY_STATE,          // 密钥状态错误
+    LD_ERR_KM_CONVERT,            // 格式转换错误
+    LD_ERR_REVOKE_KEY,            // 密钥撤销错误
+    LD_ERR_KM_SGW_MK_UPDATE,      // 网关端密钥更新错误
 } l_km_err;
 
 #ifndef USE_GMSSL
@@ -399,12 +402,13 @@ l_km_err get_handle_from_db(
 /*************************************************************************
  *                      外部接口：业务逻辑-密钥更新                       *
  *************************************************************************/
+
 /**
- * @brief 外部接口：网关和AS端更新主密钥 KAS-GS
- * @param[in] sac_sgw 本地身份
- * @param[in] sac_gs_s 源GS标识
- * @param[in] sac_gs_t 目的GS标识
- * @param[in] sac_as   AS标识
+ * @brief 外部接口：AS端更新主密钥 KAS-GS
+ * @param[in] sgw_name sgw身份
+ * @param[in] gs_s_name 源GS标识
+ * @param[in] gs_t_name 目的GS标识
+ * @param[in] as_name   AS标识
  * @param[in] dbname   密钥库名
  * @param[in] tablename 密钥表名
  * @param[in] len_nonce 随机数长度
@@ -414,10 +418,28 @@ l_km_err get_handle_from_db(
 l_km_err km_update_masterkey(
     uint8_t *dbname,
     uint8_t *tablename,
-    uint8_t *sac_sgw,
-    uint8_t *sac_gs_s,
-    uint8_t *sac_gs_t,
-    uint8_t *sac_as,
+    uint8_t *sgw_name,
+    uint8_t *gs_s_name,
+    uint8_t *gs_t_name,
+    uint8_t *as_name,
+    uint16_t len_nonce,
+    uint8_t *nonce);
+
+/**
+ *  @brief 外部接口：网关端更新主密钥 KAS-GS
+ * @param[in] key_id 密钥id标识
+ * @param[in] gs_t_name 目的GS标识
+ * @param[in] dbname   密钥库名
+ * @param[in] tablename 密钥表名
+ * @param[in] len_nonce 随机数长度
+ * @param[in] nonce 随机数
+ */
+l_km_err sgw_update_master_key(
+    uint8_t *dbname,
+    uint8_t *tablename,
+    uint8_t *key_id,
+    uint8_t* sgw_name,
+    uint8_t *gs_t_name,
     uint16_t len_nonce,
     uint8_t *nonce);
 
@@ -438,16 +460,16 @@ l_km_err km_revoke_key(
  * @param[in] dbname   密钥库名
  * @param[in] tablename 密钥表名
  * @param[in] key 主密钥
- * @param[in] sac_as AS端标识
- * @param[in] sac_gs GS本地标识
+ * @param[in] as_name AS名称
+ * @param[in] gs_name GS名称
  */
 l_km_err km_install_key(
     uint8_t *dbname,
     uint8_t *tablename,
     uint32_t key_len,
     uint8_t *key,
-    uint8_t *sac_as,
-    uint8_t *sac_gs,
+    uint8_t *as_name,
+    uint8_t *gs_name,
     uint32_t nonce_len,
     uint8_t *nonce);
 

@@ -189,6 +189,20 @@ km_src_static/fast:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/build
 .PHONY : km_src_static/fast
 
+# Convenience name for target.
+src/CMakeFiles/km_src_static_test.dir/rule:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/CMakeFiles/km_src_static_test.dir/rule
+.PHONY : src/CMakeFiles/km_src_static_test.dir/rule
+
+# Convenience name for target.
+km_src_static_test: src/CMakeFiles/km_src_static_test.dir/rule
+.PHONY : km_src_static_test
+
+# fast build rule for target.
+km_src_static_test/fast:
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/build
+.PHONY : km_src_static_test/fast
+
 key_manage.o: key_manage.c.o
 .PHONY : key_manage.o
 
@@ -196,6 +210,7 @@ key_manage.o: key_manage.c.o
 key_manage.c.o:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/key_manage.c.o
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/key_manage.c.o
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/key_manage.c.o
 .PHONY : key_manage.c.o
 
 key_manage.i: key_manage.c.i
@@ -205,6 +220,7 @@ key_manage.i: key_manage.c.i
 key_manage.c.i:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/key_manage.c.i
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/key_manage.c.i
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/key_manage.c.i
 .PHONY : key_manage.c.i
 
 key_manage.s: key_manage.c.s
@@ -214,6 +230,7 @@ key_manage.s: key_manage.c.s
 key_manage.c.s:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/key_manage.c.s
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/key_manage.c.s
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/key_manage.c.s
 .PHONY : key_manage.c.s
 
 kmdb.o: kmdb.c.o
@@ -223,6 +240,7 @@ kmdb.o: kmdb.c.o
 kmdb.c.o:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/kmdb.c.o
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/kmdb.c.o
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/kmdb.c.o
 .PHONY : kmdb.c.o
 
 kmdb.i: kmdb.c.i
@@ -232,6 +250,7 @@ kmdb.i: kmdb.c.i
 kmdb.c.i:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/kmdb.c.i
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/kmdb.c.i
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/kmdb.c.i
 .PHONY : kmdb.c.i
 
 kmdb.s: kmdb.c.s
@@ -241,6 +260,7 @@ kmdb.s: kmdb.c.s
 kmdb.c.s:
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src.dir/build.make src/CMakeFiles/km_src.dir/kmdb.c.s
 	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static.dir/build.make src/CMakeFiles/km_src_static.dir/kmdb.c.s
+	cd /home/wencheng/crypto/key_management/build && $(MAKE) $(MAKESILENT) -f src/CMakeFiles/km_src_static_test.dir/build.make src/CMakeFiles/km_src_static_test.dir/kmdb.c.s
 .PHONY : kmdb.c.s
 
 # Help Target
@@ -257,6 +277,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... km_src"
 	@echo "... km_src_static"
+	@echo "... km_src_static_test"
 	@echo "... key_manage.o"
 	@echo "... key_manage.i"
 	@echo "... key_manage.s"

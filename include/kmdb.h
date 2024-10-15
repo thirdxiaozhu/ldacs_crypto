@@ -11,10 +11,10 @@
 
 #define MAX_ID_LEN 128
 
-typedef struct struct_desc_s
+typedef struct struct_desc_s // 密钥描述结构体
 {
-    const char *name;
-    struct km_field_desc *fields;
+    const char *name;             // 结构体名称
+    struct km_field_desc *fields; // 描述字段
 } struct_desc;
 
 /*

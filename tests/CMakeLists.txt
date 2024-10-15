@@ -19,10 +19,9 @@ set(tests
         # prehandle
         # kderive
         # query_key
-        # kenable
 
 
-        # query_id
+        query_id
         # query_key
         # query_kekhandle
         # query_subid
@@ -32,20 +31,26 @@ set(tests
         # get_handle
         # query_for_update
         
-        # krevoke
-        # rkey_gen #根密钥预置和激活
-        # rkey_to_ccard
-        # rkey_import
-        # kenable
-        # kestablish_sgw # 多级密钥派生
-        # kestablish_as
-        # kestablish_gs
-        # kget_gs # 测试密钥对比
+        krevoke
+        rkey_gen #根密钥预置和激活
+        rkey_to_ccard
+        rkey_import
+        kenable
+        kestablish_sgw # 多级密钥派生
+        kestablish_as
+        kestablish_gs
+        # kget_gs 
         # kget_as
-        # kupdate # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
-
+        kcom # 测试密钥对比
+        kcom_based_id
+        kupdate # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
+        kupdate_2
+        kupdate_3 # 新增sgw的密钥更新接口
+        xor # 抑或测试
         # enc_dec
-        sm3_hmac
+        # sm3_hmac
+        km_hmac
+        asan
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
@@ -59,8 +64,10 @@ foreach (name ${tests})
     IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
         target_link_libraries(${name}test LINK_PUBLIC sdf)
     ELSE ()
-        target_link_libraries(${name}test LINK_PUBLIC piico_ccu)
+        target_link_libraries(${name}test LINK_PUBLIC piico_ccu )
     ENDIF ()
 
 endforeach ()
+
+
 

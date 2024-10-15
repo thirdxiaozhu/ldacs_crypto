@@ -23,10 +23,18 @@ int main()
     uint8_t *sac_gs_t = "GSt";
     uint8_t *sac_as = "Berry";
     enum KEY_TYPE key_type = MASTER_KEY_AS_GS; // Assume KEY_TYPE is defined somewhere
-    enum STATE state = ACTIVE;
+    enum STATE state = SUSPENDED;
 
     // 调用 query_id 函数
-    QueryResult_for_queryid *result = query_id(db_name, sgw_tablename, sac_as, sac_gs_t, key_type, state);
+    QueryResult_for_queryid *result = query_id(db_name, sgw_tablename, sac_as, sac_gs_s, key_type, state);
+    if (result->count == 0)
+    {
+        printf("Query mkid failed, null id.\n");
+    }
+    else if (result->count > 1) // TODO: check ununique id
+    {
+        printf("Query mkid failed, id is not unique.\n");
+    }
 
     // 处理查询结果
     if (result != NULL)
@@ -36,12 +44,11 @@ int main()
             printf("ID: %s\n", result->ids[i]);
         }
         // 释放查询结果
-        free_queryid_result(result);
     }
     else
     {
         printf("No results found or query failed.\n");
     }
-
+    free_queryid_result(result);
     return 0;
 }

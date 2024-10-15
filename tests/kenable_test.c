@@ -2,6 +2,45 @@
 #include "kmdb.h"
 #include "key_manage.h"
 
+int activate_key(const char *dbname, const char *tablename, const char *name1, const char *name2, enum KEY_TYPE key_type)
+{
+    QueryResult_for_queryid *query_result = NULL;
+    int ret = LD_KM_OK;
+
+    query_result = query_id(dbname, tablename, name1, name2, key_type, PRE_ACTIVATION);
+    if (query_result == NULL)
+    {
+        printf("query failed.\n");
+        ret = LD_ERR_KM_QUERY;
+        goto clean_up;
+    }
+
+    if (query_result->count == 0)
+    {
+        printf("query result count is 0.\n");
+        ret = LD_ERR_KM_QUERY;
+        goto clean_up;
+    }
+
+    if (enable_key(dbname, tablename, query_result->ids[0]) != LD_KM_OK)
+    {
+        printf("enable key failed\n");
+        ret = LD_ERR_KEY;
+        goto clean_up;
+    }
+    else
+    {
+        printf("enable key OK\n");
+    }
+
+clean_up:
+    if (query_result != NULL)
+    {
+        free_queryid_result(query_result);
+    }
+    return ret;
+}
+
 int main()
 {
     const char *dbname = "keystore.db";
@@ -12,36 +51,16 @@ int main()
     enum KEY_TYPE key_type = ROOT_KEY;
 
     // 激活sgw端根密钥
-    QueryResult_for_queryid* query_result = query_id(dbname, sgw_tablename, as_name, sgw_name, key_type, PRE_ACTIVATION);
-    if (query_result != NULL)
+    if (activate_key(dbname, sgw_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
     {
-        if (enable_key(dbname, sgw_tablename, query_result->ids[0]) != LD_KM_OK)
-        {
-            printf("enable key failed\n");
-        }
+        return LD_ERR_KM_QUERY;
     }
-    else
-    {
-        printf("query failed. query count %d\n", query_result->count);
-        return LD_ERR_KM_QUERY; // 查询失败
-    }
-    printf("enable sgw root key OK\n");
 
     // 激活as端根密钥
-    QueryResult_for_queryid* query_result_as = query_id(dbname, as_tablename, as_name, sgw_name, key_type, PRE_ACTIVATION);
-    if (query_result_as != NULL)
+    if (activate_key(dbname, as_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
     {
-        if (enable_key(dbname, as_tablename, query_result_as->ids[0]) != LD_KM_OK)
-        {
-            printf("enable key failed\n");
-        }
+        return LD_ERR_KM_QUERY;
     }
-    else
-    {
-        printf("query failed. query count %d\n", query_result_as->count);
-        return LD_ERR_KM_QUERY; // 查询失败
-    }
-    printf("enable as root key OK\n");
 
     return 0;
 }

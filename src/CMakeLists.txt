@@ -22,9 +22,13 @@ set(SOURCES
     key_manage.c 
     kmdb.c
 )
+
+# 创建库
 add_library(km_src SHARED ${SOURCES})   # 生成共享库
 add_library(km_src_static STATIC ${SOURCES})  # 生成静态库
+add_library(km_src_static_test STATIC ${SOURCES})  # 生成静态库
 
+# 包含和链接目录
 target_include_directories(km_src PUBLIC /usr/local/include/ldacs)
 target_link_directories(km_src PUBLIC /usr/local/lib/ldacs)
 target_link_libraries(km_src LINK_PUBLIC ldacsutilcore)
@@ -40,7 +44,6 @@ ENDIF ()
 IF (${IS_USE_GMSSL})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC gmssl sqlite3)
 ENDIF ()
-
 
 # 设置安装路径
 # install(TARGETS km_src DESTINATION ${CMAKE_SOURCE_DIR}/build) #指定安装共享库的目标路径
