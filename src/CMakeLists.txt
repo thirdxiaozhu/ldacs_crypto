@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.18)
 project(km_src C)
 
 set(CMAKE_C_STANDARD 99)
@@ -19,8 +19,8 @@ ELSE ()
 ENDIF ()
 
 set(SOURCES
-    key_manage.c 
-    kmdb.c
+        key_manage.c
+        kmdb.c
 )
 
 # 创建库
@@ -36,7 +36,7 @@ target_link_libraries(km_src LINK_PUBLIC ldacsutilcore)
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC pthread uuid sqlite3)
 
 IF (${IS_USE_SDF})
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf sqlite3)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf sqlite3 ldacsutilcore)
 ENDIF ()
 IF (${IS_USE_PIICO})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccu sqlite3)

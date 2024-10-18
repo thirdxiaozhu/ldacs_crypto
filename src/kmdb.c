@@ -374,7 +374,7 @@ QueryResult_for_kekhandle *query_kekhandle(uint8_t *db_name, uint8_t *table_name
 
     // 构建查询语句
     char *sql_query = NULL;
-    sprintf(&sql_query, "SELECT kek_len, kek_cipher, iv_len, iv FROM %s WHERE id='%s'", table_name, id);
+    asprintf(&sql_query, "SELECT kek_len, kek_cipher, iv_len, iv FROM %s WHERE id='%s'", table_name, id);
 
     rc = sqlite3_exec(db, sql_query, query_callback_for_kekhandle, result, &zErrMsg);
     free(sql_query);
@@ -943,13 +943,16 @@ void free_owner_result(QueryResult_for_owner *result) {
             free(result->owner1);
         }
 
+
         // 释放 owner2 的内存
         if (result->owner2 != NULL) {
             free(result->owner2);
         }
 
+
         // 释放结构体本身的内存
         free(result);
+
     }
 }
 
@@ -1092,7 +1095,7 @@ enum KEY_TYPE query_keytype(uint8_t *db_name, uint8_t *table_name, uint8_t *id) 
     }
 
     // 构建查询语句
-    sprintf(&sql, "SELECT key_type FROM %s WHERE id='%s'", table_name, id);
+    asprintf(&sql, "SELECT key_type FROM %s WHERE id='%s'", table_name, id);
 
     // 准备查询
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
@@ -1138,7 +1141,7 @@ enum STATE query_state(uint8_t *db_name, uint8_t *table_name, uint8_t *id) {
     }
 
     // 构建查询语句
-    sprintf(&sql, "SELECT key_state FROM %s WHERE id='%s'", table_name, id);
+    asprintf(&sql, "SELECT key_state FROM %s WHERE id='%s'", table_name, id);
 
     // 准备查询
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);

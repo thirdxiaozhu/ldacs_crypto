@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.18)
 project(km_test C)
 
 set(CMAKE_C_STANDARD 99)
@@ -30,7 +30,7 @@ set(tests
         # query_owner
         # get_handle
         # query_for_update
-        
+
         krevoke
         rkey_gen #根密钥预置和激活
         rkey_to_ccard
@@ -64,7 +64,7 @@ foreach (name ${tests})
     IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
         target_link_libraries(${name}test LINK_PUBLIC sdf)
     ELSE ()
-        target_link_libraries(${name}test LINK_PUBLIC piico_ccu )
+        target_link_libraries(${name}test LINK_PUBLIC piico_ccu)
     ENDIF ()
 
 endforeach ()
