@@ -10,11 +10,7 @@
 #include <string.h>
 #include <uuid/uuid.h>
 #include <ldacs/ldacs_sim/ldacs_def.h>
-
-// 暂时之计
-#include <sdf/libsdf.h>
-#include <sdfkmt/sdfe-func.h>
-#include <sdfkmt/sdfe-type.h>
+#include "km.h"
 
 /*
 ************************************************************************

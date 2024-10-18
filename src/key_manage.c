@@ -10,18 +10,6 @@
 #include "kmdb.h"
 #include "km_field.h"
 
-#ifndef USE_GMSSL
-#ifdef USE_SDF
-
-#include <sdf/libsdf.h>
-#include <sdfkmt/sdfe-func.h>
-#include <sdfkmt/sdfe-type.h>
-
-#elif USE_PIICO
-#include <piico_pc/api.h>
-#include <piico_pc/piico_define.h>
-#include <piico_pc/piico_error.h>
-#endif
 
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
@@ -2683,5 +2671,3 @@ l_km_err km_get_rootkey_handle(CCARD_HANDLE *rootkey_handle, const char *filepat
     return LD_KM_OK;
 }
 */
-
-#endif
