@@ -25,7 +25,7 @@ typedef struct struct_desc_s
 /****************创建表*****************/
 /**
  * @brief 外部接口：基于描述创建密钥表
- * @param sd 理想的数据表描述
+ * @param[in] sd 理想的数据表描述
  * @param[in] db_name 数据库名
  * @param[in] table_name 表名
  * @param[in] primary_key 主键
@@ -41,8 +41,10 @@ l_km_err create_table_if_not_exist(
 
 /**
  * @bref 存储密钥：按照描述编码和组装结构体 插入指定数据库表
- * @param pkg 密钥结构体
- * @param sd 结构体描述
+ * @param[in] db_name 数据库名
+ * @param[in] table_name 表名
+ * @param[in] pkg 密钥结构体
+ * @param[in] sd 结构体描述
  * @return 是否执行成功
  */
 l_km_err store_key(
@@ -65,13 +67,21 @@ typedef struct
 } QueryResult_for_queryid;
 
 /**
- * @bref 外部接口:基于所有者和密钥类型查询密钥
- * @param key_type 密钥类型
- * @param owner1 所有者
- * @param owner2 所有者
- * @return id:密钥标识，NULL :未查询到结果
+ * @brief 外部接口:基于所有者和密钥类型查询密钥
  *
+ * 此函数用于根据提供的数据库名、表名、所有者以及密钥类型来查询密钥。
+ *
+ *@param[in] db_name指定要查询的数据库。
+ *@param[in] table_name指定要查询的表。
+ *@param[in] owner1 所有者
+ *@param[in] owner2 所有者
+ *@param[in] key_type 密钥类型
+ *@param[in] state 密钥状态
+ *
+ * @return 返回一个指向QueryResult_for_queryid结构的指针，该结构包含查询结果。
+ *         如果未查询到结果，则相关字段将被设置为NULL。
  */
+
 QueryResult_for_queryid *query_id(
     const char *db_name,
     const char *table_name,
@@ -171,7 +181,7 @@ typedef struct
  * @bref 查询密钥拥有者
  * @param[in] dbname
  * @param[in] tablename
- * @param id 密钥编号
+ * @param[in] id 密钥编号
  * @return 密钥所有者
  *
  */
@@ -198,7 +208,6 @@ typedef struct
  * @param[in] dbname
  * @param[in] tablename
  * @param[in] id 密钥id
- * @param[in] key_type 密钥类型
  * @return 子密钥id
  */
 QueryResult_for_subkey *query_subkey(
