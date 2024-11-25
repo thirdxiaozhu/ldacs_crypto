@@ -49,7 +49,7 @@ set(tests
         # xor # 抑或测试
         # enc_dec
         # sm3_hmac
-        # km_hmac
+        km_hmac
         # asan
         rand_db # 测试 密钥库随机数存取
         delete_keyvalue

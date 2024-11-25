@@ -26,7 +26,7 @@ target_link_libraries(${PROJECT_NAME} LINK_PUBLIC yaml cjson base64 statemachine
 # 选择适配的密码卡
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf ldacsutils)
+    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf)
     option(USE_SDF "Enable SDF" ON)
 ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccmu)
