@@ -29,13 +29,19 @@ typedef struct struct_desc_s
  * @param[in] db_name 数据库名
  * @param[in] table_name 表名
  * @param[in] primary_key 主键
+ * @param[in] foreign_table 外键表 可以为空
+ * @param[in] foreign_key 外键 可以为空
+ * @param[in] is_auto_increase 是否自增
  * @return 处理结果:成功/失败
  */
 l_km_err create_table_if_not_exist(
     struct_desc *sd,
     const char *db_name,
     const char *table_name,
-    uint8_t *primary_key);
+    uint8_t *primary_key,
+    const char* foreign_table,
+    uint8_t* foreign_key,
+    bool is_auto_increase);
 
 /*************存储密钥*****************/
 
@@ -52,6 +58,22 @@ l_km_err store_key(
     const char *table_name,
     struct KeyPkg *pkg,
     struct_desc *sd);
+
+/**
+ * @bref 存储随机数：为指定密钥存储用于密钥派生的随机数
+ * @param[in] db_name 数据库名
+ * @param[in] table_name 表名
+ * @param[in] id 密钥id
+ * @param[in] rand_len 随机数长度
+ * @param[in] rand 随机数
+ * @return 是否执行成功
+ */
+l_km_err store_rand(
+    const char *db_name,
+    const char *table_name,
+    uint8_t* id,
+    uint32_t rand_len,
+    uint8_t* rand);
 
 /*
 ************************************************************************
@@ -115,6 +137,7 @@ QueryResult_for_keyvalue *query_keyvalue(
     uint8_t *table_name,
     uint8_t *id);
 
+
 /**
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
@@ -122,6 +145,32 @@ QueryResult_for_keyvalue *query_keyvalue(
 void free_keyvalue_result(
     QueryResult_for_keyvalue *result);
 
+// 结构体用于查询随机数
+typedef struct
+{
+    int rand_len;  // 密钥长度
+    uint8_t *rand; // 密钥值（明文）
+} QueryResult_for_rand;
+
+/**
+ * @bref 外部接口：查询随机数
+ * @param[in] dbname
+ * @param[in] tablename
+ * @param[in] key_id 密钥编号
+ * @return 随机数及长度
+ *
+ */
+QueryResult_for_rand *query_rand(
+    const char *db_name,
+    const char *table_name,
+    const char *key_id);
+
+/**
+ * @brief 释放 QueryResult_for_rand 结构体所占用的内存
+ * @param[in] result 指向 QueryResult_for_rand 结构体的指针
+ */
+void free_rand_result(
+    QueryResult_for_rand *result);
 /******************** 查询kek**************************/
 
 typedef struct
@@ -167,6 +216,20 @@ QueryResult_for_update *query_for_update(
 
 void free_update_result(
     QueryResult_for_update *result);
+
+// 优化：查询密钥长度
+/**
+ * @bref 查询密钥长度
+ * @param[in] dbname
+ * @param[in] tablename
+ * @param[in] id 密钥编号
+ * @return 密钥长度
+ *
+ */
+uint32_t query_keylen(
+    uint8_t *db_name,
+    uint8_t *table_name,
+    uint8_t *id);
 
 /**************查询所有者*****************/
 

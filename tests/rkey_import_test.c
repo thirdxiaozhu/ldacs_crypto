@@ -19,7 +19,7 @@ int main()
     const char *rkey_filename_in_ccard = "rootkey.bin";
     if (km_rkey_import(dbname, as_tablename, rkey_filename_in_ccard) != LD_KM_OK)
     {
-        printf("root key import failed\n");
+        log_warn("root key import failed\n");
         return -1;
     }
     return 0;

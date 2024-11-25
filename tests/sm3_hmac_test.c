@@ -34,7 +34,7 @@ int main()
     {
         if (qr_mk->count != 1)
         {
-            printf("Query rkid failed.\n");
+            log_warn("Query rkid failed.\n");
             break;
         }
 
@@ -42,17 +42,17 @@ int main()
         l_km_err hmac_err = km_sm3_hmac(db_name, sgw_tablename, qr_mk->ids[0], data, data_len, hmac_value, &hmac_len);
         if (hmac_err != LD_KM_OK)
         {
-            printf("HMAC computation failed with error code: %d\n", hmac_err);
+            log_warn("HMAC computation failed with error code: %d\n", hmac_err);
             break;
         }
 
         // 打印 HMAC 值
-        printf("HMAC value: ");
+        log_warn("HMAC value: ");
         for (uint32_t i = 0; i < hmac_len; i++)
         {
-            printf("%02x", hmac_value[i]);
+            log_warn("%02x", hmac_value[i]);
         }
-        printf("\n");
+        log_warn("\n");
     } while (0);
 
     free_queryid_result(qr_mk);

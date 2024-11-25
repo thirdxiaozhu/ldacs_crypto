@@ -26,16 +26,16 @@ int main()
     {
         if (qr == NULL)
         {
-            printf("Query failed.\n");
+            log_warn("Query failed.\n");
             break;
         }
 
         if (km_revoke_key(dbname, sgw_tablename, qr->ids[0]) != LD_KM_OK)
         {
-            printf("key %s revoke failed\n", qr->ids[0]);
+            log_warn("key %s revoke failed\n", qr->ids[0]);
             break;
         }
-        printf("revoke %s %s and it's subkey OK\n", ktype_str(type), qr->ids[0]);
+        log_warn("revoke %s %s and it's subkey OK\n", ktype_str(type), qr->ids[0]);
     } while (0);
 
     free_queryid_result(qr);

@@ -6,8 +6,7 @@
 #include "key_manage.h"
 #include "kmdb.h"
 
-int main()
-{
+int main() {
     uint8_t *dbname = "keystore.db";
     uint8_t *as_tablename = "as_keystore";
     uint8_t *gs_s_tablename = "gs_s_keystore";
@@ -22,20 +21,18 @@ int main()
     uint8_t *sac_as = "Berry";
 
     enum KEY_TYPE type = MASTER_KEY_AS_SGW;
-    QueryResult_for_queryid* qr_sk = query_id(dbname, as_tablename, sac_as, sac_sgw, type, ACTIVE);
-    if (qr_sk == NULL)
-    {
-        printf("Query rkid failed.\n");
+    QueryResult_for_queryid *qr_sk = query_id(dbname, as_tablename, sac_as, sac_sgw, type, ACTIVE);
+    if (qr_sk == NULL) {
+        log_warn("Query rkid failed.\n");
         return LD_ERR_KM_QUERY;
     }
-    printf("id %s\n", qr_sk->ids[0]);
+    log_warn("id %s\n", qr_sk->ids[0]);
 
-    QueryResult_for_keyvalue* result = query_keyvalue(dbname, as_tablename, qr_sk->ids[0]);
-    if (!result)
-    {
-        printf("Key not found or error occurred.\n");
+    QueryResult_for_keyvalue *result = query_keyvalue(dbname, as_tablename, qr_sk->ids[0]);
+    if (!result) {
+        log_warn("Key not found or error occurred.\n");
         return LD_ERR_KM_QUERY;
     }
-    printf("%s ", ktype_str(type));
-    printbuff("value ", result->key, result->key_len);
+    log_warn("%s ", ktype_str(type));
+    //printbuff("value ", result->key, result->key_len);
 }

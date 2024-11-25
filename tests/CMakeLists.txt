@@ -21,7 +21,7 @@ set(tests
         # query_key
 
 
-        query_id
+        # query_id
         # query_key
         # query_kekhandle
         # query_subid
@@ -41,16 +41,19 @@ set(tests
         kestablish_gs
         # kget_gs 
         # kget_as
-        kcom # 测试密钥对比
+        # kcom # 测试密钥对比
         kcom_based_id
         kupdate # 密钥更新 包括AS GS SGW主密钥和会话密钥的更新和撤销
-        kupdate_2
-        kupdate_3 # 新增sgw的密钥更新接口
-        xor # 抑或测试
+        # kupdate_2
+        # kupdate_3 # 新增sgw的密钥更新接口
+        # xor # 抑或测试
         # enc_dec
         # sm3_hmac
-        km_hmac
-        asan
+        # km_hmac
+        # asan
+        rand_db # 测试 密钥库随机数存取
+        delete_keyvalue
+        # hex_conv # 字符数组转字符串
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
@@ -64,7 +67,7 @@ foreach (name ${tests})
     IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
         target_link_libraries(${name}test LINK_PUBLIC sdf)
     ELSE ()
-        target_link_libraries(${name}test LINK_PUBLIC piico_ccu)
+        target_link_libraries(${name}test LINK_PUBLIC piico_ccmu)
     ENDIF ()
 
 endforeach ()

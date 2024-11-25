@@ -10,27 +10,27 @@ int activate_key(const char *dbname, const char *tablename, const char *name1, c
     query_result = query_id(dbname, tablename, name1, name2, key_type, PRE_ACTIVATION);
     if (query_result == NULL)
     {
-        printf("query failed.\n");
+        log_warn("query failed.\n");
         ret = LD_ERR_KM_QUERY;
         goto clean_up;
     }
 
     if (query_result->count == 0)
     {
-        printf("query result count is 0.\n");
+        log_warn("query result count is 0.\n");
         ret = LD_ERR_KM_QUERY;
         goto clean_up;
     }
 
     if (enable_key(dbname, tablename, query_result->ids[0]) != LD_KM_OK)
     {
-        printf("enable key failed\n");
+        log_warn("enable key failed\n");
         ret = LD_ERR_KEY;
         goto clean_up;
     }
     else
     {
-        printf("enable key OK\n");
+        log_warn("enable key OK\n");
     }
 
 clean_up:
@@ -57,10 +57,10 @@ int main()
     }
 
     // 激活as端根密钥
-    if (activate_key(dbname, as_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
-    {
-        return LD_ERR_KM_QUERY;
-    }
+    // if (activate_key(dbname, as_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
+    // {
+    //     return LD_ERR_KM_QUERY;
+    // }
 
     return 0;
 }

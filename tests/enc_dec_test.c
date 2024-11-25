@@ -25,7 +25,7 @@ int main()
     QueryResult_for_queryid *qr_mk = query_id(db_name, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
     if (qr_mk->count != 1)
     {
-        printf("Query rkid failed.\n");
+        log_warn("Query rkid failed.\n");
         return LD_ERR_KM_QUERY;
     }
 
@@ -44,7 +44,7 @@ int main()
     l_km_err encrypt_err = km_sym_encrypt(db_name, sgw_tablename, qr_mk->ids[0], alg_id, iv_enc, data, data_length, cipher_data, &cipher_data_len);
     if (encrypt_err != LD_KM_OK)
     {
-        printf("Encryption failed with error code: %d\n", encrypt_err);
+        log_warn("Encryption failed with error code: %d\n", encrypt_err);
         return 1;
     }
 
@@ -52,21 +52,21 @@ int main()
     l_km_err decrypt_err = km_sym_decrypt(db_name, sgw_tablename, qr_mk->ids[0], alg_id, iv_dec, cipher_data, cipher_data_len, plain_data, &plain_data_len);
     if (decrypt_err != LD_KM_OK)
     {
-        printf("Decryption failed with error code: %d\n", decrypt_err);
+        log_warn("Decryption failed with error code: %d\n", decrypt_err);
         return 1;
     }
 
     // 输出解密后的数据
-    printf("Decrypted data: %.*s\n", plain_data_len, plain_data);
+    log_warn("Decrypted data: %.*s\n", plain_data_len, plain_data);
 
     // 检查解密后的数据是否与原始数据相同
     if (data_length == plain_data_len && memcmp(data, plain_data, data_length) == 0)
     {
-        printf("Encryption and decryption succeeded.\n");
+        log_warn("Encryption and decryption succeeded.\n");
     }
     else
     {
-        printf("Decryption did not produce the original data.\n");
+        log_warn("Decryption did not produce the original data.\n");
     }
 
     return 0;

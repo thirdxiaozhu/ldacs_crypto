@@ -5,7 +5,7 @@ DELETE FROM gs_t_keystore;
 
 
 
-select id,key_type,key_state,owner1,owner2,key_cipher from sgw_keystore;
+select id,key_type,key_state,owner1,owner2,key_cipher,key_len from sgw_keystore;
 select id,key_type,key_state,owner1,owner2,key_cipher from as_keystore;
 select id,key_type,key_state,owner1,owner2,key_cipher from gs_s_keystore;
 select id,key_type,key_state,owner1,owner2,key_cipher from gs_t_keystore;
