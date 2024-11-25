@@ -12,6 +12,8 @@
 
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
+
+#ifndef USE_GMSSL
 // 用于创建随机数种子索引表时的描述
 static km_field_desc km_create_randseeds_table_fields[] = {
     // 密钥结构体字段描述
@@ -2823,6 +2825,8 @@ int bytes_to_hex_str(uint8_t *buff, uint16_t len, char *hex_str, uint16_t hex_st
 
     return 0; // 成功
 }
+
+#endif
 
 /*
 //

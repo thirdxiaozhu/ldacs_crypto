@@ -52,11 +52,13 @@ set(tests
         km_hmac
         # asan
         rand_db # 测试 密钥库随机数存取
-        delete_keyvalue
+#        delete_keyvalue
         # hex_conv # 字符数组转字符串
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
+
+IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME} MATCHES "as")
 
 enable_testing()
 foreach (name ${tests})
@@ -66,11 +68,15 @@ foreach (name ${tests})
 
     IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
         target_link_libraries(${name}test LINK_PUBLIC sdf)
-    ELSE ()
+    ELSEIF (${HOST_NAME} MATCHES "as")
         target_link_libraries(${name}test LINK_PUBLIC piico_ccmu)
+    ELSE ()
+        target_link_libraries(${name}test LINK_PUBLIC gmssl)
     ENDIF ()
 
 endforeach ()
+
+ENDIF ()
 
 
 

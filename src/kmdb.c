@@ -19,6 +19,8 @@
 #define MAX_QUERY_RESULT_LENGTH 512
 #define SQL_QUERY_SIZE 512
 
+#ifndef USE_GMSSL
+
 /**
  * @brief 根据字段类型返回对应的 SQL 类型字符串
  */
@@ -1678,3 +1680,4 @@ l_km_err alter_keyvalue(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint
 
     return LD_KM_OK;
 }
+#endif

@@ -86,7 +86,6 @@ typedef enum {
     LD_ERR_KM_SGW_MK_UPDATE,      // 网关端密钥更新错误
 } l_km_err;
 
-#ifndef USE_GMSSL
 // 密钥类型
 enum KEY_TYPE {
     /* 根密钥和主密钥 */
@@ -628,5 +627,4 @@ enum STATE str_kstate(const uint8_t *state_str);
 uint8_t *chck_algo_str(
         uint16_t chck_algo);
 
-#endif
 #endif
