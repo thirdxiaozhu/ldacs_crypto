@@ -19,7 +19,7 @@ add_library(km_src STATIC ${SOURCES})   # 生成共享库
 # 包含和链接目录
 target_include_directories(km_src PUBLIC /usr/local/include/ldacs)
 target_link_directories(km_src PUBLIC /usr/local/lib/ldacs)
-target_link_libraries(km_src LINK_PUBLIC ldacsutilcore)
+target_link_libraries(km_src LINK_PUBLIC ldacsutils)
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC yaml cjson base64 statemachine event event_pthreads pthread uuid sqlite3)
 
