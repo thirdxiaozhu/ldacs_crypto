@@ -765,6 +765,30 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename)
     return LD_KM_OK;
 }
 
+
+// 密码卡内删除文件
+l_km_err km_delete_ccard_file(const char *filename)
+{
+    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    SDF_OpenDevice(&DeviceHandle);                  // 打开设备
+    SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
+
+    // 调用实际的文件创建函数
+    int deteteFileResult = SDF_DeleteFile(pSessionHandle, (unsigned char *)filename, strlen(filename));
+
+    // 检查函数调用结果
+    if (deteteFileResult != SDR_OK)
+    {
+        log_warn("Error in creating cryptocard file %s, return %08x\n", filename, deteteFileResult);
+        return LD_ERR_KM_DELETE_FILE; // 返回定义的错误代码
+    }
+
+    SDF_CloseSession(pSessionHandle); // 关闭会话
+    SDF_CloseDevice(DeviceHandle);    // 关闭设备
+
+    return LD_KM_OK;
+}
+
 // 密码卡内创建文件
 l_km_err km_create_ccard_file(const char *filename, size_t file_size)
 {
@@ -844,8 +868,9 @@ l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, CCARD_HANDLE 
     // GenerateKeyWithKEK 128bit SM4-ECB 产生根密钥并用KEK加密导出 此处接口密钥长度单位为bit！！！
     do
     {
-        if (SDF_GenerateKeyWithKEK(pSessionHandle, kek_len * 8, ALGO_WITH_KEK, kek_index, cipher_key, cipher_len,
-                                   key_handle) != LD_KM_OK)
+        ret = SDF_GenerateKeyWithKEK(pSessionHandle, kek_len * 8, ALGO_WITH_KEK, kek_index, cipher_key, cipher_len,
+                                     key_handle);
+        if (ret != SDR_OK)
         {
             log_warn("SDF_GenerateKeyKEK error!return is %08x\n", ret);
             free(cipher_key);
@@ -885,7 +910,7 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
 
         uint8_t root_key[key_len];
         km_generate_random(root_key, key_len);
-        // //printbuff("root key: ", root_key, key_len);
+        // printbuff("sgw root key pliantext: ", root_key, key_len);
 
         rk_rawpkg = km_key_pkg_new(key_data, root_key, FALSE); // 明文
         if (rk_rawpkg == NULL)
