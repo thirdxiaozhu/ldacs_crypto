@@ -13,8 +13,8 @@ int main()
     // 网关端根密钥生成
     const char *dbname = "keystore.db";
     const char *sgw_tablename = "sgw_keystore";
-    const char *sgw_name = "SGW";
-    const char *as_name = "Berry";
+    const char *sgw_name = "000010000";
+    const char *as_name = "000010010";
     uint32_t rootkey_len = 16;
     const char *export_dir = "/home/wencheng/crypto/key_management/keystore/rootkey.bin"; // 导出根密钥到文件
     // const char *export_dir = "/root/ldacs/stack_new/ldacs_stack/resources/keystore/rootkey.bin"; // 导出根密钥到文件";
