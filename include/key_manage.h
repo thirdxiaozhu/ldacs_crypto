@@ -27,7 +27,7 @@
 #define MAX_IV_LEN 16
 #define MAX_CHCK_LEN 32
 #define ALGO_WITH_KEK SGD_SM4_ECB    // generatekeywithkek importkeywithkek接口调用的算法
-#define ALGO_ENC_AND_DEC SGD_SM4_OFB // 加解密调用的算法
+#define ALGO_ENC_AND_DEC SGD_SM4_CBC // 加解密调用的算法
 #define ALGO_MAC SGD_SM4_MAC         // MAC调用的算法
 #define ALGO_HASH SGD_SM3            // hash调用的算法
 
@@ -71,7 +71,7 @@ typedef enum
         LD_ERR_KM_OPEN_FILE,                   // 打开文件错误
         LD_ERR_KM_CREATE_FILE,
         LD_ERR_KM_DELETE_FILE,
-        LD_ERR_KM_ROOTKEY_VERIFY,     // 根密钥验证错误
+        LD_ERR_KM_KEY_VERIFY,         // 密钥完整性验证错误
         LD_ERR_KM_MASTERKEY_VERIFY,   // 主密钥验证错误
         LD_ERR_KM_DERIVE_KEY,         // 密钥派生错误
         LD_ERR_KM_DERIVE_SESSION_KEY, // 会话密钥派生错误
@@ -387,6 +387,13 @@ l_km_err km_rkey_import(
     const char *db_name,
     const char *table_name,
     const char *rkey_filename_in_ccard);
+/**
+ * @brief 外部接口：从密码卡将密钥导入数据库的表中
+ * */
+l_km_err km_key_import(
+    const char *db_name,
+    const char *table_name,
+    const char *rkey_filename_in_ccard);
 
 /**
  * @brief 外部接口：将文件存入密码卡文件区
@@ -403,6 +410,29 @@ l_km_err km_create_ccard_file(
 
 l_km_err km_delete_ccard_file(
     const char *filename);
+
+/**
+ * @brief 外部接口：根密钥生成、保存和导出（支持所有类型）
+ * @param[in] owner1 所有者标识
+ * @param[in] owner2 所有者标识
+ * @param[in] key_type 密钥类型
+ * @param[in] key_len 根密钥长度
+ * @param[in] validity_period 根密钥有效期（单位：天）
+ * @param[in] dbname 数据库名称，用于存储根密钥
+ * @param[in] tablename 数据库中的表名，用于存储根密钥
+ * @param[in] export_file_path 导出根密钥的文件路径
+ * @return 成功返回LD_KM_OK，失败返回其他错误码
+ * */
+l_km_err km_key_gen_export(
+    const char *owner1,
+    const char *owner2,
+    enum KEY_TYPE key_type,
+    uint32_t key_len,
+    uint32_t validity_period,
+    const char *dbname,
+    const char *tablename,
+    const char *export_file_path);
+
 /**
  * @brief 外部接口：根密钥生成、保存和导出
  * @param[in] as_name 服务访问客户端标识
@@ -422,7 +452,6 @@ l_km_err km_rkey_gen_export(
     const char *dbname,
     const char *tablename,
     const char *export_file_path);
-
 /**
  * @brief 外部接口：单个密钥的派生
  * @param[in] db_name 密钥所在数据库名
@@ -636,5 +665,13 @@ enum STATE str_kstate(const uint8_t *state_str);
  */
 uint8_t *chck_algo_str(
     uint16_t chck_algo);
+
+/**
+ * @brief 校验算法解析（逆功能）
+ * @param[in] algo_str 校验算法字符串
+ * @return 校验算法枚举类型
+ */
+int str_to_chck_algo(
+    const char *algo_str);
 
 #endif

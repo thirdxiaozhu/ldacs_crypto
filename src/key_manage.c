@@ -437,6 +437,9 @@ km_hmac_with_keyhandle(void *handle, uint8_t *data, uint32_t data_len, uint8_t *
     uint8_t iv[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     uint8_t key[16];
     uint32_t key_len;
+    // log_buf(LOG_INFO, "iv", iv, 16);
+    // log_buf(LOG_INFO, "rand", rand, 16);
+
     int ret = SDF_Encrypt(hSessionHandle, handle, ALGO_ENC_AND_DEC, iv, rand, 16, key, &key_len);
     if (ret != LD_KM_OK)
     {
@@ -446,6 +449,9 @@ km_hmac_with_keyhandle(void *handle, uint8_t *data, uint32_t data_len, uint8_t *
 
     SDF_CloseSession(hSessionHandle);
     SDF_CloseDevice(DeviceHandle);
+
+    // log_buf(LOG_INFO, "key", key, key_len);
+    // log_buf(LOG_INFO, "data", data, data_len);
 
     return km_hmac(key, key_len, data, data_len, hmac_value, hmac_len);
 }
@@ -765,7 +771,6 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename)
     return LD_KM_OK;
 }
 
-
 // 密码卡内删除文件
 l_km_err km_delete_ccard_file(const char *filename)
 {
@@ -886,21 +891,21 @@ l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, CCARD_HANDLE 
 }
 
 /**
- * @brief 根密钥管理接口，用于生成、保存和导出根密钥
+ * @brief 密钥生成、保存和导出
  * */
-l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t key_len, uint32_t validity_period,
-                            const char *dbname, const char *tablename, const char *export_file_path)
+l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE key_type, uint32_t key_len,
+                           uint32_t validity_period, const char *dbname, const char *tablename, const char *export_file_path)
 {
 
-    km_keypkg_t *rk_rawpkg = NULL;
+    km_keypkg_t *rawpkg = NULL;
     km_keypkg_t *keypkg = NULL;
     km_keymetadata_t *key_data = NULL;
     l_km_err result = LD_KM_OK;
 
     do
     {
-        // 生成根密钥
-        key_data = km_key_metadata_new(as_name, sgw_name, ROOT_KEY, key_len, validity_period);
+        // 生成密钥
+        key_data = km_key_metadata_new(owner1, owner2, key_type, key_len, validity_period);
         if (key_data == NULL)
         {
             log_warn("Failed to create key metadata\n");
@@ -908,12 +913,12 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
             break;
         }
 
-        uint8_t root_key[key_len];
-        km_generate_random(root_key, key_len);
-        // printbuff("sgw root key pliantext: ", root_key, key_len);
+        uint8_t key[key_len];
+        km_generate_random(key, key_len);
+        log_buf(LOG_INFO, "generate key plaintext: ", key, key_len);
 
-        rk_rawpkg = km_key_pkg_new(key_data, root_key, FALSE); // 明文
-        if (rk_rawpkg == NULL)
+        rawpkg = km_key_pkg_new(key_data, key, FALSE); // 明文
+        if (rawpkg == NULL)
         {
             log_warn("Failed to create key package for raw key\n");
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
@@ -922,22 +927,23 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
 
         // 导出根密钥到文件
         // delete_file(export_file_path); // 清除已有文件
-        if (write_keypkg_to_file(export_file_path, rk_rawpkg) != LD_KM_OK)
+        if (write_keypkg_to_file(export_file_path, rawpkg) != LD_KM_OK)
         {
             log_warn("write key to file failed\n");
             result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
             break;
         }
-        // print_key_pkg(rk_rawpkg);
+        // print_key_pkg(rawpkg);
 
         // 存储根密钥
-        keypkg = km_key_pkg_new(key_data, root_key, TRUE);
+        keypkg = km_key_pkg_new(key_data, key, TRUE);
         if (keypkg == NULL)
         {
             log_warn("Failed to create key package for storage\n");
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
             break;
         }
+        // print_key_pkg(keypkg);
 
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
@@ -957,9 +963,9 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
     } while (0);
 
     // 释放资源
-    if (rk_rawpkg != NULL)
+    if (rawpkg != NULL)
     {
-        key_pkg_free(rk_rawpkg);
+        key_pkg_free(rawpkg);
     }
     if (keypkg != NULL)
     {
@@ -970,13 +976,105 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
 }
 
 /**
+ * @brief 根密钥生成、保存和导出
+ * */
+l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t key_len, uint32_t validity_period,
+                            const char *dbname, const char *tablename, const char *export_file_path)
+{
+    if (km_key_gen_export(as_name, sgw_name, ROOT_KEY, key_len, validity_period, dbname, tablename, export_file_path) ==
+        LD_KM_OK)
+    {
+        return LD_KM_OK;
+    }
+
+    /*
+        km_keypkg_t *rk_rawpkg = NULL;
+        km_keypkg_t *keypkg = NULL;
+        km_keymetadata_t *key_data = NULL;
+        l_km_err result = LD_KM_OK;
+
+        do
+        {
+            // 生成根密钥
+            key_data = km_key_metadata_new(as_name, sgw_name, ROOT_KEY, key_len, validity_period);
+            if (key_data == NULL)
+            {
+                log_warn("Failed to create key metadata\n");
+                result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
+                break;
+            }
+
+            uint8_t root_key[key_len];
+            km_generate_random(root_key, key_len);
+            log_buf(LOG_INFO, "generate key plaintext: ", root_key, key_len);
+
+            rk_rawpkg = km_key_pkg_new(key_data, root_key, FALSE); // 明文
+            if (rk_rawpkg == NULL)
+            {
+                log_warn("Failed to create key package for raw key\n");
+                result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
+                break;
+            }
+
+            // 导出根密钥到文件
+            // delete_file(export_file_path); // 清除已有文件
+            if (write_keypkg_to_file(export_file_path, rk_rawpkg) != LD_KM_OK)
+            {
+                log_warn("write key to file failed\n");
+                result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
+                break;
+            }
+            // print_key_pkg(rk_rawpkg);
+
+            // 存储根密钥
+            keypkg = km_key_pkg_new(key_data, root_key, TRUE);
+            if (keypkg == NULL)
+            {
+                log_warn("Failed to create key package for storage\n");
+                result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
+                break;
+            }
+            // print_key_pkg(keypkg);
+
+            uint8_t *primary_key = "id";
+            if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
+                LD_KM_OK)
+            {
+                log_warn("create table failed\n");
+                result = LD_ERR_KM_CREATE_DB; // 或其他适当的错误码
+                break;
+            }
+            if (store_key(dbname, tablename, keypkg, &km_pkg_desc) != LD_KM_OK)
+            {
+                log_warn("store key failed\n");
+                result = LD_ERR_KM_EXE_DB; // 或其他适当的错误码
+                break;
+            }
+
+        } while (0);
+
+        // 释放资源
+        if (rk_rawpkg != NULL)
+        {
+            key_pkg_free(rk_rawpkg);
+        }
+        if (keypkg != NULL)
+        {
+            key_pkg_free(keypkg);
+        }
+
+        return result;
+        */
+}
+
+/**
  * @brief 根密钥导入
  */
 l_km_err km_rkey_import(const char *db_name, const char *table_name, const char *rkey_filename_in_ccard)
 {
 
     // read root key from ccard
-    const char *local_rkdir = "/home/wencheng/crypto/ldacs/ldacs_stack-main/rkstore/rootkey.txt";
+    const char *local_rkdir = "../keystore/rootkey.txt";
 
     do
     {
@@ -991,7 +1089,8 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
         // root key store
         km_keypkg_t *keypkg = km_key_pkg_new(raw_pkg->meta_data, raw_pkg->key_cipher, TRUE);
         // keypkg->meta_data->state = ACTIVE; // 激活密钥
-        // //print_key_pkg(keypkg);
+        log_warn("=======================加密之后的密钥======================");
+        print_key_pkg(keypkg);
         if (create_table_if_not_exist(&km_table_desc, db_name, table_name, "id", NULL, NULL, FALSE) != LD_KM_OK)
         {
             break;
@@ -1012,6 +1111,17 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
     } while (0);
 
     return LD_ERR_KM_IMPORT_KEY;
+}
+
+/**
+ * @brief 密钥导入 适用于所有类型的密钥
+ */
+l_km_err km_key_import(const char *db_name, const char *table_name, const char *rkey_filename_in_ccard)
+{
+    if (km_rkey_import(db_name, table_name, rkey_filename_in_ccard) == LD_KM_OK)
+    {
+        return LD_KM_OK;
+    }
 }
 
 /**
@@ -1528,8 +1638,6 @@ l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, 
         log_warn("Key not found or error occurred.\n");
         return LD_ERR_KM_QUERY;
     }
-
-    // log_warn("!!!!!!!!!!!!!!");
 
     // 导入密钥，获得句柄
     if (km_import_key(result->key, result->key_len, key_handle) != LD_KM_OK)
@@ -2236,8 +2344,8 @@ const char *km_error_to_string(l_km_err err_code)
         return "Error creating file";
     case LD_ERR_KM_DELETE_FILE:
         return "Error deleting file";
-    case LD_ERR_KM_ROOTKEY_VERIFY:
-        return "Root key verification error";
+    case LD_ERR_KM_KEY_VERIFY:
+        return "key verification error";
     case LD_ERR_KM_MASTERKEY_VERIFY:
         return "Master key verification error";
     case LD_ERR_KM_DERIVE_KEY:
@@ -2264,92 +2372,99 @@ const char *km_error_to_string(l_km_err err_code)
 // 逐行打印密钥信息结构体
 l_km_err print_key_metadata(struct KeyMetaData *key_info)
 {
-    //    char str[128];
-    //    uuid_unparse(key_info->id, str);
-    //    // 使用 snprintf 格式化输出
-    //    char str_buffer[1024]; // 预留足够的空间，包括格式字符串和 ID 的内容
-    //    snprintf(str_buffer, sizeof(str_buffer), "ID:%s\n", str);
-    //    log_warn("%s", str_buffer); // 输出结果
-    //
-    //    log_warn("Type: ");
-    //
-    //    switch (key_info->key_type) {
-    //        case ROOT_KEY:
-    //            log_warn("ROOT_KEY (KAS)\n");
-    //            break;
-    //        case MASTER_KEY_AS_SGW:
-    //            log_warn("MASTER_KEY_AS_SGW (KASSGW)\n");
-    //            break;
-    //        case MASTER_KEY_AS_GS:
-    //            log_warn("MASTER_KEY_AS_GS (KASGS)\n");
-    //            break;
-    //        case SESSION_KEY_USR_ENC:
-    //            log_warn("SESSION_KEY_USR_ENC (KUENC)\n");
-    //            break;
-    //        case SESSION_KEY_USR_INT:
-    //            log_warn("SESSION_KEY_USR_INT (KUINT)\n");
-    //            break;
-    //        case SESSION_KEY_CONTROL_ENC:
-    //            log_warn("SESSION_KEY_CONTROL_ENC (KCENC)\n");
-    //            break;
-    //        case SESSION_KEY_CONTROL_INT:
-    //            log_warn("SESSION_KEY_CONTROL_INT (KCINT)\n");
-    //            break;
-    //        case GROUP_KEY_BC:
-    //            log_warn("GROUP_KEY_BC (KBC)\n");
-    //            break;
-    //        case GROUP_KEY_CC:
-    //            log_warn("GROUP_KEY_CC (KCC)\n");
-    //            break;
-    //        case NH_KEY:
-    //            log_warn("NextHop KEY\n");
-    //            break;
-    //        default:
-    //            log_warn("Unknown KEY_TYPE\n");
-    //    }
-    //
-    //    uint8_t emptyArray[MAX_OWENER_LEN] = {0};
-    //    if (memcmp(key_info->owner_1, emptyArray, MAX_OWENER_LEN) == 0) {
-    //        log_warn("Owner 1 : nil (Unspecified)\n");
-    //    } else {
-    //        log_warn("Owner 1: %s\n", key_info->owner_1);
-    //    }
-    //    if (memcmp(key_info->owner_2, emptyArray, MAX_OWENER_LEN) == 0) {
-    //        log_warn("Owner 2 : nil (Unspecified)\n");
-    //    } else {
-    //        log_warn("Owner 2: %s\n", key_info->owner_2);
-    //    }
-    //    log_warn("Length: %u BYTES\n", key_info->length);
-    //
-    //    log_warn("State: ");
-    //    switch (key_info->state) {
-    //        case PRE_ACTIVATION:
-    //            log_warn("PRE_ACTIVATION\n");
-    //            break;
-    //        case ACTIVE:
-    //            log_warn("ACTIVE\n");
-    //            break;
-    //        case SUSPENDED:
-    //            log_warn("SUSPENDED\n");
-    //            break;
-    //        case DEACTIVATED:
-    //            log_warn("DEACTIVATED\n");
-    //            break;
-    //        case COMPROMISED:
-    //            log_warn("COMPROMISED\n");
-    //            break;
-    //        case DESTROYED:
-    //            log_warn("DESTROYED\n");
-    //            break;
-    //        default:
-    //            log_warn("Unknown\n");
-    //    }
-    //    struct tm *timeinfo = localtime(&key_info->creation_time);
-    //    char buffer[80];
-    //    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-    //    log_warn("Effectuation Time: %s\n", buffer);
-    //    log_warn("Update Cycle: %lld days \n", (long long) key_info->update_cycle);
-    // log_warn("Counter: %u\n", key_info->counter);
+    char str[128];
+    uuid_unparse(key_info->id, str);
+    // 使用 snprintf 格式化输出
+    char str_buffer[1024]; // 预留足够的空间，包括格式字符串和 ID 的内容
+    snprintf(str_buffer, sizeof(str_buffer), "ID:%s\n", str);
+    log_warn("%s", str_buffer); // 输出结果
+
+    log_warn("Type: ");
+
+    switch (key_info->key_type)
+    {
+    case ROOT_KEY:
+        log_warn("ROOT_KEY (KAS)\n");
+        break;
+    case MASTER_KEY_AS_SGW:
+        log_warn("MASTER_KEY_AS_SGW (KASSGW)\n");
+        break;
+    case MASTER_KEY_AS_GS:
+        log_warn("MASTER_KEY_AS_GS (KASGS)\n");
+        break;
+    case SESSION_KEY_USR_ENC:
+        log_warn("SESSION_KEY_USR_ENC (KUENC)\n");
+        break;
+    case SESSION_KEY_USR_INT:
+        log_warn("SESSION_KEY_USR_INT (KUINT)\n");
+        break;
+        //    case SESSION_KEY_CONTROL_ENC:
+        //        log_warn("SESSION_KEY_CONTROL_ENC (KCENC)\n");
+        //        break;
+        //    case SESSION_KEY_CONTROL_INT:
+        //        log_warn("SESSION_KEY_CONTROL_INT (KCINT)\n");
+        //        break;
+    case GROUP_KEY_BC:
+        log_warn("GROUP_KEY_BC (KBC)\n");
+        break;
+    case GROUP_KEY_CC:
+        log_warn("GROUP_KEY_CC (KCC)\n");
+        break;
+    case NH_KEY:
+        log_warn("NextHop KEY\n");
+        break;
+    default:
+        log_warn("Unknown KEY_TYPE\n");
+    }
+
+    uint8_t emptyArray[MAX_OWENER_LEN] = {0};
+    if (memcmp(key_info->owner_1, emptyArray, MAX_OWENER_LEN) == 0)
+    {
+        log_warn("Owner 1 : nil (Unspecified)\n");
+    }
+    else
+    {
+        log_warn("Owner 1: %s\n", key_info->owner_1);
+    }
+    if (memcmp(key_info->owner_2, emptyArray, MAX_OWENER_LEN) == 0)
+    {
+        log_warn("Owner 2 : nil (Unspecified)\n");
+    }
+    else
+    {
+        log_warn("Owner 2: %s\n", key_info->owner_2);
+    }
+    log_warn("Length: %u BYTES\n", key_info->length);
+
+    log_warn("State: ");
+    switch (key_info->state)
+    {
+    case PRE_ACTIVATION:
+        log_warn("PRE_ACTIVATION\n");
+        break;
+    case ACTIVE:
+        log_warn("ACTIVE\n");
+        break;
+    case SUSPENDED:
+        log_warn("SUSPENDED\n");
+        break;
+    case DEACTIVATED:
+        log_warn("DEACTIVATED\n");
+        break;
+    case COMPROMISED:
+        log_warn("COMPROMISED\n");
+        break;
+    case DESTROYED:
+        log_warn("DESTROYED\n");
+        break;
+    default:
+        log_warn("Unknown\n");
+    }
+    struct tm *timeinfo = localtime(&key_info->creation_time);
+    char buffer[80];
+    strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
+    log_warn("Effectuation Time: %s\n", buffer);
+    log_warn("Update Cycle: %lld days \n", (long long)key_info->update_cycle);
 
     return LD_KM_OK;
 }
@@ -2370,24 +2485,20 @@ l_km_err print_key_pkg(struct KeyPkg *key_pkg)
         return LD_ERR_KM_PARAMETERS_NULL;
     }
 
-    print_key_metadata(key_pkg
-                           ->meta_data);
+    print_key_metadata(key_pkg->meta_data);
     uint8_t emptyArray[64] = {0};
-    if (
-        memcmp(key_pkg
-                   ->kek_cipher,
-               emptyArray, 16) == 0)
+    if (memcmp(key_pkg->kek_cipher, emptyArray, 16) == 0)
     {
         log_warn("KEK: nil (Unspecified)\n");
     }
     else
     {
-        // printbuff("KEK (cipher)", key_pkg->kek_cipher, 16);
+        log_buf(LOG_WARN, "KEK (cipher)", key_pkg->kek_cipher, 16);
     }
-    // printbuff("Key ", key_pkg->key_cipher, key_pkg->meta_data->length);
-    //     log_warn("Check Algorithm: %s\n", chck_algo_str(key_pkg->chck_alg));
-    // printbuff("IV", key_pkg->iv, key_pkg->iv_len);
-    // printbuff("Check value", key_pkg->chck_value, key_pkg->chck_len);
+    log_buf(LOG_WARN, "Key ", key_pkg->key_cipher, key_pkg->meta_data->length);
+    log_warn("Check Algorithm: %s\n", chck_algo_str(key_pkg->chck_alg));
+    log_buf(LOG_WARN, "IV", key_pkg->iv, key_pkg->iv_len);
+    log_buf(LOG_WARN, "Check value", key_pkg->chck_value, key_pkg->chck_len);
 
     return LD_KM_OK;
 }
@@ -2556,7 +2667,7 @@ uint8_t *chck_algo_str(uint16_t chck_algo)
     switch (chck_algo)
     {
     case ALGO_ENC_AND_DEC:
-        return ("SGD_SM4_CFB");
+        return ("SGD_SM4_CBC");
         break;
     case ALGO_MAC:
         return ("SGD_SM4_MAC");
@@ -2570,6 +2681,39 @@ uint8_t *chck_algo_str(uint16_t chck_algo)
     default:
         return ("unknown");
         break;
+    }
+}
+
+static const char *algos[] = {
+    "SGD_SM4_CFB",
+};
+
+/**
+ * @brief 校验算法解析（逆功能）
+ * @param[in] algo_str 校验算法字符串
+ * @return 校验算法枚举类型
+ */
+int str_to_chck_algo(const char *algo_str)
+{
+    if (strcmp(algo_str, "SGD_SM4_CFB") == 0)
+    {
+        return ALGO_ENC_AND_DEC;
+    }
+    else if (strcmp(algo_str, "SGD_SM4_MAC") == 0)
+    {
+        return ALGO_MAC;
+    }
+    else if (strcmp(algo_str, "SGD_SM4_ECB") == 0)
+    {
+        return ALGO_WITH_KEK;
+    }
+    else if (strcmp(algo_str, "SGD_SM3") == 0)
+    {
+        return ALGO_HASH;
+    }
+    else
+    {
+        return -1;
     }
 }
 
@@ -2703,8 +2847,9 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
             uint32_t kek_index = 1;
             CCARD_HANDLE kek_handle;
 
-            // 生成 KEK
-            if (km_generate_key_with_kek(kek_index, 16, &kek_handle, keypkg->kek_cipher, &keypkg->kek_cipher_len))
+            // 生成 KEK 存储kek
+            if (km_generate_key_with_kek(kek_index, 16, &kek_handle, keypkg->kek_cipher, &keypkg->kek_cipher_len) !=
+                LD_KM_OK)
             {
                 fprintf(stderr, "Error in derive : SDF_GenerateKeyWithKEK failed!\n");
                 error_occurred = TRUE;
@@ -2725,7 +2870,7 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
                     memcpy(iv_mac, keypkg->iv, keypkg->iv_len);
                     memcpy(iv_enc, keypkg->iv, keypkg->iv_len);
 
-                    // 主密钥加密
+                    // 密钥加密存储
                     uint32_t cipher_len;
                     if (km_encrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, meta->length, keypkg->key_cipher,
                                    &cipher_len))
@@ -2735,14 +2880,14 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
                     }
                     else
                     {
-                        // 校验算法
-                        if (km_mac(kek_handle, ALGO_MAC, iv_mac, keypkg->key_cipher, cipher_len, keypkg->chck_value,
+                        // 对明文密钥生成校验值
+                        if (km_mac(kek_handle, ALGO_MAC, iv_mac, key, meta->length, keypkg->chck_value,
                                    &keypkg->chck_len))
                         {
                             fprintf(stderr, "Error in derive : SDF_CalculateMAC failed!\n");
                             error_occurred = TRUE;
                         }
-                        else
+                        else // 存储校验算法
                         {
                             keypkg->chck_alg = ALGO_MAC;
                         }
@@ -2771,10 +2916,10 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
                 memcpy(iv_mac, keypkg->iv, keypkg->iv_len);
                 memcpy(iv_enc, keypkg->iv, keypkg->iv_len);
 
-                // 主密钥
+                // 存储密钥密文
                 memcpy(keypkg->key_cipher, key, keypkg->meta_data->length);
 
-                // 校验
+                // 生成校验值
                 if (km_hash(ALGO_HASH, keypkg->key_cipher, keypkg->meta_data->length, keypkg->chck_value))
                 {
                     fprintf(stderr, "Error in derive : SDF_CalculateHash failed!\n");
@@ -2796,6 +2941,7 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
         key_pkg_free(keypkg);                  // 释放 keypkg 内存
         return NULL;
     }
+    // 打印kek key明文 iv mac
 
     return keypkg;
 }

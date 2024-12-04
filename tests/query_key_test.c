@@ -15,19 +15,24 @@ int main() {
     uint8_t *gs_t_tablename = "gs_t_keystore";
     uint8_t *sgw_tablename = "sgw_keystore";
 
-    uint8_t *sac_sgw = "SGW"; // 测试本地标识
     uint8_t *sac_gs_s = "GS1";
     uint8_t *sac_gs_t = "GSt";
-    uint8_t *sac_as = "Berry";
+    const char *sgw_name = "000010000";
+    const char *as_name = "000010010";
 
     // 查询密钥值
-    uint8_t *id = "1b686bba-bc08-4b7e-ae00-adf169d109f3";
-    log_warn("query keyvalue where id =  %s....\n", id);
-    QueryResult_for_keyvalue *result = query_keyvalue(dbname, sgw_tablename, id);
+    QueryResult_for_queryid *query_result = NULL;
+    int ret = LD_KM_OK;
+    query_result = query_id(dbname, as_tablename, sgw_name, "", GROUP_KEY_BC, PRE_ACTIVATION);
+    if (query_result == NULL) {
+        log_warn("query failed.\n");
+    }
+    log_warn("query keyvalue where id =  %s....\n", query_result->ids[0]);
+
+    QueryResult_for_keyvalue *result = query_keyvalue(dbname, as_tablename, query_result->ids[0]);
     if (!result) {
         log_warn("Key not found or error occurred.\n");
     }
-    //printbuff("key value",result->key,result->key_len);
+    log_buf(LOG_INFO, "key value", result->key, result->key_len);
     free_keyvalue_result(result);
-
 }

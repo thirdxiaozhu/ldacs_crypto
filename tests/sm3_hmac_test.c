@@ -15,10 +15,11 @@ int main()
     // 数据库和表名定义
     const char *db_name = "keystore.db";
     const char *sgw_tablename = "sgw_keystore";
-    uint8_t *sac_sgw = "SGW"; // 测试本地标识
-    uint8_t *sac_gs_s = "GS1";
-    uint8_t *sac_gs_t = "GSt";
-    uint8_t *sac_as = "Berry";
+    // const char* as_tablename = "as_keystore";
+    uint8_t *sac_sgw = "000010000"; // 测试本地标识
+    // uint8_t *sac_gs_s = "GS1";
+    // uint8_t *sac_gs_t = "GSt";
+    uint8_t *sac_as = "000010010";
 
     // 要计算 HMAC 的数据
     uint8_t data[] = "Hello SM3 HMAC!";
@@ -47,12 +48,8 @@ int main()
         }
 
         // 打印 HMAC 值
-        log_warn("HMAC value: ");
-        for (uint32_t i = 0; i < hmac_len; i++)
-        {
-            log_warn("%02x", hmac_value[i]);
-        }
-        log_warn("\n");
+        log_buf(LOG_INFO, "hmac value", hmac_value, 32);
+      
     } while (0);
 
     free_queryid_result(qr_mk);

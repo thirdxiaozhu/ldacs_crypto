@@ -73,14 +73,14 @@ int main()
     // create_table_if_not_exist(&test_km_desc, dbname, tablename, primary_key,NULL,NULL, FALSE);
 
     // 新增一个密钥
-    /*
-    int ret = store_key(dbname, tablename, &pkg, &test_km_desc);
+    
+    int ret = store_key(dbname, sgw_tablename, &pkg, &test_km_desc);
         if (ret != LD_KM_OK)
         {
             log_warn("store_key failed: %d\n", ret);
             return 0;
         }
-    */
+    
 
     // 测试枚举转字符串
     /*

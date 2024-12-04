@@ -22,7 +22,7 @@ set(tests
 
 
         # query_id
-        # query_key
+        query_key
         # query_kekhandle
         # query_subid
         # query_keytype
@@ -48,12 +48,15 @@ set(tests
         # kupdate_3 # 新增sgw的密钥更新接口
         # xor # 抑或测试
         # enc_dec
-        # sm3_hmac
+        sm3_hmac
         km_hmac
         # asan
         rand_db # 测试 密钥库随机数存取
 #        delete_keyvalue
         # hex_conv # 字符数组转字符串
+        gkey_gen_exp # 组密钥生成和导出
+        gkey_to_ccard # 组密钥导入密码卡
+        gkey_import # 组密钥导入
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)

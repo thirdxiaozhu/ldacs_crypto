@@ -46,21 +46,27 @@ int main()
     const char *dbname = "keystore.db";
     const char *sgw_tablename = "sgw_keystore";
     const char *as_tablename = "as_keystore";
-    const char *sgw_name = "SGW";
-    const char *as_name = "Berry";
-    enum KEY_TYPE key_type = ROOT_KEY;
+    const char *sgw_name = "000010000";
+    const char *as_name = "000010010";
 
     // 激活sgw端根密钥
-    if (activate_key(dbname, sgw_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
-    {
-        return LD_ERR_KM_QUERY;
-    }
-
-    // 激活as端根密钥
-    // if (activate_key(dbname, as_tablename, as_name, sgw_name, key_type) != LD_KM_OK)
+    // if (activate_key(dbname, sgw_tablename, as_name, sgw_name, ROOT_KEY) != LD_KM_OK)
     // {
     //     return LD_ERR_KM_QUERY;
     // }
 
+    // 激活as端根密钥
+    // if (activate_key(dbname, as_tablename, as_name, sgw_name, ROOT_KEY) != LD_KM_OK)
+    // {
+    //     return LD_ERR_KM_QUERY;
+    // }
+    
+    // 激活AS端组密钥
+     if (activate_key(dbname, as_tablename, sgw_name, "", GROUP_KEY_BC) != LD_KM_OK)
+    {
+        return LD_ERR_KM_QUERY;
+    }
+    // 激活GS端组密钥同理
+    
     return 0;
 }

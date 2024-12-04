@@ -16,7 +16,7 @@ int main()
     const char *sgw_name = "000010000";
     const char *as_name = "000010010";
     uint32_t rootkey_len = 16;
-    const char *export_dir = "/home/wencheng/crypto/key_management/keystore/rootkey.bin"; // 导出根密钥到文件
+    const char *export_dir = "../keystore/rootkey.bin"; // 导出根密钥到文件
     // const char *export_dir = "/root/ldacs/stack_new/ldacs_stack/resources/keystore/rootkey.bin"; // 导出根密钥到文件";
     uint32_t validity_period = 365; // 更新周期365天
 
