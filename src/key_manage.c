@@ -12,6 +12,7 @@
 
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
+#define SESSION_KEY_EXPIRE_TIME 365 // 会话密钥超时时间
 
 #ifndef USE_GMSSL
 // 用于创建随机数种子索引表时的描述
@@ -1155,7 +1156,7 @@ derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, co
     }
 
     key_len = key_len > 16 ? 16 : key_len; // 导入密钥 返回密钥句柄 截断 只取前16字节
-    km_keymetadata_t *meta = km_key_metadata_new(owner1, owner2, key_type, key_len, 365);
+    km_keymetadata_t *meta = km_key_metadata_new(owner1, owner2, key_type, key_len, SESSION_KEY_EXPIRE_TIME);
     km_keypkg_t *pkg = km_key_pkg_new(meta, NULL, FALSE);
     if (!pkg)
     {
@@ -1217,12 +1218,12 @@ derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, co
             log_warn("Error in derive : km_pbkdf2 failed!\n");
             break;
         }
-        // //printbuff("after pbkdf2:key", key, key_len);
+        // print_key_metadata(pkg->meta_data);
+        // log_buf(LOG_INFO, "[plaint test while gen]", key, key_len);
 
-        // 密钥加密存储
+        /* 生成对主密钥加密的密钥 */
         uint32_t kek_index = 1;
         CCARD_HANDLE kek_handle;
-        /* 生成对主密钥加密的密钥 */
         uint8_t kek_cipher[16];
         uint32_t kek_len = 16;
         uint32_t kek_cipher_len;
@@ -1247,17 +1248,15 @@ derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, co
 
         uint32_t cipher_len;
 
-        /* 主密钥密文 */
-        if (SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc,
-                        key, key_len, pkg->key_cipher, &cipher_len))
+        /* 主密钥加密 */
+        if (SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, key_len, pkg->key_cipher, &cipher_len))
         {
             log_warn("Error in derive : SDF_Encrypt failed!\n");
             break;
         }
 
-        /* 校验算法 */
-        if (SDF_CalculateMAC(hSessionHandle, kek_handle, ALGO_MAC, iv_mac,
-                             pkg->key_cipher, cipher_len, pkg->chck_value, &(pkg->chck_len)))
+        /* 计算明文校验值 */
+        if (km_mac(kek_handle, ALGO_MAC, iv_mac, key, key_len, pkg->chck_value, &(pkg->chck_len)))
         {
             log_warn("Error in derive : SDF_CalculateMAC failed!\n");
             break;
@@ -1325,7 +1324,7 @@ l_km_err km_derive_all_session_key(uint8_t *db_name, uint8_t *table_name, CCARD_
             log_warn("dervie key failed\n");
             return LD_ERR_KM_DERIVE_KEY;
         }
-        // //print_key_pkg(pkg);
+        // print_key_pkg(pkg);
         if (store_key(db_name, table_name, pkg, &km_pkg_desc) != LD_KM_OK)
         {
             log_warn("store_key failed: %d\n");
@@ -1412,7 +1411,7 @@ l_km_err km_derive_masterkey_asgs(const char *db_name, const char *table_name, C
         }
         else
         {
-            print_key_pkg(pkg_kasgs);
+            // print_key_pkg(pkg_kasgs);
             store_key(db_name, table_name, pkg_kasgs, &km_pkg_desc); // AS端计算和存储与GS之间的主密钥
         }
 
@@ -1472,6 +1471,7 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
                 log_warn("[**sgw derive_key kas-sgw error**]\n");
                 break;
             }
+            // print_key_pkg(pkg);
 
             if (create_table_if_not_exist(&km_table_desc, db_name, table_name, "id", NULL, NULL, FALSE) !=
                 LD_KM_OK)
@@ -1484,6 +1484,7 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
                 break;
             }
 
+            // 派生中间密钥NH
             uint16_t len_kasgs = 16;
             pkg_NH = derive_key(handle, NH_KEY, len_kasgs, owner1, owner2, rand, rand_len, &handle_NH);
             if (pkg_NH == NULL)
@@ -1497,8 +1498,8 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
                 break;
             }
 
-            printf("about to enter derive masterkeyasgs: dbname %s, tablename %s, id %s, asname: %s, gsname %s , handle_NH %p \n",
-                   db_name, table_name, id, owner1, (const char *)gs_name, handle_NH);
+            // 派生会话密钥KAS-GS
+            // log_warn("about to enter derive masterkeyasgs: dbname %s, tablename %s, id %s, asname: %s, gsname %s , handle_NH %p \n", db_name, table_name, id, owner1, (const char *)gs_name, handle_NH);
             if (km_derive_masterkey_asgs(db_name, table_name, handle_NH, key_len, owner1, (const char *)gs_name,
                                          rand, rand_len,
                                          NULL) != LD_KM_OK)

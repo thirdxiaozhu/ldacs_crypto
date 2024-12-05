@@ -1,4 +1,4 @@
-DELETE FROM sgw_keystore WHERE key_type != 'ROOT_KEY';
+DELETE FROM sgw_keystore WHERE key_type != 'ROOT_KEY' and key_type != 'GROUP_KEY_KBC' and key_type != 'GROUP_KEY_KCC';
 DELETE FROM as_keystore WHERE key_type != 'ROOT_KEY';
 DELETE FROM gs_s_keystore;
 DELETE FROM gs_t_keystore;
