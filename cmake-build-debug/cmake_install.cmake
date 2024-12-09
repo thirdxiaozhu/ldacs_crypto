@@ -1,4 +1,4 @@
-# Install script for directory: /home/wencheng/crypto/key_management
+# Install script for directory: /home/wencheng/crypto/wen/key_management
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,13 +43,13 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/km" TYPE DIRECTORY FILES "/home/wencheng/crypto/key_management/include/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/km" TYPE DIRECTORY FILES "/home/wencheng/crypto/wen/key_management/include/")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/wencheng/crypto/key_management/cmake-build-debug/src/cmake_install.cmake")
-  include("/home/wencheng/crypto/key_management/cmake-build-debug/tests/cmake_install.cmake")
+  include("/home/wencheng/crypto/wen/key_management/cmake-build-debug/src/cmake_install.cmake")
+  include("/home/wencheng/crypto/wen/key_management/cmake-build-debug/tests/cmake_install.cmake")
 
 endif()
 
@@ -61,5 +61,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/wencheng/crypto/key_management/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/wencheng/crypto/wen/key_management/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

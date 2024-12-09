@@ -1,4 +1,4 @@
-# Install script for directory: /home/wencheng/crypto/key_management/tests
+# Install script for directory: /home/wencheng/crypto/wen/key_management/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
