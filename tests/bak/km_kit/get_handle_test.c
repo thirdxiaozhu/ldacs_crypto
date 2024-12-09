@@ -23,7 +23,7 @@ int main()
     uint8_t *id = "dbe03c58-8507-423c-aeba-6c4620acac43";
 
     // 定义输出参数
-    CCARD_HANDLE key_handle = NULL;
+    void * key_handle = NULL;
 
     // 调用接口函数
     l_km_err result = get_handle_from_db(dbname, sgw_tablename, id, &key_handle);

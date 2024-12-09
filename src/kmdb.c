@@ -1051,7 +1051,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     // log_info("check algo %s\n", check_algo);
 
     // 导入密钥
-    CCARD_HANDLE kek_handle;
+    void * kek_handle;
     if (kek != NULL && km_import_key_with_kek(kek, kek_len, 1, &kek_handle) != LD_KM_OK)
     {
         log_warn("Error importing kek with kek\n");

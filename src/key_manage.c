@@ -83,7 +83,7 @@ void key_meta_data_free(km_keymetadata_t *meta_data);
 
 // 生成随机数
 l_km_err km_generate_random(uint8_t *random_data, int len) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     int ret;
 
     if (SDF_OpenDevice(&DeviceHandle)) {
@@ -110,8 +110,8 @@ l_km_err km_generate_random(uint8_t *random_data, int len) {
 
 l_km_err km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length,
                     uint8_t *cipher_data, uint32_t *cipher_data_len) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
-    CCARD_HANDLE phKeyHandle;
+    void * DeviceHandle, *pSessionHandle;
+    void * phKeyHandle;
     int ret;
     ret = SDF_OpenDevice(&DeviceHandle); // 打开设备
     if (ret != LD_KM_OK) {
@@ -148,7 +148,7 @@ l_km_err km_sym_encrypt(const char *db_name, const char *table_name, const char 
     }
 
     // 获取密钥句柄
-    CCARD_HANDLE key_handle;
+    void * key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
         log_warn("get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
@@ -160,7 +160,7 @@ l_km_err km_sym_encrypt(const char *db_name, const char *table_name, const char 
 
 l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher_data, uint32_t cipher_data_len,
                     uint8_t *plain_data, uint32_t *plain_data_len) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
@@ -187,7 +187,7 @@ l_km_err km_sym_decrypt(const char *db_name, const char *table_name, const char 
     }
 
     // 获取密钥句柄
-    CCARD_HANDLE key_handle;
+    void * key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
         log_warn("get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
@@ -199,7 +199,7 @@ l_km_err km_sym_decrypt(const char *db_name, const char *table_name, const char 
 
 // hash算法
 l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *output) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     int ret;
     ret = SDF_OpenDevice(&DeviceHandle); // 打开设备
     if (ret != LD_KM_OK) {
@@ -250,9 +250,9 @@ l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *outpu
 
 // MAC运算 SM4_CFB
 l_km_err
-km_mac(CCARD_HANDLE key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *mac,
+km_mac(void * key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *mac,
        uint32_t *mac_length) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -270,7 +270,7 @@ km_mac(CCARD_HANDLE key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uin
 // 通用sm3 hmac ，key长度要求为32byte
 l_km_err
 km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_t *hmac_value, uint32_t *hmac_len) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     uint32_t hash_result_len;
     uint8_t hash[64] = {0};
     uint8_t ipad_[HMAC_HASH_BLOCK_SIZE] = {0};
@@ -388,7 +388,7 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
 // 使用句柄完成hmac
 l_km_err
 km_hmac_with_keyhandle(void *handle, uint8_t *data, uint32_t data_len, uint8_t *hmac_value, uint32_t *hmac_len) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -423,7 +423,7 @@ l_km_err km_sm3_hmac(const char *db_name, const char *table_name, const char *ke
     }
 
     // 获取密钥句柄
-    CCARD_HANDLE key_handle;
+    void * key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
         log_warn("get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
@@ -463,7 +463,7 @@ l_km_err printbuff(const char *printtitle, uint8_t *buff, int len) {
 
 // 导入明文密钥
 l_km_err km_import_key(uint8_t *key, uint32_t key_length, void **key_handle) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -485,8 +485,8 @@ l_km_err km_import_key(uint8_t *key, uint32_t key_length, void **key_handle) {
  * @param[in] kek_index kek下标
  * @param[out] key_handle
  */
-l_km_err km_import_key_with_kek(uint8_t *key, uint32_t key_length, int kek_index, CCARD_HANDLE *key_handle) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+l_km_err km_import_key_with_kek(uint8_t *key, uint32_t key_length, int kek_index, void * *key_handle) {
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -502,8 +502,8 @@ l_km_err km_import_key_with_kek(uint8_t *key, uint32_t key_length, int kek_index
 }
 
 // 销毁密钥
-l_km_err km_destroy_key(CCARD_HANDLE key_handle) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+l_km_err km_destroy_key(void * key_handle) {
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -623,7 +623,7 @@ l_km_err km_pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
 l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     FILE *file;
     uint32_t file_size;
     uint16_t result;
@@ -701,7 +701,7 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
 
 // 密码卡内删除文件
 l_km_err km_delete_ccard_file(const char *filename) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
@@ -722,7 +722,7 @@ l_km_err km_delete_ccard_file(const char *filename) {
 
 // 密码卡内创建文件
 l_km_err km_create_ccard_file(const char *filename, size_t file_size) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
@@ -743,7 +743,7 @@ l_km_err km_create_ccard_file(const char *filename, size_t file_size) {
 
 // 从密码卡读取文件 放到指定位置
 l_km_err km_readfile_from_cryptocard(const char *filename, const char *filepath) {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
     uint32_t ret;
@@ -782,7 +782,7 @@ l_km_err km_readfile_from_cryptocard(const char *filename, const char *filepath)
  * 密钥生成派生 *
  ***************/
 // 指定KEK索引和密钥元数据（密钥类型，密钥所有者，密钥长度，启用日期，更新周期），初始化元数据并生成密钥、密钥id，输出密钥句柄、使用KEK加密的密钥密文、和密钥元数据结构体。
-l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, CCARD_HANDLE *key_handle, uint8_t *cipher_key,
+l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, void * *key_handle, uint8_t *cipher_key,
                                   int *cipher_len) {
     void *DeviceHandle, *pSessionHandle;
     int ret; // iterate with crypto-device
@@ -1038,9 +1038,9 @@ l_km_err km_key_import(const char *db_name, const char *table_name, const char *
  * @return 返回密钥包结构体
  */
 km_keypkg_t *
-derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const char *owner1, const char *owner2,
-           uint8_t *rand, uint32_t rand_len, CCARD_HANDLE *key_handle) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+derive_key(void * kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const char *owner1, const char *owner2,
+           uint8_t *rand, uint32_t rand_len, void * *key_handle) {
+    void * DeviceHandle, *hSessionHandle;
     if (SDF_OpenDevice(&DeviceHandle) != SDR_OK) {
         log_warn("Error in derive: SDF_OpenDevice failed!\n");
         return NULL;
@@ -1113,7 +1113,7 @@ derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, co
 
         /* 生成对主密钥加密的密钥 */
         uint32_t kek_index = 1;
-        CCARD_HANDLE kek_handle;
+        void * kek_handle;
         uint8_t kek_cipher[16];
         uint32_t kek_len = 16;
         uint32_t kek_cipher_len;
@@ -1188,7 +1188,7 @@ derive_key(CCARD_HANDLE kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, co
  * @param[in] rand 随机数
  * @param[in] rand_len 随机数长度
  */
-l_km_err km_derive_all_session_key(uint8_t *db_name, uint8_t *table_name, CCARD_HANDLE handle_mk, uint32_t key_len,
+l_km_err km_derive_all_session_key(uint8_t *db_name, uint8_t *table_name, void * handle_mk, uint32_t key_len,
                                    const char *as_name, const char *gs_name, uint8_t *rand, uint32_t rand_len) {
     // 派生会话密钥
     enum KEY_TYPE key_types[4];
@@ -1232,9 +1232,9 @@ l_km_err km_derive_all_session_key(uint8_t *db_name, uint8_t *table_name, CCARD_
  * @return 返回报错码/成功码LD_KM_OK
  */
 
-l_km_err km_derive_masterkey_asgs(const char *db_name, const char *table_name, CCARD_HANDLE handle_NH, uint32_t key_len,
+l_km_err km_derive_masterkey_asgs(const char *db_name, const char *table_name, void * handle_NH, uint32_t key_len,
                                   const char *as_name, const char *gs_name, uint8_t *rand, uint32_t rand_len,
-                                  CCARD_HANDLE *handle_kasgs) {
+                                  void * *handle_kasgs) {
 
     uint16_t len_kasgs = 16;
     struct KeyPkg *pkg_kasgs;
@@ -1303,8 +1303,8 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
     struct KeyPkg *pkg = NULL;
     km_keypkg_t *pkg_NH = NULL;
     QueryResult_for_owner *qr_o = NULL;
-    CCARD_HANDLE handle;
-    CCARD_HANDLE handle_NH;
+    void * handle;
+    void * handle_NH;
     l_km_err result = LD_ERR_KM_DERIVE_KEY;
 
     if (query_state(db_name, table_name, id) != ACTIVE) {
@@ -1408,8 +1408,8 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
 }
 
 // 获取密钥句柄
-l_km_err km_get_key_handle(struct KeyPkg *pkg, CCARD_HANDLE *key_handle) {
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -1483,7 +1483,7 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, CCARD_HANDLE *key_handle) {
  * @param[out] handle 密钥句柄
  * @return 是否执行成功
  */
-l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, CCARD_HANDLE *key_handle) {
+l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, void * *key_handle) {
     // 查询密钥明文
     QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, id);
     if (result->key == NULL) {
@@ -1511,7 +1511,7 @@ l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, 
  */
 l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_mk, uint8_t *as_name, uint8_t *gs_t_name,
                               uint32_t nonce_len, uint8_t *nonce) {
-    CCARD_HANDLE handle_mk;
+    void * handle_mk;
     // 查询主密钥句柄
     if (get_handle_from_db(dbname, tablename, id_mk, &handle_mk) != LD_KM_OK) {
         log_warn("get_handle_from_db failed\n");
@@ -1574,8 +1574,8 @@ km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_
     QueryResult_for_queryid *qr_nmk = NULL;
     km_keypkg_t *keypkg_NH; // 更新的NH
     km_keypkg_t *keypkg_Kasgs = NULL;
-    CCARD_HANDLE handle_NH;
-    CCARD_HANDLE handle_asasw;
+    void * handle_NH;
+    void * handle_asasw;
 
     uint8_t *rand = malloc(sizeof(uint8_t) * 32);
     uint32_t rand_len;
@@ -1915,7 +1915,7 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
         // log_warn("kas-gs id %s\n", qr_mk->ids[0]);
 
         // 查询主密钥句柄
-        CCARD_HANDLE handle_mk;
+        void * handle_mk;
         if (get_handle_from_db(dbname, tablename, qr_mk->ids[0], &handle_mk) != LD_KM_OK) {
             log_warn("get_handle_from_db failed\n");
             fail_tag = TRUE;
@@ -2552,7 +2552,7 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
     if (key != NULL) { // 如果传入明文密钥，对其加密存储并存入控制信息
         if (is_encrypt) {
             uint32_t kek_index = 1;
-            CCARD_HANDLE kek_handle;
+            void * kek_handle;
 
             // 生成 KEK 存储kek
             if (km_generate_key_with_kek(kek_index, 16, &kek_handle, keypkg->kek_cipher, &keypkg->kek_cipher_len) !=
@@ -2592,7 +2592,7 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
             }
         } else {
             uint32_t kek_index = 1;
-            CCARD_HANDLE kek_handle;
+            void * kek_handle;
             memset(keypkg->kek_cipher, 0, 16);
             keypkg->kek_cipher_len = 0;
 
@@ -2741,11 +2741,11 @@ bool km_checkvalue_is_same(uint32_t alg_id, uint8_t *mac, uint32_t mac_length, u
     }
 }
 
-static l_km_err output_enc_key(CCARD_HANDLE hSessionHandle, km_keypkg_t *keypkg, const char *export_raw_path)
+static l_km_err output_enc_key(void * hSessionHandle, km_keypkg_t *keypkg, const char *export_raw_path)
 {
     // 使用本地密钥加密和完整性保护存储
     uint32_t kek_index = 1;
-    CCARD_HANDLE kek_handle;
+    void * kek_handle;
     SDF_GenerateKeyWithKEK(hSessionHandle, 128, ALGO_WITH_KEK,
                            kek_index, keypkg->kek_cipher, &keypkg->kek_cipher_len,
                            &kek_handle); // 生成对密钥加密的密钥
@@ -2776,10 +2776,10 @@ static l_km_err output_enc_key(CCARD_HANDLE hSessionHandle, km_keypkg_t *keypkg,
 //   @param[in] import_bin_path 从网关获取的根密钥文件
 //   @param[in] import_raw_path 使用本地密码卡加密后输出的根密钥文件
 
-km_keypkg_t *km_import_rootkey(CCARD_HANDLE *rootkey_handle, const char *import_bin_path, const char *import_raw_path)
+km_keypkg_t *km_import_rootkey(void * *rootkey_handle, const char *import_bin_path, const char *import_raw_path)
 {
     // 输出参数赋予空间
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &hSessionHandle); // 打开会话句柄
 
@@ -2834,7 +2834,7 @@ km_keypkg_t *km_export_rootkey(struct KeyMetaData *keymeta, const char *export_b
     // 输出参数赋予空间
     km_keypkg_t *keypkg = km_key_pkg_new(keymeta, NULL, FALSE);
 
-    CCARD_HANDLE DeviceHandle, hSessionHandle;
+    void * DeviceHandle, *hSessionHandle;
     SDF_OpenDevice(&DeviceHandle);
     SDF_OpenSession(DeviceHandle, &hSessionHandle);
 
@@ -2860,9 +2860,9 @@ km_keypkg_t *km_export_rootkey(struct KeyMetaData *keymeta, const char *export_b
 }
 
 // 适用于SGW端：获取根密钥  输出：根密钥句柄
-l_km_err km_get_rootkey_handle(CCARD_HANDLE *rootkey_handle, const char *filepath)
+l_km_err km_get_rootkey_handle(void * *rootkey_handle, const char *filepath)
 {
-    CCARD_HANDLE DeviceHandle, pSessionHandle;
+    void * DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
@@ -2879,7 +2879,7 @@ l_km_err km_get_rootkey_handle(CCARD_HANDLE *rootkey_handle, const char *filepat
 
     // 根密钥使用-校验密钥完整性
     uint32_t kek_index = 1;
-    CCARD_HANDLE kek_handle;
+    void * kek_handle;
     // 导入密钥加密密钥
     if (SDF_ImportKeyWithKEK(pSessionHandle, ALGO_WITH_KEK, kek_index, restored_pkg->kek_cipher,
                              restored_pkg->kek_cipher_len, &kek_handle) != LD_KM_OK)

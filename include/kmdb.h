@@ -175,7 +175,7 @@ void free_rand_result(
 
 typedef struct
 {
-    CCARD_HANDLE kek_handle;
+    void * kek_handle;
     uint16_t iv_len;
     uint8_t *iv;
 } QueryResult_for_kekhandle;

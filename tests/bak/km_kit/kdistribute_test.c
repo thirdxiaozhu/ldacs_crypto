@@ -29,8 +29,8 @@ int main()
     uint8_t SAC_GS[16] = {0x12, 0x30}; // SAC为前12bit  后面视为填充
 
     // 主密钥KAS-SGW=KDF(rootkey,sharedinfo)派生
-    CCARD_HANDLE handle_rootkey; // 根密钥句柄
-    CCARD_HANDLE handle_kassgw;  // AS和SGW之间的主密钥
+    void * handle_rootkey; // 根密钥句柄
+    void * handle_kassgw;  // AS和SGW之间的主密钥
     struct KeyPkg *pkg_kassgw;   // 用于保存主密钥信息
     uint16_t len_kassgw = 16;    // 主密钥长度
 
@@ -75,8 +75,8 @@ int main()
     // 主密钥KAS-GS派生
     uint8_t NH[16]; // 中间变量 下一跳密钥
     uint16_t len_kasgs = 16;
-    CCARD_HANDLE handle_NH;
-    CCARD_HANDLE handle_kasgs;
+    void * handle_NH;
+    void * handle_kasgs;
     struct KeyPkg *pkg_NH;
     struct KeyPkg *pkg_kasgs;
     pkg_NH = km_derive_key(handle_kassgw, NH_KEY, len_kasgs, "Berry", "GS1", rand_3,
@@ -107,7 +107,7 @@ int main()
 
     // 会话密钥派生 以用户数据加密密钥为例
     uint16_t len_session_key = 16;
-    CCARD_HANDLE handle_session_key;
+    void * handle_session_key;
     struct KeyPkg *pkg_session_key;
     pkg_session_key = km_derive_key(handle_kasgs, SESSION_KEY_USR_ENC, len_session_key, "Berry", "GS1",
                      rand_3, len_rand_3, &handle_session_key); // KU-ENC=KDF(KAS-GS,rand3)

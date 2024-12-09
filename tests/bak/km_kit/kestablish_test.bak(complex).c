@@ -64,7 +64,7 @@ int main()
     }
 
     // 获取根密钥
-    CCARD_HANDLE handle_rootkey;
+    void * handle_rootkey;
     QueryResult_for_queryid *rk_id = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
     if (rk_id == NULL)
     {
@@ -80,7 +80,7 @@ int main()
     }
 
     // 派生主密钥：密钥KAS-SGW=KDF(rootkey,sharedinfo)派生
-    CCARD_HANDLE handle_kassgw; // AS和SGW之间的主密钥
+    void * handle_kassgw; // AS和SGW之间的主密钥
     struct KeyPkg *pkg_kassgw;  // 用于保存主密钥信息
     uint16_t len_kassgw = 16;   // 主密钥长度
     pkg_kassgw = km_derive_key(handle_rootkey, MASTER_KEY_AS_SGW, len_kassgw, sac_as, sac_sgw, sharedinfo, sharedinfo_len, &handle_kassgw);
@@ -134,7 +134,7 @@ int main()
 
     // 主密钥KAS-GS派生
     uint16_t len_kasgs = 16;
-    CCARD_HANDLE handle_kasgs;
+    void * handle_kasgs;
     if (km_derive_masterkey_asgs(dbname, as_tablename, handle_kassgw, len_kasgs, sac_as, sac_gs, rand, rand_len, &handle_kasgs) != LD_KM_OK)
     {
         log_warn("[**AS derive master KAS-GS failed]\n");
@@ -157,7 +157,7 @@ int main()
 
     // 省略：密钥校验
     // 密钥KAS-GS派生 和AS同理：NH = KDF(KAS-SGW,rand)
-    CCARD_HANDLE handle_kasgs2;
+    void * handle_kasgs2;
     if (km_derive_masterkey_asgs(dbname, sgw_tablename, handle_kassgw, len_kasgs, sac_as, sac_gs, rand, rand_len, &handle_kasgs2) != LD_KM_OK)
     {
         log_warn("[**SGW derive master KAS-GS failed]\n");

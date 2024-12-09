@@ -9,10 +9,10 @@ int main()
 {
 
     uint32_t kek_len = 16;
-    CCARD_HANDLE handle;
+    void * handle;
     uint8_t kek_cipher[16];
     uint32_t cipher_len;
-    CCARD_HANDLE handle2;
+    void * handle2;
     do
     {
         if (km_generate_key_with_kek(1, kek_len, &handle, kek_cipher, &cipher_len) != LD_KM_OK)

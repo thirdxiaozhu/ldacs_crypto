@@ -32,7 +32,7 @@
 #define ALGO_HASH SGD_SM3            // hash调用的算法
 
 // 密钥句柄别名
-typedef void *CCARD_HANDLE;
+//typedef void *void *;
 
 // typedef enum { TRUE = 1, FALSE = 0 } bool;
 
@@ -287,7 +287,7 @@ l_km_err km_hash(
     uint8_t *output);
 
 l_km_err km_mac(
-    CCARD_HANDLE key_handle,
+    void * key_handle,
     uint32_t alg_id,
     uint8_t *iv,
     uint8_t *data,
@@ -306,7 +306,7 @@ l_km_err km_hmac(
 
 // sm3 hmac key长度要求为32byte
 l_km_err km_hmac_with_keyhandle(
-    CCARD_HANDLE handle,
+    void * handle,
     uint8_t *data,
     uint32_t data_len,
     uint8_t *hmac_value,
@@ -346,17 +346,17 @@ l_km_err km_sm3_hmac(
 l_km_err km_import_key(
     uint8_t *key,
     uint32_t key_length,
-    CCARD_HANDLE *key_handle);
+    void * *key_handle);
 
 // 销毁密钥
 l_km_err km_destroy_key(
-    CCARD_HANDLE key_handle);
+    void * key_handle);
 
 // 指定KEK索引和密钥元数据，生成密钥，返回密钥句柄和密钥密文
 l_km_err km_generate_key_with_kek(
     int kek_index,
     uint32_t kek_len,
-    CCARD_HANDLE *key_handle,
+    void * *key_handle,
     uint8_t *cipher_key,
     int *cipher_len);
 
@@ -371,7 +371,7 @@ l_km_err km_import_key_with_kek(
     uint8_t *key,
     uint32_t key_length,
     int kek_index,
-    CCARD_HANDLE *key_handle);
+    void * *key_handle);
 
 /*************************************************************************
  *                      外部接口：业务逻辑-密钥生成和派生                  *
@@ -488,7 +488,7 @@ l_km_err get_handle_from_db(
     uint8_t *db_name,
     uint8_t *table_name,
     uint8_t *id,
-    CCARD_HANDLE *handle);
+    void * *handle);
 
 /*************************************************************************
  *                      外部接口：业务逻辑-密钥更新                       *
@@ -578,7 +578,7 @@ l_km_err km_install_key(
 // 输入密钥包 获取密钥句柄
 l_km_err km_getkeyhandle(
     struct KeyPkg *pkg,
-    CCARD_HANDLE *key_handle);
+    void * *key_handle);
 
 // 从密码卡读取文件 放到指定位置
 l_km_err km_readfile_from_cryptocard(

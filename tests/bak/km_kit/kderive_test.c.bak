@@ -60,7 +60,7 @@ int main()
     }
 
     // 获取根密钥
-    CCARD_HANDLE handle_rootkey; // 根密钥句柄
+    void * handle_rootkey; // 根密钥句柄
     uint8_t *filepath = "/home/wencheng/crypto/key_management/keystore/rootkey.txt";
     ret = km_get_rootkey_handle(&handle_rootkey, filepath); // 获取根密钥
     if (ret != LD_KM_OK)
@@ -70,7 +70,7 @@ int main()
     }
 
     // 派生主密钥：密钥KAS-SGW=KDF(rootkey,sharedinfo)派生
-    CCARD_HANDLE handle_kassgw; // AS和SGW之间的主密钥
+    void * handle_kassgw; // AS和SGW之间的主密钥
     struct KeyPkg *pkg_kassgw;  // 用于保存主密钥信息
     uint16_t len_kassgw = 16;   // 主密钥长度
     pkg_kassgw = km_derive_key(handle_rootkey, MASTER_KEY_AS_SGW, len_kassgw, sac_sgw, sac_as, sharedinfo, sharedinfo_len, &handle_kassgw);
@@ -103,7 +103,7 @@ int main()
     // 主密钥KAS-GS派生
     uint16_t len_kasgs = 16;
     
-    CCARD_HANDLE handle_kasgs;
+    void * handle_kasgs;
     if (km_derive_masterkey_asgs(dbname, as_tablename, handle_kassgw, len_kasgs, sac_as, sac_gs, rand, rand_len, &handle_kasgs) != LD_KM_OK)
     {
         log_warn("[**AS derive master KAS-GS failed]\n");
