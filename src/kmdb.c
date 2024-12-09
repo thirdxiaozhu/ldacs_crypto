@@ -47,6 +47,8 @@ const char *sql_type(enum km_field_type type)
     }
 }
 
+
+
 /**
  * @bref 基于描述创建密钥表
  */
@@ -417,6 +419,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
  */
 l_km_err store_rand(const char *db_name, const char *table_name, uint8_t *key_id, uint32_t rand_len, uint8_t *rand)
 {
+    // 链接数据库
     sqlite3 *db;
     int rc;
     sqlite3_stmt *stmt;

@@ -2072,7 +2072,7 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
     QueryResult_for_queryid *qr_mk = NULL;
     do
     {
-        // 如果不存在，先创建表
+        // 如果不存在，先创建密钥表
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
             LD_KM_OK)
