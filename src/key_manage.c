@@ -848,7 +848,7 @@ l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE
             result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
             break;
         }
-        print_key_pkg(rawpkg);
+//        print_key_pkg(rawpkg);
 
         // 存储根密钥
         keypkg = km_key_pkg_new(key_data, key, TRUE);
@@ -989,7 +989,7 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
         }
         km_keypkg_t *raw_pkg = read_keypkg_from_file(local_rkdir);
         remove(local_rkdir);
-        print_key_pkg(raw_pkg);
+//        print_key_pkg(raw_pkg);
 
         // root key store
         km_keypkg_t *keypkg = km_key_pkg_new(raw_pkg->meta_data, raw_pkg->key_cipher, TRUE);
@@ -1120,7 +1120,6 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
             break;
         }
         // print_key_metadata(pkg->meta_data);
-        // log_buf(LOG_INFO, "[plaint test while gen]", key, key_len);
 
         /* 生成对主密钥加密的密钥 */
         uint32_t kek_index = 1;
@@ -1346,7 +1345,6 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
     const char *owner1 = qr_o->owner1;
     const char *owner2 = qr_o->owner2;
 
-    // log_warn("dbname %s, tablename %s, id %s, asname: %s\n", db_name, table_name, id, qr_o->owner1);
 
     switch (query_keytype(db_name, table_name, id)) {
         case ROOT_KEY: {

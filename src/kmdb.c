@@ -614,7 +614,7 @@ query_id(const char *db_name, const char *table_name, const char *owner1, const 
 
     char query[1024];
     snprintf(query, sizeof(query),
-             "SELECT id FROM %s WHERE owner1='%s' AND owner2='%s' AND key_type='%s' AND key_state='%s'",
+             "SELECT id FROM %s WHERE owner1='%s' AND owner2='%s' AND key_type='%s' AND key_state='%s' ORDER BY creatime DESC",
              table_name, owner1, owner2, ktype_str(key_type), kstate_str(state));
     // log_warn("query: %s\n", query);
 
