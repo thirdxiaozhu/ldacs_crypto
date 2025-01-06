@@ -47,8 +47,6 @@ const char *sql_type(enum km_field_type type)
     }
 }
 
-
-
 /**
  * @bref 基于描述创建密钥表
  */
@@ -1181,6 +1179,31 @@ QueryResult_for_keyvalue *query_keyvalue(uint8_t *db_name, uint8_t *table_name, 
     return result;
 }
 
+QueryResult_for_keyvalue *query_keyvalue_by_owner(uint8_t *db_name, uint8_t *table_name, const char *owner1,
+                                                  const char *owner2, enum KEY_TYPE key_type, enum STATE state)
+{
+    // query id
+    QueryResult_for_queryid *qr = query_id(db_name, table_name, owner1, owner2, key_type, state);
+    if (qr->count != 1)
+    {
+        log_warn("Query key-id failed, so that query keyvalue failed.\n");
+        free_queryid_result(qr);
+        return LD_ERR_KM_QUERY;
+    }
+
+    // query keyvalue
+    QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, qr->ids[0]);
+    if (!result)
+    {
+        log_warn("Failed to query key from %s, table %s, id %s\n", db_name, table_name, qr->ids[0]);
+        free_keyvalue_result(result);
+        return NULL;
+    }
+
+    free_queryid_result(qr);
+    return result;
+    
+}
 /**
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
