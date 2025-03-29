@@ -1,1 +1,0 @@
-cmd_/home/wencheng/key_management/piico/driver/usb/Module.symvers :=  scripts/mod/modpost -m -a     -o /home/wencheng/key_management/piico/driver/usb/Module.symvers -T /home/wencheng/key_management/piico/driver/usb/modules.order -i Module.symvers -e 

@@ -1,10 +1,11 @@
+
 #ifndef KM_H
 #define KM_H
 
 
-/* #undef USE_SDF */
-/* #undef USE_PIICO */
-#define USE_GMSSL
+#cmakedefine USE_SDF
+#cmakedefine USE_PIICO
+#cmakedefine USE_GMSSL
 
 #ifdef USE_SDF
 

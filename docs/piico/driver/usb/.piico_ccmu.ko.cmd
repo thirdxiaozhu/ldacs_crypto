@@ -1,1 +1,0 @@
-cmd_/home/wencheng/key_management/piico/driver/usb/piico_ccmu.ko := ld -r -m elf_x86_64 -z noexecstack --build-id=sha1  -T scripts/module.lds -o /home/wencheng/key_management/piico/driver/usb/piico_ccmu.ko /home/wencheng/key_management/piico/driver/usb/piico_ccmu.o /home/wencheng/key_management/piico/driver/usb/piico_ccmu.mod.o;  true

@@ -1,3 +1,0 @@
-管理员身份登录密码卡
-sudo piico_manager -l 2
-密码：ad

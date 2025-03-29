@@ -1,4 +1,0 @@
-/home/wencheng/crypto/key_management/build/tests/CMakeFiles/key_distributetest.dir
-/home/wencheng/crypto/key_management/build/tests/CMakeFiles/keygentest.dir
-/home/wencheng/crypto/key_management/build/src/CMakeFiles/km_src.dir
-/home/wencheng/crypto/key_management/build/tests/CMakeFiles/rkey_exporttest.dir
