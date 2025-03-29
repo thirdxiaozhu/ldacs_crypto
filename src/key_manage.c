@@ -379,6 +379,8 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
         } // //printbuff("km_hmac check point: digest opad and km_hash", hmac_value, *hmac_len);
     } while (0);
 
+//    log_buf(LOG_WARN, "hmac", hmac_value, (size_t) hmac_len);
+
     SDF_CloseSession(pSessionHandle);
     SDF_CloseDevice(DeviceHandle);
 
@@ -1311,6 +1313,7 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
         log_warn("key state mismatch");
         return LD_ERR_KM_KEY_STATE;
     }
+
 
     if (get_handle_from_db(db_name, table_name, id, &handle) != LD_KM_OK) {
         log_warn("[** get_handle error**]\n");
