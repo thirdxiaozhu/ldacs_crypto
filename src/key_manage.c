@@ -822,6 +822,7 @@ l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE
     km_keymetadata_t *key_data = NULL;
     l_km_err result = LD_KM_OK;
 
+
     do {
         // 生成密钥
         key_data = km_key_metadata_new(owner1, owner2, key_type, key_len, validity_period);
@@ -849,7 +850,7 @@ l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE
             result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
             break;
         }
-        // print_key_pkg(rawpkg);
+//        print_key_pkg(rawpkg);
 
         // 存储根密钥
         keypkg = km_key_pkg_new(key_data, key, TRUE);
@@ -858,7 +859,7 @@ l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
             break;
         }
-        // print_key_pkg(keypkg);
+//        print_key_pkg(keypkg);
 
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
@@ -990,7 +991,7 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
         }
         km_keypkg_t *raw_pkg = read_keypkg_from_file(local_rkdir);
         remove(local_rkdir);
-        // print_key_pkg(raw_pkg);
+//        print_key_pkg(raw_pkg);
 
         // root key store
         km_keypkg_t *keypkg = km_key_pkg_new(raw_pkg->meta_data, raw_pkg->key_cipher, TRUE);
@@ -1003,6 +1004,14 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
         if (store_key(db_name, table_name, keypkg, &km_pkg_desc) != LD_KM_OK) {
             break;
         }
+//        if (key_type == 1 || key_type == 3) {
+//            log_warn("%s %s %d", owner1, owner2, key_len);
+//            log_buf(LOG_ERROR, "HASH", hash_of_keytype, 32);
+//            log_buf(LOG_ERROR, "HASH", hash_of_rand, 32);
+//            log_buf(LOG_ERROR, "SALT", salt, salt_len);
+//        }
+//        log_warn("KEY TYPE:  %d", key_type);
+//        log_buf(LOG_ERROR, "KEY", key, 16);
 
         // 释放变量空间
         key_pkg_free(keypkg);
@@ -1043,6 +1052,7 @@ km_keypkg_t *
 derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const char *owner1, const char *owner2,
            uint8_t *rand, uint32_t rand_len, void **key_handle) {
     void *DeviceHandle, *hSessionHandle;
+
     if (SDF_OpenDevice(&DeviceHandle) != SDR_OK) {
         log_warn("Error in derive: SDF_OpenDevice failed!\n");
         return NULL;
@@ -1081,6 +1091,7 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
 
     do {
 
+
         // 派生密钥
         if (km_hash(ALGO_HASH, (uint8_t *) type_names[key_type], strlen(type_names[key_type]), hash_of_keytype)) {
             log_warn("Error in derive : km_hash failed!\n\n");
@@ -1111,7 +1122,6 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
             break;
         }
         // print_key_metadata(pkg->meta_data);
-        // log_buf(LOG_INFO, "[plaint test while gen]", key, key_len);
 
         /* 生成对主密钥加密的密钥 */
         uint32_t kek_index = 1;
@@ -1146,6 +1156,15 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
             break;
         }
 
+
+        /* test */
+//        char iv[16] = {0};
+//        char data[16] = {0};
+//        char res[256] = {0};
+//        uint32_t res_len = 0;
+//        km_encrypt(key, ALGO_ENC_AND_DEC, iv, data, 16, res, (uint32_t *) &res_len);
+//        log_buf(LOG_ERROR, "TEST RES", res, res_len);
+
         /* 计算明文校验值 */
         if (km_mac(kek_handle, ALGO_MAC, iv_mac, key, key_len, pkg->chck_value, &(pkg->chck_len))) {
             log_warn("Error in derive : SDF_CalculateMAC failed!\n");
@@ -1158,7 +1177,6 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
             log_warn("Error in derive : SDF_ImportKey\n");
             break;
         }
-
     } while (0);
 
     // 释放内存
@@ -1330,7 +1348,6 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
     const char *owner1 = qr_o->owner1;
     const char *owner2 = qr_o->owner2;
 
-    // log_warn("dbname %s, tablename %s, id %s, asname: %s\n", db_name, table_name, id, qr_o->owner1);
 
     switch (query_keytype(db_name, table_name, id)) {
         case ROOT_KEY: {

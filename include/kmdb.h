@@ -125,7 +125,7 @@ typedef struct
 } QueryResult_for_keyvalue;
 
 /**
- * @bref 外部接口：查询密钥值
+ * @bref 外部接口：通过密钥id查询密钥值
  * @param[in] dbname
  * @param[in] tablename
  * @param id 密钥编号
