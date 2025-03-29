@@ -512,7 +512,7 @@ l_km_err get_handle_from_db(
 l_km_err km_update_masterkey(
     uint8_t *dbname,
     uint8_t *tablename,
-    uint8_t *key_id,
+//    uint8_t *key_id,
     uint8_t *sgw_name,
     uint8_t *gs_s_name,
     uint8_t *gs_t_name,

@@ -1581,11 +1581,14 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
 /**
  * @brief 网关和AS端更新主密钥 KAS-GS
  */
+//km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_t *sgw_name, uint8_t *gs_s_name,
+//                    uint8_t *gs_t_name,
+//                    uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
 l_km_err
-km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_t *sgw_name, uint8_t *gs_s_name,
-                    uint8_t *gs_t_name,
-                    uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
-    bool fail_tag = FALSE;
+    km_update_masterkey(uint8_t *dbname, uint8_t *tablename,  uint8_t *sgw_name, uint8_t *gs_s_name,
+                        uint8_t *gs_t_name,
+                        uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
+        bool fail_tag = FALSE;
     QueryResult_for_queryid *qr_NH = NULL;
     QueryResult_for_keyvalue *query_NH = NULL;
     QueryResult_for_queryid *qr_assgw = NULL;
@@ -1610,6 +1613,20 @@ km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_
             fail_tag = TRUE;
             break;
         }
+
+        qr_mk = query_id(dbname, tablename, as_name, gs_s_name, MASTER_KEY_AS_GS, ACTIVE);
+        if (qr_mk->count == 0) {
+            printf("Query mkid failed, null kas-gs id.\n");
+            fail_tag = TRUE;
+            break;
+        } else if (qr_mk->count > 1) // TODO: check ununique id
+        {
+            printf("Query mkid failed,kas-gs id is not unique.\n");
+            fail_tag = TRUE;
+            break;
+        }
+
+        uint8_t *key_id = qr_mk->ids[0];
 
         // 查询待更新密钥kas-gs信息
         uint32_t mk_len = query_keylen(dbname, tablename, key_id);
@@ -1803,7 +1820,13 @@ sgw_update_master_key(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint
         }
         // log_warn("owner1: %s, owner2: %s\n", qo->owner1, qo->owner2);
 
-        if (km_update_masterkey(dbname, tablename, key_id, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
+//        if (km_update_masterkey(dbname, tablename, key_id, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
+//                                nonce) !=
+//            LD_KM_OK) {
+//            fail_tag = TRUE;
+//            break;
+//        }
+        if (km_update_masterkey(dbname, tablename, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
                                 nonce) !=
             LD_KM_OK) {
             fail_tag = TRUE;
