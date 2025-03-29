@@ -126,6 +126,7 @@ typedef struct
 
 /**
  * @bref 外部接口：通过密钥id查询密钥值
+ * @bref 外部接口：基于id查询密钥值
  * @param[in] dbname
  * @param[in] tablename
  * @param id 密钥编号
@@ -137,6 +138,25 @@ QueryResult_for_keyvalue *query_keyvalue(
     uint8_t *table_name,
     uint8_t *id);
 
+/* 基于所有者查询密钥值 */
+/**
+ * @bref 外部接口：基于所有者查询密钥值
+ * @param[in] dbname
+ * @param[in] tablename
+ * @param[in] owner1 所有者
+ * @param[in] owner2 所有者
+ * @param[in] key_type 密钥类型
+ * @param[in] state 密钥状态
+ * @return key:密钥值，NULL :未查询到结果
+ *
+ */
+QueryResult_for_keyvalue *query_keyvalue_by_owner(
+    uint8_t *db_name,
+    uint8_t *table_name,
+    const char *owner1,
+    const char *owner2,
+    enum KEY_TYPE key_type,
+    enum STATE state);
 
 /**
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
@@ -175,7 +195,7 @@ void free_rand_result(
 
 typedef struct
 {
-    void * kek_handle;
+    CCARD_HANDLE kek_handle;
     uint16_t iv_len;
     uint8_t *iv;
 } QueryResult_for_kekhandle;

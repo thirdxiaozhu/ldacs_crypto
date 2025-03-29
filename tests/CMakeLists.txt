@@ -18,7 +18,7 @@ set(tests
         # kinstall
         # prehandle
         # kderive
-        # query_key
+#        query_key_by_owner
 
 
         # query_id
