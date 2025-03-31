@@ -11,11 +11,11 @@
 // 用于创建随机数种子索引表时的描述
 static km_field_desc km_create_randseeds_table_fields[] = {
         // 密钥结构体字段描述
-        {ft_uint32t,        0, "seeds_id", NULL},
-        {ft_uuid,           0, "key_id",   NULL},
-        {ft_uint16t,        0, "rand_len", NULL},
-        {ft_uint8t_pointer, 0, "rand",     NULL},
-        {ft_end,            0, NULL,       NULL},
+        {km_ft_uint32t,        0, "seeds_id", NULL},
+        {km_ft_uuid,           0, "key_id",   NULL},
+        {km_ft_uint16t,        0, "rand_len", NULL},
+        {km_ft_uint8t_pointer, 0, "rand",     NULL},
+        {km_ft_end,            0, NULL,       NULL},
 };
 struct_desc static km_seeds_desc = {"km_seed", km_create_randseeds_table_fields};
 

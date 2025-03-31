@@ -9,7 +9,7 @@ endif()
 
 
 # 创建库
-add_library(${PROJECT_NAME} STATIC key_manage.c kmdb.c)   # 生成共享库
+add_library(${PROJECT_NAME} STATIC key_manage.c kmdb.c cipher_util.c)   # 生成共享库
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC uuid sqlite3)
 

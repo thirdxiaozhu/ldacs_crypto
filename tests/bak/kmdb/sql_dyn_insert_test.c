@@ -7,13 +7,13 @@ enum km_field_type
     /*
      * key management relevant
      */
-    ft_uuid,
-    ft_uint8t_pointer,
-    ft_enum,
-    ft_uint32t,
-    ft_timet,
-    ft_uint16t,
-    ft_end,
+    km_ft_uuid,
+    km_ft_uint8t_pointer,
+    km_ft_enum,
+    km_ft_uint32t,
+    km_ft_timet,
+    km_ft_uint16t,
+    km_ft_end,
 };
 
 // 定义结构体描述字段
@@ -33,22 +33,22 @@ typedef struct struct_desc_s
 
 static km_field_desc test_km_fields[] = {
     // 密钥结构体字段描述
-    {ft_uuid, 256, "id", NULL},
-    {ft_enum, 64, "key_type", NULL},
-    {ft_uint8t_pointer, 128, "owner1", NULL},
-    {ft_uint8t_pointer, 128, "owner2", NULL},
-    {ft_uint32t, 256, "key_len", NULL},
-    {ft_enum, 64, "key_state", NULL},
-    {ft_timet, 128, "creatime", NULL},
-    {ft_timet, 128, "updatecycle", NULL},
-    {ft_uint32t, 64, "kek_len", NULL},
-    {ft_uint8t_pointer, 128, "kek_cipher", NULL},
-    {ft_uint8t_pointer, 128, "iv", NULL},
-    {ft_uint16t, 64, "iv_len", NULL},
-    {ft_enum, 64, "chck_algo", NULL},
-    {ft_uint16t, 64, "check_len", NULL},
-    {ft_uint8t_pointer, 128, "chck_value", NULL},
-    {ft_end, 0, NULL, NULL},
+    {km_ft_uuid, 256, "id", NULL},
+    {km_ft_enum, 64, "key_type", NULL},
+    {km_ft_uint8t_pointer, 128, "owner1", NULL},
+    {km_ft_uint8t_pointer, 128, "owner2", NULL},
+    {km_ft_uint32t, 256, "key_len", NULL},
+    {km_ft_enum, 64, "key_state", NULL},
+    {km_ft_timet, 128, "creatime", NULL},
+    {km_ft_timet, 128, "updatecycle", NULL},
+    {km_ft_uint32t, 64, "kek_len", NULL},
+    {km_ft_uint8t_pointer, 128, "kek_cipher", NULL},
+    {km_ft_uint8t_pointer, 128, "iv", NULL},
+    {km_ft_uint16t, 64, "iv_len", NULL},
+    {km_ft_enum, 64, "chck_algo", NULL},
+    {km_ft_uint16t, 64, "check_len", NULL},
+    {km_ft_uint8t_pointer, 128, "chck_value", NULL},
+    {km_ft_end, 0, NULL, NULL},
 };
 
 struct_desc static test_km_desc = {"km_pkg", test_km_fields};
@@ -79,12 +79,12 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
 
     // 添加字段名
     const km_field_desc *next_field;
-    while (current_field->km_field_type != ft_end)
+    while (current_field->km_field_type != km_ft_end)
     {
         next_field = current_field;
         next_field++; // 指向下一个描述域
         strcat(sql, current_field->name);
-        if (next_field->km_field_type != ft_end)
+        if (next_field->km_field_type != km_ft_end)
         {
             strcat(sql, ", ");
         }
@@ -94,9 +94,9 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
     // 添加字段值
     current_field = sd->fields;
     strcat(sql, ") VALUES (");
-    while (current_field->km_field_type != ft_end)
+    while (current_field->km_field_type != km_ft_end)
     {
-        if (current_field->km_field_type == ft_uint16t)
+        if (current_field->km_field_type == km_ft_uint16t)
         {
             strcat(sql, current_field->name); // TODO: 根据类型决定拷贝什么和类型判断
         }
@@ -109,7 +109,7 @@ char *constructInsertSQL(struct_desc *sd, const char *tableName)
 
         next_field = current_field;
         next_field++; // 指向下一个描述域
-        if (next_field->km_field_type != ft_end)
+        if (next_field->km_field_type != km_ft_end)
         {
             strcat(sql, ", ");
         }
