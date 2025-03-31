@@ -21,13 +21,13 @@ int main()
     // 导入kbc
     if (km_key_import(dbname, as_tablename, kbc_filename) != LD_KM_OK)
     {
-        log_warn("kbc key import failed\n");
+        fprintf(stderr, "kbc key import failed\n");
         return -1;
     }
     // 导入kcc
     if (km_key_import(dbname, as_tablename, kcc_filename) != LD_KM_OK)
     {
-        log_warn("kcc key import failed\n");
+        fprintf(stderr, "kcc key import failed\n");
         return -1;
     }
     return 0;

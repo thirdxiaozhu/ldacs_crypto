@@ -54,7 +54,7 @@ int main()
     ret = km_generate_random(sharedinfo, sharedinfo_len); // 用随机数填充
     if (ret != LD_KM_OK)
     {
-        log_warn("[**sgw generate sharedinfo error**]\n");
+        fprintf(stderr, "[**sgw generate sharedinfo error**]\n");
         return 0;
     }
 
@@ -62,7 +62,7 @@ int main()
     QueryResult_for_queryid qr_rk = query_id(dbname, sgw_tablename, sac_as, sac_sgw, ROOT_KEY, ACTIVE);
     if (qr_rk.count != 1)
     {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         return LD_ERR_KM_QUERY;
     }
 
@@ -70,7 +70,7 @@ int main()
     uint32_t len_kassgw = 16;
     if (km_derive_key(dbname, sgw_tablename, qr_rk.ids[0], len_kassgw, sac_gs, sharedinfo, sharedinfo_len) != LD_KM_OK)
     {
-        log_warn("[**sgw derive_key kas-sgw error**]\n");
+        fprintf(stderr, "[**sgw derive_key kas-sgw error**]\n");
         return 0;
     }
 
@@ -78,7 +78,7 @@ int main()
     QueryResult_for_queryid qr_mk = query_id(dbname, sgw_tablename, sac_as, sac_gs, MASTER_KEY_AS_GS, ACTIVE);
     if (qr_mk.count != 1)
     {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         return LD_ERR_KM_QUERY;
     }
 
@@ -86,7 +86,7 @@ int main()
     uint32_t len_sessionkey = 16;
     if (km_derive_key(dbname, sgw_tablename, qr_mk.ids[0], len_kassgw, sac_gs, sharedinfo, sharedinfo_len) != LD_KM_OK)
     {
-        log_warn("[**sgw derive_key kas-sgw error**]\n");
+        fprintf(stderr, "[**sgw derive_key kas-sgw error**]\n");
         return 0;
     }
     return 0;

@@ -7,8 +7,7 @@
 #include "key_manage.h"
 #include "kmdb.h"
 
-int main()
-{
+int main() {
     uint8_t *dbname = "keystore.db";
     uint8_t *primary_key = "id";
     uint8_t *as_tablename = "as_keystore";
@@ -22,16 +21,14 @@ int main()
     const char *as_name = "000010010";
 
     // 调用接口函数
-    QueryResult_for_keyvalue *result = query_keyvalue_by_owner(dbname, sgw_tablename, as_name, sac_gs_s, MASTER_KEY_AS_SGW, ACTIVE);
+    QueryResult_for_keyvalue *result = query_keyvalue_by_owner(dbname, sgw_tablename, as_name, sac_gs_s,
+                                                               MASTER_KEY_AS_SGW, ACTIVE);
 
     // 检查结果
-    if (result->key != NULL)
-    {
+    if (result->key != NULL) {
         printf("Query successful!\n");
-        log_buf(LOG_INFO, "Result data \n", result->key, result->key_len);
-    }
-    else
-    {
+        //log_buf(LOG_INFO, "Result data \n", result->key, result->key_len);
+    } else {
         printf("Query failed with status");
     }
 

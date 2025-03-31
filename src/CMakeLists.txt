@@ -17,7 +17,7 @@ add_library(km_src STATIC ${SOURCES})   # 生成共享库
 #add_library(km_src_static_test STATIC ${SOURCES})  # 生成静态库
 
 # 包含和链接目录
-target_include_directories(km_src PUBLIC /usr/local/include/ldacs)
+target_include_directories(km_src PUBLIC /usr/local/ldacs-cauc/include)
 target_link_directories(km_src PUBLIC /usr/local/lib/ldacs)
 target_link_libraries(km_src LINK_PUBLIC ldacsutils)
 

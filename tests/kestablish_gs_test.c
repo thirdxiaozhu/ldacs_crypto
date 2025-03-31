@@ -65,9 +65,9 @@ int main()
     uint8_t rand[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     if (km_install_key(dbname, gs_tablename, key_len, key, as_name, gs_name, rand_len, rand) != LD_KM_OK)
     {
-        log_warn("gs install key failed\n");
+        fprintf(stderr, "gs install key failed\n");
     }
-    log_warn("gs install key ok\n");
+    fprintf(stderr, "gs install key ok\n");
 
     /* 把随机数保存 可以用于密钥更新 */
     // 创建随机数种子表
@@ -86,7 +86,7 @@ int main()
     QueryResult_for_queryid *qr_mk = query_id(dbname, gs_tablename, as_name, gs_name, MASTER_KEY_AS_GS, ACTIVE);
     if (qr_mk == NULL)
     {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         free_queryid_result(qr_mk);
         return LD_ERR_KM_QUERY;
     }

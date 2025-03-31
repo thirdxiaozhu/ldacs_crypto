@@ -22,10 +22,10 @@ int main()
 
     if (km_rkey_gen_export(as_name, sgw_name, rootkey_len, validity_period, dbname, sgw_tablename, export_dir))
     {
-        log_warn("根密钥生成、保存和导出失败。\n");
+        fprintf(stderr, "根密钥生成、保存和导出失败。\n");
     }
 
-    log_warn("OK\n");
+    fprintf(stderr, "OK\n");
 
     return 0;
 }

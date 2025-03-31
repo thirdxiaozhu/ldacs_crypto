@@ -10,27 +10,27 @@ int activate_key(const char *dbname, const char *tablename, const char *name1, c
     query_result = query_id(dbname, tablename, name1, name2, key_type, PRE_ACTIVATION);
     if (query_result == NULL)
     {
-        log_warn("query failed.\n");
+        fprintf(stderr, "query failed.\n");
         ret = LD_ERR_KM_QUERY;
         goto clean_up;
     }
 
     if (query_result->count == 0)
     {
-        log_warn("query result count is 0.\n");
+        fprintf(stderr, "query result count is 0.\n");
         ret = LD_ERR_KM_QUERY;
         goto clean_up;
     }
 
     if (enable_key(dbname, tablename, query_result->ids[0]) != LD_KM_OK)
     {
-        log_warn("enable key failed\n");
+        fprintf(stderr, "enable key failed\n");
         ret = LD_ERR_KEY;
         goto clean_up;
     }
     else
     {
-        log_warn("enable key OK\n");
+        fprintf(stderr, "enable key OK\n");
     }
 
 clean_up:

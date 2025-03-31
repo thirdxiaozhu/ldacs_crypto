@@ -10,7 +10,6 @@
 #include <string.h>
 #include <uuid/uuid.h>
 #include <global/ldacs_sim.h>
-#include <utils/ld_log.h>
 #include "km.h"
 
 /*

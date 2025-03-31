@@ -9,6 +9,7 @@
 #include <sdf/libsdf.h>
 #include <sdfkmt/sdfe-func.h>
 #include <sdfkmt/sdfe-type.h>
+#include <utils/ld_log.h>
 
 #elif defined(USE_PIICO)
 
@@ -340,7 +341,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
         current_field++;
     }
     strcat(sql, ");");
-    // log_warn("Generated SQL statement: %s\n", sql);
+    // fprintf(stderr, "Generated SQL statement: %s\n", sql);
 
     /******************************
      *        执行insert语句       *
@@ -444,7 +445,7 @@ int query_callback_for_kekhandle(void *data, int argc, char **argv, char **azCol
     uint8_t *kek_cipher = NULL, *iv = NULL;
 
     if (argc < 4 || !argv[0] || !argv[1] || !argv[2] || !argv[3]) {
-        log_warn("[query_callback_for_kekhandle] 参数无效\n");
+        fprintf(stderr, "[query_callback_for_kekhandle] 参数无效\n");
         return 1;
     }
 
@@ -454,7 +455,7 @@ int query_callback_for_kekhandle(void *data, int argc, char **argv, char **azCol
     iv = hex_to_bytes(argv[3]);
 
     if (kek_cipher == NULL || iv == NULL) {
-        log_warn("[query_callback_for_kekhandle] 内存分配失败\n");
+        fprintf(stderr, "[query_callback_for_kekhandle] 内存分配失败\n");
         if (kek_cipher != NULL) {
             free(kek_cipher);
         }
@@ -465,7 +466,7 @@ int query_callback_for_kekhandle(void *data, int argc, char **argv, char **azCol
     }
 
     if (km_import_key_with_kek(kek_cipher, kek_len, 1, &result->kek_handle) != LD_KM_OK) {
-        log_warn("[query_callback_for_kekhandle] import key failed\n");
+        fprintf(stderr, "[query_callback_for_kekhandle] import key failed\n");
         free(kek_cipher);
         free(iv);
         return -1;
@@ -490,7 +491,7 @@ QueryResult_for_kekhandle *query_kekhandle(uint8_t *db_name, uint8_t *table_name
     int rc;
     QueryResult_for_kekhandle *result = (QueryResult_for_kekhandle *) malloc(sizeof(QueryResult_for_kekhandle));
     if (result == NULL) {
-        log_warn("内存分配失败\n");
+        fprintf(stderr, "内存分配失败\n");
         return NULL;
     }
 
@@ -512,7 +513,7 @@ QueryResult_for_kekhandle *query_kekhandle(uint8_t *db_name, uint8_t *table_name
     free(sql_query);
 
     if (rc != SQLITE_OK) {
-        log_warn("查询失败: %s\n", zErrMsg);
+        fprintf(stderr, "查询失败: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
         free(result);
         return NULL;
@@ -559,8 +560,8 @@ void free_kekhandle_result(QueryResult_for_kekhandle *result) {
 
 // 查询回调函数
 static int queryid_callback(void *data, int argc, char **argv, char **azColName) {
-    // log_warn("Callback called: argc = %d\n", argc);
-    // log_warn("Callback called, argv[0]: %s\n", argv[0] ? argv[0] : "NULL");
+    // fprintf(stderr, "Callback called: argc = %d\n", argc);
+    // fprintf(stderr, "Callback called, argv[0]: %s\n", argv[0] ? argv[0] : "NULL");
 
     QueryResult_for_queryid *result = (QueryResult_for_queryid *) data;
 
@@ -616,7 +617,7 @@ query_id(const char *db_name, const char *table_name, const char *owner1, const 
     snprintf(query, sizeof(query),
              "SELECT id FROM %s WHERE owner1='%s' AND owner2='%s' AND key_type='%s' AND key_state='%s' ORDER BY creatime DESC",
              table_name, owner1, owner2, ktype_str(key_type), kstate_str(state));
-    // log_warn("query: %s\n", query);
+    // fprintf(stderr, "query: %s\n", query);
 
     // 执行查询
     if (sqlite3_exec(db, query, queryid_callback, result, &err_msg) != SQLITE_OK) {
@@ -859,7 +860,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
 
     if (argc == 0) // 没有返回数据
     {
-        log_warn("Error: No data returned from query\n");
+        fprintf(stderr, "Error: No data returned from query\n");
         return LD_ERR_KM_QUERY; // 假设有一个错误码表示没有数据
     }
 
@@ -881,12 +882,12 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
         if (kek_len > 0) {
             kek = hex_to_bytes(argv[1]);
             if (kek == NULL) {
-                log_warn("Error: Conversion of kek failed\n");
+                fprintf(stderr, "Error: Conversion of kek failed\n");
                 return LD_ERR_KM_CONVERT;
             }
         }
     }
-    // log_buf(LOG_WARN, "kek", kek, kek_len);
+    // //log_buf(LOG_WARN, "kek", kek, kek_len);
 
     // 获取 key_len
     if (argc > 2 && argv[2] != NULL) {
@@ -898,7 +899,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
         if (key_len > 0) {
             key_cipher = hex_to_bytes(argv[3]);
             if (key_cipher == NULL) {
-                log_warn("Error: Conversion of key_cipher failed\n");
+                fprintf(stderr, "Error: Conversion of key_cipher failed\n");
                 free(kek);
                 return LD_ERR_KM_CONVERT;
             }
@@ -919,14 +920,14 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
             memcpy(iv_mac, iv_enc, iv_len);
 
             if (iv_enc == NULL) {
-                log_warn("Error: Conversion of iv failed\n");
+                fprintf(stderr, "Error: Conversion of iv failed\n");
                 free(key_cipher);
                 free(kek);
                 return LD_ERR_KM_CONVERT;
             }
         }
     }
-    // log_buf(LOG_WARN, "iv", iv_mac, iv_len);
+    // //log_buf(LOG_WARN, "iv", iv_mac, iv_len);
 
     // 获取校验值
     if (argc > 8 && argv[6] != NULL && argv[7] >= 0 && argv[8] != NULL) {
@@ -941,14 +942,14 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
         calc_chck_value = malloc(sizeof(uint8_t) * check_len);
         rcvd_chck_value = hex_to_bytes(argv[8]);
 
-        // log_buf(LOG_WARN, "check", rcvd_chck_value, check_len);
+        // //log_buf(LOG_WARN, "check", rcvd_chck_value, check_len);
     }
     // log_info("check algo %s\n", check_algo);
 
     // 导入密钥
     void *kek_handle;
     if (kek != NULL && km_import_key_with_kek(kek, kek_len, 1, &kek_handle) != LD_KM_OK) {
-        log_warn("Error importing kek with kek\n");
+        fprintf(stderr, "Error importing kek with kek\n");
         free(kek);
         free(key_cipher);
         free(iv_enc);
@@ -959,17 +960,17 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     // 解密密钥
     uint8_t *key = malloc(sizeof(uint8_t) * key_len);
     if (key == NULL) {
-        log_warn("Error: Memory allocation failed for key\n");
+        fprintf(stderr, "Error: Memory allocation failed for key\n");
         free(kek);
         free(key_cipher);
         free(iv_enc);
         free(iv_mac);
         return LD_ERR_KM_MALLOC;
     }
-    // log_buf(LOG_WARN, "keycipher", key_cipher, key_len);
+    // //log_buf(LOG_WARN, "keycipher", key_cipher, key_len);
 
     if (km_decrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key_cipher, key_len, key, &key_len) != LD_KM_OK) {
-        log_warn("Error decrypting key\n");
+        fprintf(stderr, "Error decrypting key\n");
         free(key);
         free(kek);
         free(key_cipher);
@@ -977,20 +978,20 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
         free(iv_mac);
         return LD_ERR_KM_DECRYPT;
     }
-    // log_buf(LOG_WARN, "decrypted key", key, key_len);
+    // //log_buf(LOG_WARN, "decrypted key", key, key_len);
 
     /* 校验明文密钥完整性 */
     // 计算校验值
     if (km_mac(kek_handle, str_to_chck_algo(check_algo), iv_mac, key, key_len, calc_chck_value, &check_len) !=
         LD_KM_OK) {
-        log_warn("Error in derive : SDF_CalculateMAC failed!\n");
+        fprintf(stderr, "Error in derive : SDF_CalculateMAC failed!\n");
     }
-    // log_buf(LOG_WARN, "rcvd_chck_value", rcvd_chck_value, check_len);
-    // log_buf(LOG_WARN, "calc_chck_value", calc_chck_value, check_len);
+    // //log_buf(LOG_WARN, "rcvd_chck_value", rcvd_chck_value, check_len);
+    // //log_buf(LOG_WARN, "calc_chck_value", calc_chck_value, check_len);
 
     // 对比校验值
     if (memcmp(rcvd_chck_value, calc_chck_value, check_len) != 0) {
-        log_warn("Error in verify : key integrity  verified failed!\n");
+        fprintf(stderr, "Error in verify : key integrity  verified failed!\n");
         return LD_ERR_KM_KEY_VERIFY;
     }
 
@@ -998,7 +999,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     result->key_len = key_len;
     result->key = malloc(result->key_len);
     if (result->key == NULL) {
-        log_warn("Error: Memory allocation failed for result key\n");
+        fprintf(stderr, "Error: Memory allocation failed for result key\n");
         free(key);
         free(kek);
         free(key_cipher);
@@ -1068,22 +1069,19 @@ QueryResult_for_keyvalue *query_keyvalue(uint8_t *db_name, uint8_t *table_name, 
 }
 
 QueryResult_for_keyvalue *query_keyvalue_by_owner(uint8_t *db_name, uint8_t *table_name, const char *owner1,
-                                                  const char *owner2, enum KEY_TYPE key_type, enum STATE state)
-{
+                                                  const char *owner2, enum KEY_TYPE key_type, enum STATE state) {
     // query id
     QueryResult_for_queryid *qr = query_id(db_name, table_name, owner1, owner2, key_type, state);
-    if (qr->count != 1)
-    {
-        log_warn("Query key-id failed, so that query keyvalue failed.\n");
+    if (qr->count != 1) {
+        fprintf(stderr, "Query key-id failed, so that query keyvalue failed.\n");
         free_queryid_result(qr);
         return LD_ERR_KM_QUERY;
     }
 
     // query keyvalue
     QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, qr->ids[0]);
-    if (!result)
-    {
-        log_warn("Failed to query key from %s, table %s, id %s\n", db_name, table_name, qr->ids[0]);
+    if (!result) {
+        fprintf(stderr, "Failed to query key from %s, table %s, id %s\n", db_name, table_name, qr->ids[0]);
         free_keyvalue_result(result);
         return NULL;
     }
@@ -1092,6 +1090,7 @@ QueryResult_for_keyvalue *query_keyvalue_by_owner(uint8_t *db_name, uint8_t *tab
     return result;
 
 }
+
 /**
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针

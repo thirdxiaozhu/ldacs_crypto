@@ -20,7 +20,7 @@ int main() {
     QueryResult_for_queryid *qr_gskid = NULL; // 移到循环外
 
     if (km_generate_random(rand, 16) != LD_KM_OK) {
-        log_warn("Error generating random. \n");
+        fprintf(stderr, "Error generating random. \n");
         return LD_ERR_KM_GENERATE_RANDOM;
     }
 
@@ -28,56 +28,56 @@ int main() {
         /* 网关端密钥更新 */
 //        if (sgw_update_master_key(dbname, sgw_tablename, id, sgw_name, gs_t_name, sizeof(rand), rand) != LD_KM_OK)
 //        {
-//            log_warn("sgw update masterkey failed\n");
+//            fprintf(stderr, "sgw update masterkey failed\n");
 //            break;
 //        }
-        log_warn("[**sgw update key OK. **]\n");
+        fprintf(stderr, "[**sgw update key OK. **]\n");
 
         // 查询新密钥id
         qr_mkid = query_id(dbname, sgw_tablename, as_name, gs_t_name, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_mkid == NULL) {
-            log_warn("NULL Query.\n");
+            fprintf(stderr, "NULL Query.\n");
             break;
         } else if (qr_mkid->count > 1) {
-            log_warn("id isn't unique\n");
+            fprintf(stderr, "id isn't unique\n");
             break;
         }
 
         // 查询密钥值(发送给GS)
         result = query_keyvalue(dbname, sgw_tablename, qr_mkid->ids[0]);
         if (!result) {
-            log_warn("Key not found or error occurred.\n");
+            fprintf(stderr, "Key not found or error occurred.\n");
             break;
         }
 
         /* AS端密钥更新 */
         if (km_update_masterkey(dbname, as_tablename, sgw_name, gs_s_name, gs_t_name, as_name, sizeof(rand), rand) !=
             LD_KM_OK) {
-            log_warn("as update masterkey failed\n");
+            fprintf(stderr, "as update masterkey failed\n");
             break;
         }
-        log_warn("[**as update key OK. **]\n");
+        fprintf(stderr, "[**as update key OK. **]\n");
 
         /* 源GS端撤销密钥 */
         qr_gskid = query_id(dbname, gs_s_tablename, as_name, gs_s_name, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_gskid == NULL) {
-            log_warn("Query NULL or more than one.\n");
+            fprintf(stderr, "Query NULL or more than one.\n");
             break;
         }
 
         if (km_revoke_key(dbname, gs_s_tablename, qr_gskid->ids[0]) != LD_KM_OK) {
-            log_warn("gs revoke key err\n");
+            fprintf(stderr, "gs revoke key err\n");
             break;
         }
-        log_warn("[**source gs revoke key OK. **]\n");
+        fprintf(stderr, "[**source gs revoke key OK. **]\n");
 
         /* 目标GS端接收密钥 */
         if (km_install_key(dbname, gs_t_tablename, result->key_len, result->key, as_name, gs_t_name, sizeof(rand),
                            rand) != LD_KM_OK) {
-            log_warn("target gs install key err\n");
+            fprintf(stderr, "target gs install key err\n");
             break;
         }
-        log_warn("[**gs install key OK. **]\n");
+        fprintf(stderr, "[**gs install key OK. **]\n");
 
     } while (0);
 
