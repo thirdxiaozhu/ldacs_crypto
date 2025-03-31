@@ -12,7 +12,7 @@
 
 int main()
 {
-    const char *dbname = "keystore.db";
+    const char *dbname = "keystore2.db";
     const char *as_tablename = "as_keystore";
 
     // root key import

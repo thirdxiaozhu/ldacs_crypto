@@ -31,7 +31,10 @@ set(tests
         # get_handle
         # query_for_update
 
+        # kderive
+        kderive_time
         krevoke
+        krevoke_time
         rkey_gen #根密钥预置和激活
         rkey_to_ccard
         rkey_import
@@ -51,12 +54,14 @@ set(tests
         sm3_hmac
         km_hmac
         # asan
+        rand
         rand_db # 测试 密钥库随机数存取
 #        delete_keyvalue
         # hex_conv # 字符数组转字符串
         gkey_gen_exp # 组密钥生成和导出
         gkey_to_ccard # 组密钥导入密码卡
         gkey_import # 组密钥导入
+        gethandle
 
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)

@@ -11,7 +11,7 @@
 int main()
 {
     // 网关端根密钥生成
-    const char *dbname = "keystore.db";
+    const char *dbname = "keystore1.db";
     const char *sgw_tablename = "sgw_keystore";
     const char *sgw_name = "000010000";
     const char *as_name = "000010010";
