@@ -1,1 +1,0 @@
-/bin/cc      CMakeFiles/rkey_exporttest.dir/rkey_export_test.c.o  -o rkey_exporttest -rdynamic ../src/libkm_src.so -lsdf -lpthread -luuid -Wl,-rpath,/home/wencheng/crypto/key_management/build/src 
