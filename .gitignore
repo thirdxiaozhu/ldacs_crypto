@@ -1,5 +1,0 @@
-/build
-/cmake-build-debug
-/.vscode
-/.VSCodeCounter
-/cmake/*.cmake
