@@ -21,21 +21,21 @@ int main()
     // kbc文件到密码卡
     if (km_create_ccard_file(kbc_filename, file_size) != LD_KM_OK)
     {
-        log_warn("Error create kbc file in ccard \n");
+        fprintf(stderr, "Error create kbc file in ccard \n");
     }
     if (km_writefile_to_cryptocard(export_bc_dir, kbc_filename) != LD_KM_OK)
     {
-        log_warn("Error writing kbc to ccard \n");
+        fprintf(stderr, "Error writing kbc to ccard \n");
     }
 
     // kcc文件到密码卡
     if (km_create_ccard_file(kcc_filename, file_size) != LD_KM_OK)
     {
-        log_warn("Error create kbc file in ccard \n");
+        fprintf(stderr, "Error create kbc file in ccard \n");
     }
     if (km_writefile_to_cryptocard(export_cc_dir, kcc_filename) != LD_KM_OK)
     {
-        log_warn("Error writing kcc to ccard \n");
+        fprintf(stderr, "Error writing kcc to ccard \n");
     }
     return 0;
 }

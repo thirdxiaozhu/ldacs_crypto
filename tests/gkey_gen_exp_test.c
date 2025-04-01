@@ -23,16 +23,16 @@ int main()
 
     if (km_key_gen_export(owner_1, owner_2, GROUP_KEY_BC, key_len, validity_period, dbname, sgw_tablename, export_kbc_dir))
     {
-        log_warn("kbc生成、保存和导出失败。\n");
+        fprintf(stderr, "kbc生成、保存和导出失败。\n");
         return -1;
     }
 
     if (km_key_gen_export(owner_1, owner_2, GROUP_KEY_CC, key_len, validity_period, dbname, sgw_tablename, export_kcc_dir))
     {
-        log_warn("kbc生成、保存和导出失败。\n");
+        fprintf(stderr, "kbc生成、保存和导出失败。\n");
         return -1;
     }
-    log_warn("OK\n");
+    fprintf(stderr, "OK\n");
 
     return 0;
 }

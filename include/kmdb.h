@@ -9,8 +9,7 @@
 
 #define MAX_ID_LEN 128
 
-typedef struct struct_desc_s
-{
+typedef struct struct_desc_s {
     const char *name;
     struct km_field_desc *fields;
 } struct_desc;
@@ -33,13 +32,13 @@ typedef struct struct_desc_s
  * @return 处理结果:成功/失败
  */
 l_km_err create_table_if_not_exist(
-    struct_desc *sd,
-    const char *db_name,
-    const char *table_name,
-    uint8_t *primary_key,
-    const char* foreign_table,
-    uint8_t* foreign_key,
-    bool is_auto_increase);
+        struct_desc *sd,
+        const char *db_name,
+        const char *table_name,
+        uint8_t *primary_key,
+        const char *foreign_table,
+        uint8_t *foreign_key,
+        bool is_auto_increase);
 
 /*************存储密钥*****************/
 
@@ -52,10 +51,10 @@ l_km_err create_table_if_not_exist(
  * @return 是否执行成功
  */
 l_km_err store_key(
-    const char *db_name,
-    const char *table_name,
-    struct KeyPkg *pkg,
-    struct_desc *sd);
+        const char *db_name,
+        const char *table_name,
+        struct KeyPkg *pkg,
+        struct_desc *sd);
 
 /**
  * @bref 存储随机数：为指定密钥存储用于密钥派生的随机数
@@ -67,11 +66,11 @@ l_km_err store_key(
  * @return 是否执行成功
  */
 l_km_err store_rand(
-    const char *db_name,
-    const char *table_name,
-    uint8_t* id,
-    uint32_t rand_len,
-    uint8_t* rand);
+        const char *db_name,
+        const char *table_name,
+        uint8_t *id,
+        uint32_t rand_len,
+        uint8_t *rand);
 
 /*
 ************************************************************************
@@ -80,8 +79,7 @@ l_km_err store_rand(
 */
 /***************查询id*****************/
 
-typedef struct
-{
+typedef struct {
     uint8_t *ids[MAX_ID_LEN];
     uint32_t count;
 } QueryResult_for_queryid;
@@ -103,38 +101,37 @@ typedef struct
  */
 
 QueryResult_for_queryid *query_id(
-    const char *db_name,
-    const char *table_name,
-    const char *owner1,
-    const char *owner2,
-    enum KEY_TYPE key_type,
-    enum STATE state);
+        const char *db_name,
+        const char *table_name,
+        const char *owner1,
+        const char *owner2,
+        enum KEY_TYPE key_type,
+        enum STATE state);
 
 void free_queryid_result(
-    QueryResult_for_queryid *result);
+        QueryResult_for_queryid *result);
 
 /***************查询密钥明文****************/
 
 // 结构体用于存储查询密钥
-typedef struct
-{
+typedef struct {
     int key_len;  // 密钥长度
     uint8_t *key; // 密钥值（明文）
 } QueryResult_for_keyvalue;
 
 /**
- * @bref 外部接口：通过密钥id查询密钥值
  * @bref 外部接口：基于id查询密钥值
+ * @bref 外部接口：通过密钥id查询密钥值
  * @param[in] dbname
  * @param[in] tablename
- * @param id 密钥编号
+ * @param[in] id 密钥编号
  * @return key:密钥值，NULL :未查询到结果
  *
  */
 QueryResult_for_keyvalue *query_keyvalue(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 /* 基于所有者查询密钥值 */
 /**
@@ -149,23 +146,22 @@ QueryResult_for_keyvalue *query_keyvalue(
  *
  */
 QueryResult_for_keyvalue *query_keyvalue_by_owner(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    const char *owner1,
-    const char *owner2,
-    enum KEY_TYPE key_type,
-    enum STATE state);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        const char *owner1,
+        const char *owner2,
+        enum KEY_TYPE key_type,
+        enum STATE state);
 
 /**
  * @brief 释放 QueryResult_for_keyvalue 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_keyvalue 结构体的指针
  */
 void free_keyvalue_result(
-    QueryResult_for_keyvalue *result);
+        QueryResult_for_keyvalue *result);
 
 // 结构体用于查询随机数
-typedef struct
-{
+typedef struct {
     int rand_len;  // 密钥长度
     uint8_t *rand; // 密钥值（明文）
 } QueryResult_for_rand;
@@ -179,20 +175,20 @@ typedef struct
  *
  */
 QueryResult_for_rand *query_rand(
-    const char *db_name,
-    const char *table_name,
-    const char *key_id);
+        const char *db_name,
+        const char *table_name,
+        const char *key_id);
 
 /**
  * @brief 释放 QueryResult_for_rand 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_rand 结构体的指针
  */
 void free_rand_result(
-    QueryResult_for_rand *result);
+        QueryResult_for_rand *result);
+
 /******************** 查询kek**************************/
 
-typedef struct
-{
+typedef struct {
     void *kek_handle;
     uint16_t iv_len;
     uint8_t *iv;
@@ -206,34 +202,33 @@ typedef struct
  * @return 查询结果
  */
 QueryResult_for_kekhandle *query_kekhandle(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 /**
  * @brief 释放 QueryResult_for_kekhandle 结构体所占用的内存
  * @param[in] result 指向 QueryResult_for_kekhandle 结构体的指针
  */
 void free_kekhandle_result(
-    QueryResult_for_kekhandle *result);
+        QueryResult_for_kekhandle *result);
 
 /*************查询更新相关*****************/
 
 // 查询结果结构体
-typedef struct
-{
+typedef struct {
     uint16_t key_len;
     uint16_t update_cycle;
     uint16_t update_count;
 } QueryResult_for_update;
 
 QueryResult_for_update *query_for_update(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 void free_update_result(
-    QueryResult_for_update *result);
+        QueryResult_for_update *result);
 
 // 优化：查询密钥长度
 /**
@@ -245,15 +240,14 @@ void free_update_result(
  *
  */
 uint32_t query_keylen(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 /**************查询所有者*****************/
 
 // 结构体用于存储密钥所有者
-typedef struct
-{
+typedef struct {
     uint8_t *owner1;
     uint8_t *owner2;
 } QueryResult_for_owner;
@@ -267,18 +261,17 @@ typedef struct
  *
  */
 QueryResult_for_owner *query_owner(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 void free_owner_result(
-    QueryResult_for_owner *result);
+        QueryResult_for_owner *result);
 
 /************查询子密钥*****************/
 
 // 结果集结构体定义
-typedef struct
-{
+typedef struct {
     int count;            // 结果数量
     uint8_t **subkey_ids; // 子密钥id数组
     uint8_t **key_types;  // key_type数组
@@ -292,12 +285,12 @@ typedef struct
  * @return 子密钥id
  */
 QueryResult_for_subkey *query_subkey(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 void free_query_result_for_subkey(
-    QueryResult_for_subkey *result);
+        QueryResult_for_subkey *result);
 
 /**************查询密钥类型*****************/
 
@@ -309,9 +302,9 @@ void free_query_result_for_subkey(
  * @return 密钥类型
  */
 enum KEY_TYPE query_keytype(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 /**
  * @brief 查询密钥状态
@@ -321,9 +314,9 @@ enum KEY_TYPE query_keytype(
  * @return 密钥状态
  */
 enum STATE query_state(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id);
 
 /*
 ************************************************************************
@@ -339,10 +332,10 @@ enum STATE query_state(
  * @param[in] state 想要改成的密钥状态
  */
 l_km_err alter_keystate(
-    const char *db_name,
-    const char *table_name,
-    uint8_t *id,
-    enum STATE state);
+        const char *db_name,
+        const char *table_name,
+        uint8_t *id,
+        enum STATE state);
 
 /**
  * @brief 启用密钥
@@ -352,9 +345,9 @@ l_km_err alter_keystate(
  * @return 成功：LD_KM_OK/失败：错误码
  */
 l_km_err enable_key(
-    const char *db_name,
-    const char *table_name,
-    const char *id);
+        const char *db_name,
+        const char *table_name,
+        const char *id);
 
 /**
  * @brief 更新计数增加一次
@@ -365,9 +358,9 @@ l_km_err enable_key(
  * @return 成功与否
  */
 l_km_err increase_updatecount(
-    uint8_t *dbname,
-    uint8_t *tablename,
-    uint8_t *id);
+        uint8_t *dbname,
+        uint8_t *tablename,
+        uint8_t *id);
 
 /**
  * @brief 修改密钥值
@@ -379,8 +372,8 @@ l_km_err increase_updatecount(
  * @return 修改成功与否
  */
 l_km_err alter_keyvalue(
-    uint8_t *db_name,
-    uint8_t *table_name,
-    uint8_t *id,
-    uint16_t key_len,
-    uint8_t *key);
+        uint8_t *db_name,
+        uint8_t *table_name,
+        uint8_t *id,
+        uint16_t key_len,
+        uint8_t *key);

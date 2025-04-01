@@ -3,13 +3,13 @@ project(ldacscrypto VERSION 1.0.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "/usr/local/ldacs-cauc" CACHE PATH "Default install path" FORCE)
-endif()
+endif ()
 
 
 # 创建库
-add_library(${PROJECT_NAME} STATIC key_manage.c kmdb.c cipher_util.c)   # 生成共享库
+add_library(${PROJECT_NAME} STATIC key_manage.c kmdb.c)   # 生成共享库
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC uuid sqlite3)
 
@@ -43,7 +43,7 @@ configure_file(
 # 设置安装路径
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES output_name "ldacscrypto")
 SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-INSTALL(TARGETS ${PROJECT_NAME} EXPORT LdacscryptoTargets ARCHIVE DESTINATION lib LIBRARY DESTINATION lib )
+INSTALL(TARGETS ${PROJECT_NAME} EXPORT LdacscryptoTargets ARCHIVE DESTINATION lib LIBRARY DESTINATION lib)
 INSTALL(DIRECTORY ${CMAKE_SOURCE_DIR}/include/ DESTINATION include/crypto)
 
 INSTALL(EXPORT LdacscryptoTargets

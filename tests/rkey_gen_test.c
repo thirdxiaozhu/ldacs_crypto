@@ -11,7 +11,7 @@
 int main()
 {
     // 网关端根密钥生成
-    const char *dbname = "keystore.db";
+    const char *dbname = "keystore1.db";
     const char *sgw_tablename = "sgw_keystore";
     const char *sgw_name = "000010000";
     const char *as_name = "000010010";
@@ -22,10 +22,10 @@ int main()
 
     if (km_rkey_gen_export(as_name, sgw_name, rootkey_len, validity_period, dbname, sgw_tablename, export_dir))
     {
-        log_warn("根密钥生成、保存和导出失败。\n");
+        fprintf(stderr, "根密钥生成、保存和导出失败。\n");
     }
 
-    log_warn("OK\n");
+    fprintf(stderr, "OK\n");
 
     return 0;
 }

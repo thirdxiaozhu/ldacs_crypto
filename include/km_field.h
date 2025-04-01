@@ -9,8 +9,7 @@
 /*
  * 需要考虑更具体的数据类型
  */
-enum km_field_type
-{
+enum km_field_type {
     // key management related fields
     km_ft_uuid,
     km_ft_uint8t_pointer,
@@ -21,8 +20,7 @@ enum km_field_type
     km_ft_end,
 };
 
-typedef struct km_field_desc
-{
+typedef struct km_field_desc {
     enum km_field_type km_field_type;
     const int size; /* size, in bits, of field */
     const char *name;

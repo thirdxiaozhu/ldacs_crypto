@@ -19,7 +19,7 @@
 static km_field_desc km_create_randseeds_table_fields[] = {
         // 密钥结构体字段描述
         {km_ft_uint32t,        0, "seeds_id", NULL},
-        {km_km_ft_uuid,           0, "key_id",   NULL},
+        {km_ft_uuid,           0, "key_id",   NULL},
         {km_ft_uint16t,        0, "rand_len", NULL},
         {km_ft_uint8t_pointer, 0, "rand",     NULL},
         {km_ft_end,            0, NULL,       NULL},
@@ -87,19 +87,19 @@ l_km_err km_generate_random(uint8_t *random_data, int len) {
     int ret;
 
     if (SDF_OpenDevice(&DeviceHandle)) {
-        log_warn("SDF_OpenDevice error!\n");
+        fprintf(stderr, "SDF_OpenDevice error!\n");
         return LD_ERR_KM_OPEN_DEVICE;
     }
 
     if (SDF_OpenSession(DeviceHandle, &pSessionHandle)) {
-        log_warn("SDF_OpenSession error!\n");
+        fprintf(stderr, "SDF_OpenSession error!\n");
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
 
     if (SDF_GenerateRandom(pSessionHandle, len, random_data)) {
-        log_warn("SDF_GenerateRandom Function failure!, ret %08x\n",
-                 SDF_GenerateRandom(pSessionHandle, len, random_data));
+        fprintf(stderr, "SDF_GenerateRandom Function failure!, ret %08x\n",
+                SDF_GenerateRandom(pSessionHandle, len, random_data));
         return LD_ERR_KM_GENERATE_RANDOM;
     }
     SDF_CloseSession(pSessionHandle);
@@ -115,13 +115,13 @@ l_km_err km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *dat
     int ret;
     ret = SDF_OpenDevice(&DeviceHandle); // 打开设备
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenDevice error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenDevice error!return 0x%08x\n", ret);
         return LD_ERR_KM_OPEN_DEVICE;
     }
 
     ret = SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenSession error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenSession error!return 0x%08x\n", ret);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
@@ -129,7 +129,7 @@ l_km_err km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *dat
     // 调用SDF_Encrypt函数
     int result = SDF_Encrypt(pSessionHandle, key_handle, alg_id, iv, data, data_length, cipher_data, cipher_data_len);
     if (result != LD_KM_OK) {
-        log_warn("SDF_Encrypt with phKeyHandle error!ret is %08x \n", result);
+        fprintf(stderr, "SDF_Encrypt with phKeyHandle error!ret is %08x \n", result);
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_ENCRYPT;
@@ -143,14 +143,14 @@ l_km_err km_sym_encrypt(const char *db_name, const char *table_name, const char 
                         uint8_t *cipher_data, uint32_t *cipher_data_len) {
     // 检查密钥状态
     if (query_state(db_name, table_name, key_id) != ACTIVE) {
-        log_warn("key state mismatch\n");
+        fprintf(stderr, "key state mismatch\n");
         return LD_ERR_KM_KEY_STATE;
     }
 
     // 获取密钥句柄
     void *key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
-        log_warn("get key handle failed\n");
+        fprintf(stderr, "get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
     }
 
@@ -169,7 +169,7 @@ l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cip
     int result = SDF_Decrypt(pSessionHandle, key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data,
                              plain_data_len);
     if (result != LD_KM_OK) {
-        log_warn("SDF_Decrypt with phKeyHandle error!ret is %08x \n", result);
+        fprintf(stderr, "SDF_Decrypt with phKeyHandle error!ret is %08x \n", result);
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_DECRYPT;
@@ -182,14 +182,14 @@ l_km_err km_sym_decrypt(const char *db_name, const char *table_name, const char 
                         uint8_t *cipher_data, uint32_t cipher_data_len, uint8_t *plain_data, uint32_t *plain_data_len) {
     // 检查密钥状态
     if (query_state(db_name, table_name, key_id) != ACTIVE) {
-        log_warn("key state mismatch\n");
+        fprintf(stderr, "key state mismatch\n");
         return LD_ERR_KM_KEY_STATE;
     }
 
     // 获取密钥句柄
     void *key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
-        log_warn("get key handle failed\n");
+        fprintf(stderr, "get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
     }
 
@@ -203,12 +203,12 @@ l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *outpu
     int ret;
     ret = SDF_OpenDevice(&DeviceHandle); // 打开设备
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenDevice error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenDevice error!return 0x%08x\n", ret);
         return LD_ERR_KM_OPEN_DEVICE;
     }
     ret = SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenSession error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenSession error!return 0x%08x\n", ret);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
@@ -218,7 +218,7 @@ l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *outpu
 
     ret = SDF_HashInit(pSessionHandle, alg_id, NULL, NULL, 0);
     if (ret != LD_KM_OK) {
-        log_warn("SDF_HashInit Function failure! %08x \n", ret);
+        fprintf(stderr, "SDF_HashInit Function failure! %08x \n", ret);
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_HashInit;
@@ -226,7 +226,7 @@ l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *outpu
 
     ret = SDF_HashUpdate(pSessionHandle, data, data_len);
     if (ret != LD_KM_OK) {
-        log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+        fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_HashUpdate;
@@ -234,7 +234,7 @@ l_km_err km_hash(uint32_t alg_id, uint8_t *data, size_t data_len, uint8_t *outpu
 
     ret = SDF_HashFinal(pSessionHandle, hashResult, &hashResultLen);
     if (ret != LD_KM_OK) {
-        log_warn("SDF_HashFinish Function failure! %08x \n", ret);
+        fprintf(stderr, "SDF_HashFinish Function failure! %08x \n", ret);
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_HashFinal;
@@ -260,7 +260,7 @@ km_mac(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t d
     SDF_CloseSession(hSessionHandle);
     SDF_CloseDevice(DeviceHandle);
     if (ret != LD_KM_OK) {
-        log_warn("SDF_CalculateMACZ with phKeyHandle error!ret is %08x \n", ret);
+        fprintf(stderr, "SDF_CalculateMACZ with phKeyHandle error!ret is %08x \n", ret);
         return LD_ERR_KM_MAC;
     }
 
@@ -279,19 +279,19 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
 
     // 参数非空检查
     if (!key || key_len > 64 || !data || !data_len) {
-        log_warn("km_hmac LD_ERR_KM_PARAMETERS_ERR\n");
+        fprintf(stderr, "km_hmac LD_ERR_KM_PARAMETERS_ERR\n");
         return LD_ERR_KM_PARAMETERS_ERR;
     }
 
     ret = SDF_OpenDevice(&DeviceHandle); // 打开设备
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenDevice error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenDevice error!return 0x%08x\n", ret);
         return LD_ERR_KM_OPEN_DEVICE;
     }
 
     ret = SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话
     if (ret != LD_KM_OK) {
-        log_warn("SDF_OpenSession error!return 0x%08x\n", ret);
+        fprintf(stderr, "SDF_OpenSession error!return 0x%08x\n", ret);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
@@ -311,14 +311,14 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
         // digest ipad and data
         ret = SDF_HashInit(pSessionHandle, SGD_SM3, NULL, NULL, 0);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashInit Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashInit Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
 
         ret = SDF_HashUpdate(pSessionHandle, ipad_, HMAC_HASH_BLOCK_SIZE);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
@@ -329,14 +329,14 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
             memcpy(padded_data, data, data_len);
             ret = SDF_HashUpdate(pSessionHandle, padded_data, 8);
             if (ret != LD_KM_OK) {
-                log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+                fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
                 fail_tag = TRUE;
                 break;
             }
         } else {
             ret = SDF_HashUpdate(pSessionHandle, data, data_len);
             if (ret != LD_KM_OK) {
-                log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+                fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
                 fail_tag = TRUE;
                 break;
             }
@@ -344,7 +344,7 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
 
         ret = SDF_HashFinal(pSessionHandle, hash, &hash_result_len);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashFinish Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashFinish Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
@@ -353,33 +353,31 @@ km_hmac(uint8_t *key, uint32_t key_len, uint8_t *data, uint32_t data_len, uint8_
         // digest opad and km_hash
         ret = SDF_HashInit(pSessionHandle, SGD_SM3, NULL, NULL, 0);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashInit Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashInit Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
 
         ret = SDF_HashUpdate(pSessionHandle, opad_, HMAC_HASH_BLOCK_SIZE);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
 
         ret = SDF_HashUpdate(pSessionHandle, hash, 32);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashUpdate Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashUpdate Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         }
         ret = SDF_HashFinal(pSessionHandle, hmac_value, hmac_len);
         if (ret != LD_KM_OK) {
-            log_warn("SDF_HashFinal Function failure! %08x \n", ret);
+            fprintf(stderr, "SDF_HashFinal Function failure! %08x \n", ret);
             fail_tag = TRUE;
             break;
         } // //printbuff("km_hmac check point: digest opad and km_hash", hmac_value, *hmac_len);
     } while (0);
-
-//    log_buf(LOG_WARN, "hmac", hmac_value, (size_t) hmac_len);
 
     SDF_CloseSession(pSessionHandle);
     SDF_CloseDevice(DeviceHandle);
@@ -398,20 +396,20 @@ km_hmac_with_keyhandle(void *handle, uint8_t *data, uint32_t data_len, uint8_t *
     uint8_t iv[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     uint8_t key[16];
     uint32_t key_len;
-    // log_buf(LOG_INFO, "iv", iv, 16);
-    // log_buf(LOG_INFO, "rand", rand, 16);
+    // //log_buf(LOG_INFO, "iv", iv, 16);
+    // //log_buf(LOG_INFO, "rand", rand, 16);
 
     int ret = SDF_Encrypt(hSessionHandle, handle, ALGO_ENC_AND_DEC, iv, rand, 16, key, &key_len);
     if (ret != LD_KM_OK) {
-        log_warn("km_hmac_with_keyhandle  error!ret is %08x \n", ret);
+        fprintf(stderr, "km_hmac_with_keyhandle  error!ret is %08x \n", ret);
         return LD_ERR_KM_HMAC;
     }
 
     SDF_CloseSession(hSessionHandle);
     SDF_CloseDevice(DeviceHandle);
 
-    // log_buf(LOG_INFO, "key", key, key_len);
-    // log_buf(LOG_INFO, "data", data, data_len);
+    // //log_buf(LOG_INFO, "key", key, key_len);
+    // //log_buf(LOG_INFO, "data", data, data_len);
 
     return km_hmac(key, key_len, data, data_len, hmac_value, hmac_len);
 }
@@ -420,14 +418,14 @@ l_km_err km_sm3_hmac(const char *db_name, const char *table_name, const char *ke
                      uint8_t *hmac_value, uint32_t *hmac_len) {
     // 检查密钥状态
     if (query_state(db_name, table_name, key_id) != ACTIVE) {
-        log_warn("key state mismatch\n");
+        fprintf(stderr, "key state mismatch\n");
         return LD_ERR_KM_KEY_STATE;
     }
 
     // 获取密钥句柄
     void *key_handle;
     if (get_handle_from_db(db_name, table_name, key_id, &key_handle) != LD_KM_OK) {
-        log_warn("get key handle failed\n");
+        fprintf(stderr, "get key handle failed\n");
         return LD_ERR_KM_GET_HANDLE;
     }
 
@@ -438,23 +436,23 @@ l_km_err km_sm3_hmac(const char *db_name, const char *table_name, const char *ke
 // 打印字符串
 l_km_err printbuff(const char *printtitle, uint8_t *buff, int len) {
     if (buff == NULL) {
-        log_warn("error: printbuff NULL pamameter\n");
+        fprintf(stderr, "error: printbuff NULL pamameter\n");
         return LD_ERR_KM_PARAMETERS_NULL;
     }
     int i;
-    log_warn("%s:\n", printtitle);
+    fprintf(stderr, "%s:\n", printtitle);
     for (i = 0; i < len; i++) {
-        // log_warn("%02X ", buff[i]);
-        log_warn("%02x ", buff[i]);
+        // fprintf(stderr, "%02X ", buff[i]);
+        fprintf(stderr, "%02x ", buff[i]);
         if ((i + 1) % 16 == 0)
-            // log_warn("\n");
-            log_warn("\n");
+            // fprintf(stderr, "\n");
+            fprintf(stderr, "\n");
     }
 
     if ((i % 16) == 0) {
-        log_warn("-----------------------------\n");
+        fprintf(stderr, "-----------------------------\n");
     } else {
-        log_warn("\n-----------------------------\n");
+        fprintf(stderr, "\n-----------------------------\n");
     }
     return LD_KM_OK;
 }
@@ -471,7 +469,7 @@ l_km_err km_import_key(uint8_t *key, uint32_t key_length, void **key_handle) {
 
     int ret = SDF_ImportKey(hSessionHandle, key, key_length, key_handle);
     if (ret != SDR_OK) {
-        log_warn("SDF_ImportKey with phKeyHandle error!ret is %08x \n", ret);
+        fprintf(stderr, "SDF_ImportKey with phKeyHandle error!ret is %08x \n", ret);
         return LD_ERR_KM_IMPORT_KEY;
     }
 
@@ -494,7 +492,7 @@ l_km_err km_import_key_with_kek(uint8_t *key, uint32_t key_length, int kek_index
 
     int ret = SDF_ImportKeyWithKEK(hSessionHandle, ALGO_WITH_KEK, kek_index, key, key_length, key_handle);
     if (ret != SDR_OK) {
-        log_warn("SDF_ImportKey with phKeyHandle error!ret is %08x \n", ret);
+        fprintf(stderr, "SDF_ImportKey with phKeyHandle error!ret is %08x \n", ret);
         return LD_ERR_KM_IMPORT_KEY;
     }
 
@@ -513,7 +511,7 @@ l_km_err km_destroy_key(void *key_handle) {
     SDF_CloseSession(hSessionHandle);
     SDF_CloseDevice(DeviceHandle);
     if (ret != LD_KM_OK) {
-        log_warn("SDF_DestroyKey with phKeyHandle error!ret is %08x \n", ret);
+        fprintf(stderr, "SDF_DestroyKey with phKeyHandle error!ret is %08x \n", ret);
         return LD_ERR_KM_DESTROY_KEY;
     }
 
@@ -535,22 +533,22 @@ l_km_err km_pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint
                    uint32_t derived_key_len, uint8_t *derived_key) {
     /* 参数检查 */
     if (password == NULL || salt == NULL) {
-        log_warn("km_pbkdf2 fail , password and salt shouldn't be NULL\n");
+        fprintf(stderr, "km_pbkdf2 fail , password and salt shouldn't be NULL\n");
         return LD_ERR_KM_PARAMETERS_NULL;
     }
     /* 参数检查 盐值长度不能小于4字节*/
     if (salt_len < 4) {
-        log_warn("km_pbkdf2 fail , salt len should over 4 byte \n");
+        fprintf(stderr, "km_pbkdf2 fail , salt len should over 4 byte \n");
         return LD_ERR_KM_PARAMETERS_ERR;
     }
     /* 迭代次数不能小于1024 */
     if (iterations < 1024) {
-        log_warn("km_pbkdf2 fail , iterations should over 1024 times\n");
+        fprintf(stderr, "km_pbkdf2 fail , iterations should over 1024 times\n");
         return LD_ERR_KM_PARAMETERS_ERR;
     }
     /* 派生密钥的长度为128 256 512byte */
     if (derived_key_len != 16 && derived_key_len != 32 && derived_key_len != 64) {
-        log_warn("km_pbkdf2 fail for illegal key len, 16/32/48/64 bytes are permitted\n");
+        fprintf(stderr, "km_pbkdf2 fail for illegal key len, 16/32/48/64 bytes are permitted\n");
         return LD_ERR_KM_PARAMETERS_ERR;
     }
 
@@ -609,9 +607,9 @@ l_km_err km_pbkdf2(uint8_t *password, uint32_t password_len, uint8_t *salt, uint
 
         // Copy the derived key block to the output
         uint32_t copy_len = (i == block_num && dkLen % block_size != 0) ? (dkLen % block_size) : block_size;
-        // log_warn("copy len %d ,(i - 1) * block_size:(%d -1) * %d\n", copy_len, i, block_size);
+        // fprintf(stderr, "copy len %d ,(i - 1) * block_size:(%d -1) * %d\n", copy_len, i, block_size);
         memcpy(derived_key + (i - 1) * block_size, xorsum, copy_len);
-        // log_warn("copy_len:%d,i:%d, hlen%d",copy_len,i,block_size);
+        // fprintf(stderr, "copy_len:%d,i:%d, hlen%d",copy_len,i,block_size);
 
         // //printbuff("km_pbkdf2 output", derived_key, derived_key_len);
     }
@@ -633,13 +631,13 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
 
     // 打开设备
     if (SDF_OpenDevice(&DeviceHandle) != SDR_OK) {
-        log_warn("Error opening device.\n");
+        fprintf(stderr, "Error opening device.\n");
         return LD_ERR_KM_OPEN_DEVICE;
     }
 
     // 打开会话句柄
     if (SDF_OpenSession(DeviceHandle, &hSessionHandle) != SDR_OK) {
-        log_warn("Error opening session.\n");
+        fprintf(stderr, "Error opening session.\n");
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
@@ -647,7 +645,7 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
     // 打开文件
     file = fopen(filepath, "rb");
     if (file == NULL) {
-        log_warn("Error opening file %s.\n", filepath);
+        fprintf(stderr, "Error opening file %s.\n", filepath);
         SDF_CloseSession(hSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_FILE;
@@ -661,7 +659,7 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
     // 分配内存以存储文件内容
     buffer = (uint8_t *) malloc(file_size * sizeof(uint8_t));
     if (buffer == NULL) {
-        log_warn("Memory allocation error.\n");
+        fprintf(stderr, "Memory allocation error.\n");
         fclose(file);
         SDF_CloseSession(hSessionHandle);
         SDF_CloseDevice(DeviceHandle);
@@ -671,7 +669,7 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
     // 将文件内容读入缓冲区
     result = fread(buffer, sizeof(uint8_t), file_size, file);
     if (result != file_size) {
-        log_warn("Error reading file.\n");
+        fprintf(stderr, "Error reading file.\n");
         fclose(file);
         free(buffer); // 确保释放分配的内存
         SDF_CloseSession(hSessionHandle);
@@ -682,7 +680,7 @@ l_km_err km_writefile_to_cryptocard(uint8_t *filepath, uint8_t *filename) {
     // 文件内容写入密码卡
     int writeFileResult = SDF_WriteFile(hSessionHandle, filename, strlen((char *) filename), 0, file_size, buffer);
     if (writeFileResult != SDR_OK) {
-        log_warn("Error writing to cryptocard file %s, return %08x\n", filename, writeFileResult);
+        fprintf(stderr, "Error writing to cryptocard file %s, return %08x\n", filename, writeFileResult);
         fclose(file);
         free(buffer); // 确保释放分配的内存
         SDF_CloseSession(hSessionHandle);
@@ -712,7 +710,7 @@ l_km_err km_delete_ccard_file(const char *filename) {
 
     // 检查函数调用结果
     if (deteteFileResult != SDR_OK) {
-        log_warn("Error in creating cryptocard file %s, return %08x\n", filename, deteteFileResult);
+        fprintf(stderr, "Error in creating cryptocard file %s, return %08x\n", filename, deteteFileResult);
         return LD_ERR_KM_DELETE_FILE; // 返回定义的错误代码
     }
 
@@ -733,7 +731,7 @@ l_km_err km_create_ccard_file(const char *filename, size_t file_size) {
 
     // 检查函数调用结果
     if (createFileResult != SDR_OK) {
-        log_warn("Error in creating cryptocard file %s, return %08x\n", filename, createFileResult);
+        fprintf(stderr, "Error in creating cryptocard file %s, return %08x\n", filename, createFileResult);
         return LD_ERR_KM_CREATE_FILE; // 返回定义的错误代码
     }
 
@@ -758,7 +756,7 @@ l_km_err km_readfile_from_cryptocard(const char *filename, const char *filepath)
     int readFileResult = SDF_ReadFile(pSessionHandle, (unsigned char *) filename, strlen(filename), 0, &readLength,
                                       restored_byteBuffer);
     if (readFileResult != 0) {
-        log_warn("Error reading from file\n");
+        fprintf(stderr, "Error reading from file\n");
         return LD_ERR_KM_READ_FILE;
     }
 
@@ -766,7 +764,7 @@ l_km_err km_readfile_from_cryptocard(const char *filename, const char *filepath)
     FILE *file;
     file = fopen(filepath, "wb");
     if (file == NULL) {
-        log_warn("Error opening file.\n");
+        fprintf(stderr, "Error opening file.\n");
         return LD_ERR_KM_OPEN_FILE;
     }
     fwrite(restored_byteBuffer, readLength, 1, file);
@@ -797,7 +795,7 @@ l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, void **key_ha
         ret = SDF_GenerateKeyWithKEK(pSessionHandle, kek_len * 8, ALGO_WITH_KEK, kek_index, cipher_key, cipher_len,
                                      key_handle);
         if (ret != SDR_OK) {
-            log_warn("SDF_GenerateKeyKEK error!return is %08x\n", ret);
+            fprintf(stderr, "SDF_GenerateKeyKEK error!return is %08x\n", ret);
             free(cipher_key);
             break;
         }
@@ -822,54 +820,65 @@ l_km_err km_key_gen_export(const char *owner1, const char *owner2, enum KEY_TYPE
     km_keymetadata_t *key_data = NULL;
     l_km_err result = LD_KM_OK;
 
-
     do {
+        // clock_t start, mid, end;
+        // double cpu_time_used;
+        // start = clock();
+
         // 生成密钥
         key_data = km_key_metadata_new(owner1, owner2, key_type, key_len, validity_period);
         if (key_data == NULL) {
-            log_warn("Failed to create key metadata\n");
+            fprintf(stderr, "Failed to create key metadata\n");
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
             break;
         }
 
         uint8_t key[key_len];
         km_generate_random(key, key_len);
-//        log_buf(LOG_INFO, "generate key plaintext: ", key, key_len);
+        //        //log_buf(LOG_INFO, "generate key plaintext: ", key, key_len);
 
         rawpkg = km_key_pkg_new(key_data, key, FALSE); // 明文
         if (rawpkg == NULL) {
-            log_warn("Failed to create key package for raw key\n");
+            fprintf(stderr, "Failed to create key package for raw key\n");
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
             break;
         }
+
+        // mid = clock();
+        // cpu_time_used = ((double)(mid - start)) / CLOCKS_PER_SEC;
+        // printf("生成根密钥文件的时间为: %f seconds\n", cpu_time_used);
 
         // 导出根密钥到文件
         // delete_file(export_file_path); // 清除已有文件
         if (write_keypkg_to_file(export_file_path, rawpkg) != LD_KM_OK) {
-            log_warn("write key to file failed\n");
+            fprintf(stderr, "write key to file failed\n");
             result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
             break;
         }
-//        print_key_pkg(rawpkg);
+        //        print_key_pkg(rawpkg);
+
+        // end = clock();
+        // cpu_time_used = ((double)(end - mid)) / CLOCKS_PER_SEC;
+        // printf("导出根密钥文件的时间为: %f seconds\n", cpu_time_used);
 
         // 存储根密钥
         keypkg = km_key_pkg_new(key_data, key, TRUE);
         if (keypkg == NULL) {
-            log_warn("Failed to create key package for storage\n");
+            fprintf(stderr, "Failed to create key package for storage\n");
             result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
             break;
         }
-//        print_key_pkg(keypkg);
+        //        print_key_pkg(keypkg);
 
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
             LD_KM_OK) {
-            log_warn("create table failed\n");
+            fprintf(stderr, "create table failed\n");
             result = LD_ERR_KM_CREATE_DB; // 或其他适当的错误码
             break;
         }
         if (store_key(dbname, tablename, keypkg, &km_pkg_desc) != LD_KM_OK) {
-            log_warn("store key failed\n");
+            fprintf(stderr, "store key failed\n");
             result = LD_ERR_KM_EXE_DB; // 或其他适当的错误码
             break;
         }
@@ -909,19 +918,19 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
             key_data = km_key_metadata_new(as_name, sgw_name, ROOT_KEY, key_len, validity_period);
             if (key_data == NULL)
             {
-                log_warn("Failed to create key metadata\n");
+                fprintf(stderr, "Failed to create key metadata\n");
                 result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
                 break;
             }
 
             uint8_t root_key[key_len];
             km_generate_random(root_key, key_len);
-            log_buf(LOG_INFO, "generate key plaintext: ", root_key, key_len);
+            //log_buf(LOG_INFO, "generate key plaintext: ", root_key, key_len);
 
             rk_rawpkg = km_key_pkg_new(key_data, root_key, FALSE); // 明文
             if (rk_rawpkg == NULL)
             {
-                log_warn("Failed to create key package for raw key\n");
+                fprintf(stderr, "Failed to create key package for raw key\n");
                 result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
                 break;
             }
@@ -930,7 +939,7 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
             // delete_file(export_file_path); // 清除已有文件
             if (write_keypkg_to_file(export_file_path, rk_rawpkg) != LD_KM_OK)
             {
-                log_warn("write key to file failed\n");
+                fprintf(stderr, "write key to file failed\n");
                 result = LD_ERR_KM_WRITE_FILE; // 或其他适当的错误码
                 break;
             }
@@ -940,7 +949,7 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
             keypkg = km_key_pkg_new(key_data, root_key, TRUE);
             if (keypkg == NULL)
             {
-                log_warn("Failed to create key package for storage\n");
+                fprintf(stderr, "Failed to create key package for storage\n");
                 result = LD_ERR_KM_MALLOC; // 或其他适当的错误码
                 break;
             }
@@ -950,13 +959,13 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
             if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
                 LD_KM_OK)
             {
-                log_warn("create table failed\n");
+                fprintf(stderr, "create table failed\n");
                 result = LD_ERR_KM_CREATE_DB; // 或其他适当的错误码
                 break;
             }
             if (store_key(dbname, tablename, keypkg, &km_pkg_desc) != LD_KM_OK)
             {
-                log_warn("store key failed\n");
+                fprintf(stderr, "store key failed\n");
                 result = LD_ERR_KM_EXE_DB; // 或其他适当的错误码
                 break;
             }
@@ -986,32 +995,46 @@ l_km_err km_rkey_import(const char *db_name, const char *table_name, const char 
     const char *local_rkdir = "/dev/shm/rootkey.txt";
 
     do {
+        // clock_t start, mid, end;
+        // double cpu_time_used;
+        // start = clock();
+
         if (km_readfile_from_cryptocard(rkey_filename_in_ccard, local_rkdir) != LD_KM_OK) {
             break;
         }
         km_keypkg_t *raw_pkg = read_keypkg_from_file(local_rkdir);
         remove(local_rkdir);
-//        print_key_pkg(raw_pkg);
+        // print_key_pkg(raw_pkg);
+
+        // mid = clock();
+        // cpu_time_used = ((double)(mid - start)) / CLOCKS_PER_SEC;
+        // printf("导入根密钥文件到本地的时间为: %f seconds\n", cpu_time_used);
 
         // root key store
         km_keypkg_t *keypkg = km_key_pkg_new(raw_pkg->meta_data, raw_pkg->key_cipher, TRUE);
         // keypkg->meta_data->state = ACTIVE; // 激活密钥
-//        log_warn("=======================加密之后的密钥======================");
-//        print_key_pkg(keypkg);
+        // print_key_pkg(keypkg);
         if (create_table_if_not_exist(&km_table_desc, db_name, table_name, "id", NULL, NULL, FALSE) != LD_KM_OK) {
             break;
         }
+
         if (store_key(db_name, table_name, keypkg, &km_pkg_desc) != LD_KM_OK) {
             break;
         }
-//        if (key_type == 1 || key_type == 3) {
-//            log_warn("%s %s %d", owner1, owner2, key_len);
-//            log_buf(LOG_ERROR, "HASH", hash_of_keytype, 32);
-//            log_buf(LOG_ERROR, "HASH", hash_of_rand, 32);
-//            log_buf(LOG_ERROR, "SALT", salt, salt_len);
-//        }
-//        log_warn("KEY TYPE:  %d", key_type);
-//        log_buf(LOG_ERROR, "KEY", key, 16);
+
+        // if (key_type == 1 || key_type == 3)
+        // {
+        //     fprintf(stderr, "%s %s %d", owner1, owner2, key_len);
+        //     //log_buf(LOG_ERROR, "HASH", hash_of_keytype, 32);
+        //     //log_buf(LOG_ERROR, "HASH", hash_of_rand, 32);
+        //     //log_buf(LOG_ERROR, "SALT", salt, salt_len);
+        // }
+        // fprintf(stderr, "KEY TYPE:  %d", key_type);
+        // //log_buf(LOG_ERROR, "KEY", key, 16);
+
+        // end = clock();
+        // cpu_time_used = ((double)(end - mid)) / CLOCKS_PER_SEC;
+        // printf("根密钥存入数据库的的时间为: %f seconds\n", cpu_time_used);
 
         // 释放变量空间
         key_pkg_free(keypkg);
@@ -1054,12 +1077,12 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
     void *DeviceHandle, *hSessionHandle;
 
     if (SDF_OpenDevice(&DeviceHandle) != SDR_OK) {
-        log_warn("Error in derive: SDF_OpenDevice failed!\n");
+        fprintf(stderr, "Error in derive: SDF_OpenDevice failed!\n");
         return NULL;
     }
 
     if (SDF_OpenSession(DeviceHandle, &hSessionHandle) != SDR_OK) {
-        log_warn("Error in derive: SDF_OpenSession failed!\n");
+        fprintf(stderr, "Error in derive: SDF_OpenSession failed!\n");
         SDF_CloseDevice(DeviceHandle);
         return NULL;
     }
@@ -1068,7 +1091,7 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
     km_keymetadata_t *meta = km_key_metadata_new(owner1, owner2, key_type, key_len, SESSION_KEY_EXPIRE_TIME);
     km_keypkg_t *pkg = km_key_pkg_new(meta, NULL, FALSE);
     if (!pkg) {
-        log_warn("Error in derive: km_key_pkg_new failed!\n");
+        fprintf(stderr, "Error in derive: km_key_pkg_new failed!\n");
         return NULL;
     }
 
@@ -1091,17 +1114,16 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
 
     do {
 
-
         // 派生密钥
         if (km_hash(ALGO_HASH, (uint8_t *) type_names[key_type], strlen(type_names[key_type]), hash_of_keytype)) {
-            log_warn("Error in derive : km_hash failed!\n\n");
+            fprintf(stderr, "Error in derive : km_hash failed!\n\n");
             break;
         }
         // //printbuff("hash_of_keytype before pbkdf", hash_of_keytype, 32);
 
         // keytype的hash_value作为iv 使用上级密钥对rand的hash值加密，取前16byte作为盐值输入pbkdf2
         if (km_hash(ALGO_HASH, rand, rand_len, hash_of_rand)) {
-            log_warn("Error in derive : km_hash failed!\n\n");
+            fprintf(stderr, "Error in derive : km_hash failed!\n\n");
             break;
         }
         // //printbuff("hash_of_rand before pbkdf", hash_of_rand, 32);
@@ -1110,7 +1132,7 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
         int ret = SDF_Encrypt(hSessionHandle, kdk_handle, ALGO_ENC_AND_DEC, hash_of_keytype, hash_of_rand, 32, salt,
                               &salt_len);
         if (ret != SDR_OK) {
-            log_warn("Error in derive : km_encrypt failed! %08x\n", ret);
+            fprintf(stderr, "Error in derive : km_encrypt failed! %08x\n", ret);
             break;
         }
         // //printbuff("salt before pbkdf", salt, salt_len);
@@ -1118,9 +1140,10 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
         // hash_of_rand作为password，使用主密钥对key_type加密的结果作为iv  输入pbkdf2后派生出密钥
         /* 使用SM3-HMAC作为密钥派生的PRF，迭代次数1024次 */
         if (km_pbkdf2(hash_of_rand, 32, salt, salt_len, 1024, key_len, key)) {
-            log_warn("Error in derive : km_pbkdf2 failed!\n");
+            fprintf(stderr, "Error in derive : km_pbkdf2 failed!\n");
             break;
         }
+
         // print_key_metadata(pkg->meta_data);
 
         /* 生成对主密钥加密的密钥 */
@@ -1132,7 +1155,7 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
         if (km_generate_key_with_kek(kek_index, kek_len, &kek_handle, pkg->kek_cipher, &pkg->kek_cipher_len) !=
             LD_KM_OK) // TODO: KEK存入密钥包
         {
-            log_warn("Error in derive : SDF_GenerateKeyWithKEK failed!\n");
+            fprintf(stderr, "Error in derive : SDF_GenerateKeyWithKEK failed!\n");
             break;
         }
 
@@ -1152,29 +1175,28 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
         /* 主密钥加密 */
         if (SDF_Encrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, key_len, pkg->key_cipher,
                         &cipher_len)) {
-            log_warn("Error in derive : SDF_Encrypt failed!\n");
+            fprintf(stderr, "Error in derive : SDF_Encrypt failed!\n");
             break;
         }
 
-
         /* test */
-//        char iv[16] = {0};
-//        char data[16] = {0};
-//        char res[256] = {0};
-//        uint32_t res_len = 0;
-//        km_encrypt(key, ALGO_ENC_AND_DEC, iv, data, 16, res, (uint32_t *) &res_len);
-//        log_buf(LOG_ERROR, "TEST RES", res, res_len);
+        //        char iv[16] = {0};
+        //        char data[16] = {0};
+        //        char res[256] = {0};
+        //        uint32_t res_len = 0;
+        //        km_encrypt(key, ALGO_ENC_AND_DEC, iv, data, 16, res, (uint32_t *) &res_len);
+        //        //log_buf(LOG_ERROR, "TEST RES", res, res_len);
 
         /* 计算明文校验值 */
         if (km_mac(kek_handle, ALGO_MAC, iv_mac, key, key_len, pkg->chck_value, &(pkg->chck_len))) {
-            log_warn("Error in derive : SDF_CalculateMAC failed!\n");
+            fprintf(stderr, "Error in derive : SDF_CalculateMAC failed!\n");
             break;
         }
         pkg->chck_alg = ALGO_MAC;
         pkg->meta_data->state = ACTIVE;
 
         if (key_handle != NULL && SDF_ImportKey(hSessionHandle, key, key_len, key_handle)) {
-            log_warn("Error in derive : SDF_ImportKey\n");
+            fprintf(stderr, "Error in derive : SDF_ImportKey\n");
             break;
         }
     } while (0);
@@ -1223,12 +1245,12 @@ l_km_err km_derive_all_session_key(uint8_t *db_name, uint8_t *table_name, void *
 
         pkg = derive_key(handle_mk, key_types[i], sessionkey_len, as_name, gs_name, rand, rand_len, NULL);
         if (pkg == NULL) {
-            log_warn("dervie key failed\n");
+            fprintf(stderr, "dervie key failed\n");
             return LD_ERR_KM_DERIVE_KEY;
         }
         // print_key_pkg(pkg);
         if (store_key(db_name, table_name, pkg, &km_pkg_desc) != LD_KM_OK) {
-            log_warn("store_key failed: %d\n");
+            fprintf(stderr, "store_key failed: %d\n");
             return LD_ERR_KM_DERIVE_KEY;
         }
 
@@ -1260,8 +1282,8 @@ l_km_err km_derive_masterkey_asgs(const char *db_name, const char *table_name, v
     struct KeyPkg *pkg_kasgs;
     uint8_t *xor_result;
 
-    printf("owner1: %s %p\n", as_name, as_name);
-    printf("owner2: %s %p\n", gs_name, gs_name);
+    // printf("owner1: %s %p\n", as_name, as_name);
+    // printf("owner2: %s %p\n", gs_name, gs_name);
     do {
         /* 随机数与gs_name的hash值抑或 */
         uint16_t len_xor_res = rand_len;
@@ -1293,7 +1315,7 @@ l_km_err km_derive_masterkey_asgs(const char *db_name, const char *table_name, v
         }
 
         /* 密钥派生 */
-        printf("km_derive_masterkey_asgs inside***\n");
+        // printf("km_derive_masterkey_asgs inside***\n");
 
         pkg_kasgs = derive_key(handle_NH, MASTER_KEY_AS_GS, len_kasgs, as_name, gs_name, xor_result,
                                len_xor_res, handle_kasgs); // KAS-GS=KDF(NH,gs_name^N3)
@@ -1328,36 +1350,42 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
     l_km_err result = LD_ERR_KM_DERIVE_KEY;
 
     if (query_state(db_name, table_name, id) != ACTIVE) {
-        log_warn("key state mismatch");
+        fprintf(stderr, "key state mismatch");
         return LD_ERR_KM_KEY_STATE;
     }
 
-
     if (get_handle_from_db(db_name, table_name, id, &handle) != LD_KM_OK) {
-        log_warn("[** get_handle error**]\n");
+        fprintf(stderr, "[** get_handle error**]\n");
         return LD_ERR_KM_GET_HANDLE;
     }
 
     qr_o = query_owner(db_name, table_name, id);
     if (qr_o == NULL || qr_o->owner1 == NULL || qr_o->owner2 == NULL) // 查询结果检查
     {
-        log_warn("[** query_owner error**]\n");
+        fprintf(stderr, "[** query_owner error**]\n");
         return LD_ERR_KM_QUERY;
     }
 
     const char *owner1 = qr_o->owner1;
     const char *owner2 = qr_o->owner2;
 
-
     switch (query_keytype(db_name, table_name, id)) {
         case ROOT_KEY: {
             do {
+                clock_t start, mid, end;
+                double cpu_time_used;
+                start = clock();
+
                 pkg = derive_key(handle, MASTER_KEY_AS_SGW, key_len, owner1, owner2, rand, rand_len, NULL);
                 if (pkg == NULL) {
-                    log_warn("[**sgw derive_key kas-sgw error**]\n");
+                    fprintf(stderr, "[**sgw derive_key kas-sgw error**]\n");
                     break;
                 }
+
                 // print_key_pkg(pkg);
+                // mid = clock();
+                // cpu_time_used = ((double)(mid - start)) / CLOCKS_PER_SEC;
+                // printf("派生长度为%d的密钥时间为: %f seconds\n", key_len, cpu_time_used);
 
                 if (create_table_if_not_exist(&km_table_desc, db_name, table_name, "id", NULL, NULL, FALSE) !=
                     LD_KM_OK) {
@@ -1368,11 +1396,15 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
                     break;
                 }
 
+                // end = clock();
+                // cpu_time_used = ((double)(end - mid)) / CLOCKS_PER_SEC;
+                // printf("存储长度为%d的密钥时间为: %f seconds\n", key_len, cpu_time_used);
+
                 // 派生中间密钥NH
                 uint16_t len_kasgs = 16;
                 pkg_NH = derive_key(handle, NH_KEY, len_kasgs, owner1, owner2, rand, rand_len, &handle_NH);
                 if (pkg_NH == NULL) {
-                    log_warn("[**AS derive_key NH error**]\n");
+                    fprintf(stderr, "[**AS derive_key NH error**]\n");
                     break;
                 }
 
@@ -1381,7 +1413,8 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
                 }
 
                 // 派生会话密钥KAS-GS
-                // log_warn("about to enter derive masterkeyasgs: dbname %s, tablename %s, id %s, asname: %s, gsname %s , handle_NH %p \n", db_name, table_name, id, owner1, (const char *)gs_name, handle_NH);
+
+                // fprintf(stderr, "about to enter derive masterkeyasgs: dbname %s, tablename %s, id %s, asname: %s, gsname %s , handle_NH %p \n", db_name, table_name, id, owner1, (const char *)gs_name, handle_NH);
                 if (km_derive_masterkey_asgs(db_name, table_name, handle_NH, key_len, owner1, (const char *) gs_name,
                                              rand, rand_len,
                                              NULL) != LD_KM_OK) {
@@ -1399,7 +1432,7 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
             do {
                 if (km_derive_all_session_key(db_name, table_name, handle, key_len, qr_o->owner1, qr_o->owner2, rand,
                                               rand_len) != LD_KM_OK) {
-                    log_warn("session key derive failed\n");
+                    fprintf(stderr, "session key derive failed\n");
                     break;
                 }
 
@@ -1409,7 +1442,7 @@ km_derive_key(uint8_t *db_name, uint8_t *table_name, uint8_t *id, uint32_t key_l
             break;
 
         default:
-            log_warn("unexpected key type\n");
+            fprintf(stderr, "unexpected key type\n");
             break;
     }
 
@@ -1440,7 +1473,7 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     ret = SDF_ImportKeyWithKEK(hSessionHandle, ALGO_WITH_KEK, kek_index, pkg->kek_cipher, pkg->kek_cipher_len,
                                &kek_handle);
     if (ret != LD_KM_OK) {
-        log_warn("get key handle : import kek failed!\n");
+        fprintf(stderr, "get key handle : import kek failed!\n");
         return LD_ERR_KM_IMPORT_KEY_WITH_KEK;
     }
 
@@ -1457,12 +1490,12 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     // //printbuff("chck", chck_value,chck_len);
     if (ret != LD_KM_OK) // 计算mac失败
     {
-        log_warn("get key handle: calc km_mac failed!\n");
+        fprintf(stderr, "get key handle: calc km_mac failed!\n");
         return LD_ERR_KM_MAC;
     }
     if (memcmp(pkg->chck_value, chck_value, chck_len) != 0) // 密钥校验不通过
     {
-        log_warn("get key handle: key verify failed!\n");
+        fprintf(stderr, "get key handle: key verify failed!\n");
         // printbuff("chck_value", chck_value, 32);
         return LD_ERR_KM_MASTERKEY_VERIFY;
     }
@@ -1473,7 +1506,7 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     ret = SDF_Decrypt(hSessionHandle, kek_handle, ALGO_ENC_AND_DEC, iv_dec, pkg->key_cipher, pkg->meta_data->length,
                       key, &key_len);
     if (ret != LD_KM_OK) {
-        log_warn("get masterkey handle: km_decrypt failed!\n");
+        fprintf(stderr, "get masterkey handle: km_decrypt failed!\n");
         return LD_ERR_KM_DECRYPT;
     }
 
@@ -1481,7 +1514,7 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     key_len = key_len > 16 ? 16 : key_len;
     ret = SDF_ImportKey(hSessionHandle, key, key_len, key_handle);
     if (ret != LD_KM_OK) {
-        log_warn("get masterkey handle: import masterkey failed!\n");
+        fprintf(stderr, "get masterkey handle: import masterkey failed!\n");
         return LD_ERR_KM_IMPORT_KEY;
     }
 
@@ -1507,15 +1540,23 @@ l_km_err get_handle_from_db(uint8_t *db_name, uint8_t *table_name, uint8_t *id, 
     // 查询密钥明文
     QueryResult_for_keyvalue *result = query_keyvalue(db_name, table_name, id);
     if (result->key == NULL) {
-        log_warn("Key not found or error occurred.\n");
+        fprintf(stderr, "Key not found or error occurred.\n");
         return LD_ERR_KM_QUERY;
     }
 
+    // clock_t start, end;
+    // double cpu_time_used;
+    // start = clock();
+
     // 导入密钥，获得句柄
     if (km_import_key(result->key, result->key_len, key_handle) != LD_KM_OK) {
-        log_warn("%s\n", km_error_to_string(LD_ERR_KM_IMPORT_KEY));
+        fprintf(stderr, "%s\n", km_error_to_string(LD_ERR_KM_IMPORT_KEY));
         return LD_ERR_KM_IMPORT_KEY;
     }
+
+    // end = clock();
+    // cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+    // printf("导入密钥的时间为: %f seconds\n", cpu_time_used);
 
     // 释放空间
     free_keyvalue_result(result);
@@ -1534,7 +1575,7 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
     void *handle_mk;
     // 查询主密钥句柄
     if (get_handle_from_db(dbname, tablename, id_mk, &handle_mk) != LD_KM_OK) {
-        log_warn("get_handle_from_db failed\n");
+        fprintf(stderr, "get_handle_from_db failed\n");
         return LD_ERR_KM_DERIVE_SESSION_KEY;
     }
 
@@ -1553,19 +1594,19 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
             pkg = derive_key(handle_mk, key_types[i], sessionkey_len, as_name, gs_t_name, nonce,
                              nonce_len, NULL);
             if (pkg == NULL) {
-                log_warn("dervie key failed\n");
+                fprintf(stderr, "dervie key failed\n");
                 break;
             }
-            // log_warn("dervie key OK\n");
+            // fprintf(stderr, "dervie key OK\n");
 
             // 存储新密钥
             if (store_key(dbname, tablename, pkg, &km_pkg_desc) != LD_KM_OK) {
-                log_warn("store_key failed.\n");
+                fprintf(stderr, "store_key failed.\n");
                 key_pkg_free(pkg); // 释放已分配的内存
                 pkg = NULL;
                 break;
             }
-            // log_warn("store_key OK.\n");
+            // fprintf(stderr, "store_key OK.\n");
 
             key_pkg_free(pkg); // 释放变量空间
             pkg = NULL;
@@ -1581,19 +1622,16 @@ l_km_err km_update_sessionkey(uint8_t *dbname, uint8_t *tablename, uint8_t *id_m
 /**
  * @brief 网关和AS端更新主密钥 KAS-GS
  */
-//km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_t *sgw_name, uint8_t *gs_s_name,
-//                    uint8_t *gs_t_name,
-//                    uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
 l_km_err
-    km_update_masterkey(uint8_t *dbname, uint8_t *tablename,  uint8_t *sgw_name, uint8_t *gs_s_name,
-                        uint8_t *gs_t_name,
-                        uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
-        bool fail_tag = FALSE;
+km_update_masterkey(uint8_t *dbname, uint8_t *tablename, uint8_t *sgw_name, uint8_t *gs_s_name,
+                    uint8_t *gs_t_name,
+                    uint8_t *as_name, uint16_t len_nonce, uint8_t *nonce) {
+    bool fail_tag = FALSE;
+    QueryResult_for_queryid *qr_as_kid = NULL;
     QueryResult_for_queryid *qr_NH = NULL;
     QueryResult_for_keyvalue *query_NH = NULL;
     QueryResult_for_queryid *qr_assgw = NULL;
     QueryResult_for_subkey *qr_s = NULL;
-    QueryResult_for_queryid *qr_mk = NULL;
     QueryResult_for_queryid *qr_nmk = NULL;
     km_keypkg_t *keypkg_NH; // 更新的NH
     km_keypkg_t *keypkg_Kasgs = NULL;
@@ -1609,57 +1647,59 @@ l_km_err
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
             LD_KM_OK) {
-            log_warn("create table err\n");
+            fprintf(stderr, "create table err\n");
             fail_tag = TRUE;
             break;
         }
 
-        qr_mk = query_id(dbname, tablename, as_name, gs_s_name, MASTER_KEY_AS_GS, ACTIVE);
-        if (qr_mk->count == 0) {
-            printf("Query mkid failed, null kas-gs id.\n");
-            fail_tag = TRUE;
-            break;
-        } else if (qr_mk->count > 1) // TODO: check ununique id
-        {
-            printf("Query mkid failed,kas-gs id is not unique.\n");
-            fail_tag = TRUE;
+        fprintf(stderr, "%s %s %s %s", as_name, gs_s_name, gs_t_name, sgw_name);
+
+        /* AS端密钥更新 */
+        // 查询新密钥id
+        qr_as_kid = query_id(dbname, tablename, as_name, gs_s_name, MASTER_KEY_AS_GS, ACTIVE);
+        if (qr_as_kid == NULL) {
+            fprintf(stderr, "NULL Query.\n");
             break;
         }
-
-        uint8_t *key_id = qr_mk->ids[0];
+        //        else if (qr_as_kid->count > 1) {
+        //            fprintf(stderr, "%s %s", qr_as_kid->ids[0], qr_as_kid->ids[1]);
+        //            fprintf(stderr, "id isn't unique\n");
+        //            break;
+        //        }
 
         // 查询待更新密钥kas-gs信息
-        uint32_t mk_len = query_keylen(dbname, tablename, key_id);
+        uint32_t mk_len = query_keylen(dbname, tablename, qr_as_kid->ids[0]);
         if (mk_len <= 0) {
-            log_warn("Query mk len failed.\n");
+            fprintf(stderr, "Query mk len failed.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("Query mk info OK.%d\n", mk_len);
+        // fprintf(stderr, "Query mk info OK.%d\n", mk_len);
 
         // 查询NH密钥id
         qr_NH = query_id(dbname, tablename, as_name, sgw_name, NH_KEY, ACTIVE);
         if (qr_NH->count == 0) {
-            log_warn("Query id_NH failed, null outcome.\n");
-            fail_tag = TRUE;
-            break;
-        } else if (qr_NH->count > 1) // TODO: check ununique id
-        {
-            log_warn("Query id_NH failed, duplicate outcome.\n");
+            fprintf(stderr, "Query id_NH failed, null outcome.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("Query id_NH OK,id:%s.\n", qr_NH->ids[0]);
+        //        } else if (qr_NH->count > 1) // TODO: check ununique id
+        //        {
+        //            fprintf(stderr, "Query id_NH failed, duplicate outcome.\n");
+        //            fail_tag = TRUE;
+        //            break;
+        //        }
+        fprintf(stderr, "Query id_NH OK,id:%s.\n", qr_NH->ids[0]);
 
         // 查询NH密钥值
         query_NH = query_keyvalue(dbname, tablename, qr_NH->ids[0]);
         if (!query_NH) {
-            log_warn("Key NH value not found or error occurred.\n");
+            fprintf(stderr, "Key NH value not found or error occurred.\n");
             fail_tag = TRUE;
             break;
         }
         // //printbuff("query_NH->key", query_NH->key, query_NH->key_len);
-        // log_warn("Query NH info OK.\n");
+        // fprintf(stderr, "Query NH info OK.\n");
 
         // 计算新的NH密钥值 : NH = kdf(kas-sgw,NH')
         /*计算新的NH密钥值 : NH = kdf(kas-sgw,NH')*/
@@ -1668,92 +1708,92 @@ l_km_err
         qr_assgw = query_id(dbname, tablename, as_name, sgw_name, MASTER_KEY_AS_SGW,
                             ACTIVE); // AS端
         if (qr_assgw == NULL) {
-            log_warn("Query kassgw failed.\n");
+            fprintf(stderr, "Query kassgw failed.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("qr_assgw OK. kid_assgw = %s\n", qr_assgw->ids[0]);
+        // fprintf(stderr, "qr_assgw OK. kid_assgw = %s\n", qr_assgw->ids[0]);
 
         // 获取主密钥Kas-sgw句柄
         if (get_handle_from_db(dbname, tablename, qr_assgw->ids[0], &handle_asasw) != LD_KM_OK) {
-            log_warn("get_handle_from_db failed\n");
+            fprintf(stderr, "get_handle_from_db failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("get kas-sgw handle_from_db OK\n");
+        // fprintf(stderr, "get kas-sgw handle_from_db OK\n");
 
         // 重新计算NH
         keypkg_NH = derive_key(handle_asasw, NH_KEY, query_NH->key_len, as_name, sgw_name, query_NH->key,
                                query_NH->key_len, NULL);
         if (keypkg_NH == NULL) {
-            log_warn("derive keypkg_NH failed\n");
+            fprintf(stderr, "derive keypkg_NH failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("derive keypkg_NH OK\n");
+        // fprintf(stderr, "derive keypkg_NH OK\n");
 
         // 存储NH密钥值
         if (store_key(dbname, tablename, keypkg_NH, &km_pkg_desc) != LD_KM_OK) {
-            log_warn("store_key failed.\n");
+            fprintf(stderr, "store_key failed.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("store NH keyvalue OK\n");
+        // fprintf(stderr, "store NH keyvalue OK\n");
 
         // 撤销原NH密钥
         if (alter_keystate(dbname, tablename, qr_NH->ids[0], SUSPENDED) != LD_KM_OK) {
-            log_warn("alter keystate failed\n");
+            fprintf(stderr, "alter keystate failed\n");
             fail_tag = TRUE;
             break;
         }
 
         // AS-SGW 更新计数器自增
         if (increase_updatecount(dbname, tablename, qr_assgw->ids[0]) != LD_KM_OK) {
-            log_warn("increase update count failed\n");
+            fprintf(stderr, "increase update count failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("increase update count OK\n");
+        // fprintf(stderr, "increase update count OK\n");
 
         /* 生成 kas-gs = kdf(NH, rand)*/
         if (km_hmac(nonce, len_nonce, gs_t_name, strlen(gs_t_name), rand, &rand_len) !=
             LD_KM_OK) // rand = hmac(sacgs-t,nonce)
         {
-            log_warn("km_hmac failed\n");
+            fprintf(stderr, "km_hmac failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("km hmac OK\n");
+        // fprintf(stderr, "km hmac OK\n");
 
         if (get_handle_from_db(dbname, tablename, qr_NH->ids[0], &handle_NH) != LD_KM_OK) {
-            log_warn("get keyhandle from db failed\n");
+            fprintf(stderr, "get keyhandle from db failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("get handle from db OK\n");
-        // log_warn("%p \n", handle_NH);
+        // fprintf(stderr, "get handle from db OK\n");
+        // fprintf(stderr, "%p \n", handle_NH);
 
         keypkg_Kasgs = derive_key(handle_NH, MASTER_KEY_AS_GS, mk_len, as_name, gs_t_name, rand,
                                   rand_len,
                                   NULL);
         if (keypkg_Kasgs == NULL) {
-            log_warn("kasgs derive failed\n");
+            fprintf(stderr, "kasgs derive failed\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("kasgs derive OK\n");
+        // fprintf(stderr, "kasgs derive OK\n");
 
         // 存储更新的主密钥kas-gs
         if (store_key(dbname, tablename, keypkg_Kasgs, &km_pkg_desc) != LD_KM_OK) {
-            log_warn("store_key failed.\n");
+            fprintf(stderr, "store_key failed.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("store master key OK.\n");
+        // fprintf(stderr, "store master key OK.\n");
 
         // 将原密钥的状态改为已经撤销
-        if (km_revoke_key(dbname, tablename, key_id) != LD_KM_OK) {
-            log_warn("km_revoke_key failed\n");
+        if (km_revoke_key(dbname, tablename, qr_as_kid->ids[0]) != LD_KM_OK) {
+            fprintf(stderr, "km_revoke_key failed\n");
             fail_tag = TRUE;
             break;
         }
@@ -1761,36 +1801,37 @@ l_km_err
         // 查询新的kAS-GS id
         qr_nmk = query_id(dbname, tablename, as_name, gs_t_name, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_nmk->count == 0) {
-            log_warn("Query new mkid failed, null kas-gs id.\n");
+            fprintf(stderr, "Query new mkid failed, null kas-gs id.\n");
             fail_tag = TRUE;
             break;
         } else if (qr_nmk->count > 1) // TODO: check ununique id
         {
-            log_warn("Query new mkid failed,kas-gs id is not unique.\n");
+            fprintf(stderr, "Query new mkid failed,kas-gs id is not unique.\n");
             fail_tag = TRUE;
             break;
         }
-        // log_warn("Query mkid OK,id:%s.\n", qr_nmk->ids[0]);
+        // fprintf(stderr, "Query mkid OK,id:%s.\n", qr_nmk->ids[0]);
 
         // 如果有子会话密钥
-        qr_s = query_subkey(dbname, tablename, key_id);
+        qr_s = query_subkey(dbname, tablename, qr_as_kid->ids[0]);
         if (qr_s->count == 4) {
             // 会话密钥更新
             if (km_update_sessionkey(dbname, tablename, qr_nmk->ids[0], as_name, gs_t_name, len_nonce, nonce) !=
                 LD_KM_OK) {
-                log_warn("update masterkey %s's sessionkey failed\n", qr_nmk->ids[0]);
+                fprintf(stderr, "update masterkey %s's sessionkey failed\n", qr_nmk->ids[0]);
                 fail_tag = TRUE;
                 break;
             }
-            // log_warn("update masterkey %s's sessionkey OK\n", qr_nmk->ids[0]);
+            // fprintf(stderr, "update masterkey %s's sessionkey OK\n", qr_nmk->ids[0]);
         }
 
     } while (0);
 
     // 释放动态分配的内存
-    free_queryid_result(qr_mk);
     free_queryid_result(qr_nmk);
     free_queryid_result(qr_NH);
+    if (qr_as_kid)
+        free_queryid_result(qr_as_kid);
     free_keyvalue_result(query_NH);
     free_queryid_result(qr_assgw);
     key_pkg_free(keypkg_NH);
@@ -1804,44 +1845,38 @@ l_km_err
     return LD_KM_OK;
 }
 
-/** @brief 外部接口：网关端更新主密钥 KAS-GS */
-l_km_err
-sgw_update_master_key(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_t *sgw_name, uint8_t *gs_t_name,
-                      uint16_t len_nonce, uint8_t *nonce) {
-    // 根据id 查询sgw name 和 as_name
-    QueryResult_for_owner *qo = NULL;
-    bool fail_tag = FALSE;
-    do {
-        qo = query_owner(dbname, tablename, key_id);
-        if (qo->owner1 == NULL || qo->owner2 == NULL) {
-            log_warn("query_owner failed\n");
-            fail_tag = TRUE;
-            break;
-        }
-        // log_warn("owner1: %s, owner2: %s\n", qo->owner1, qo->owner2);
-
-//        if (km_update_masterkey(dbname, tablename, key_id, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
-//                                nonce) !=
-//            LD_KM_OK) {
-//            fail_tag = TRUE;
-//            break;
-//        }
-        if (km_update_masterkey(dbname, tablename, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
-                                nonce) !=
-            LD_KM_OK) {
-            fail_tag = TRUE;
-            break;
-        }
-    } while (0);
-
-    // 释放变量空间
-    free_owner_result(qo);
-    qo = NULL;
-
-    // 返回执行情况
-    return fail_tag == FALSE ? LD_KM_OK : LD_ERR_KM_SGW_MK_UPDATE;
-}
-
+///** @brief 外部接口：网关端更新主密钥 KAS-GS */
+// l_km_err
+// sgw_update_master_key(uint8_t *dbname, uint8_t *tablename, uint8_t *key_id, uint8_t *sgw_name, uint8_t *gs_t_name,
+//                       uint16_t len_nonce, uint8_t *nonce) {
+//     // 根据id 查询sgw name 和 as_name
+//     QueryResult_for_owner *qo = NULL;
+//     bool fail_tag = FALSE;
+//     do {
+//         qo = query_owner(dbname, tablename, key_id);
+//         if (qo->owner1 == NULL || qo->owner2 == NULL) {
+//             fprintf(stderr, "query_owner failed\n");
+//             fail_tag = TRUE;
+//             break;
+//         }
+//         // fprintf(stderr, "owner1: %s, owner2: %s\n", qo->owner1, qo->owner2);
+//
+//         if (km_update_masterkey(dbname, tablename, sgw_name, qo->owner2, gs_t_name, qo->owner1, len_nonce,
+//                                 nonce) !=
+//             LD_KM_OK) {
+//             fail_tag = TRUE;
+//             break;
+//         }
+//     } while (0);
+//
+//     // 释放变量空间
+//     free_owner_result(qo);
+//     qo = NULL;
+//
+//     // 返回执行情况
+//     return fail_tag == FALSE ? LD_KM_OK : LD_ERR_KM_SGW_MK_UPDATE;
+// }
+//
 /**
  * @brief 撤销密钥及其派生密钥
  */
@@ -1852,9 +1887,9 @@ l_km_err km_revoke_key(uint8_t *dbname, uint8_t *tablename, uint8_t *id) {
     do {
         // 检查密钥状态
         enum STATE state = query_state(dbname, tablename, id);
-        // log_warn("dbname %s tablename %s key-id %s state: %s \n", dbname, tablename, id, kstate_str(state));
+        // fprintf(stderr, "dbname %s tablename %s key-id %s state: %s \n", dbname, tablename, id, kstate_str(state));
         if (state != ACTIVE && state != PRE_ACTIVATION) {
-            log_warn("key state mismatch\n");
+            fprintf(stderr, "key state mismatch\n");
             fail_tag = TRUE;
             break;
         }
@@ -1866,15 +1901,15 @@ l_km_err km_revoke_key(uint8_t *dbname, uint8_t *tablename, uint8_t *id) {
             {
                 if (alter_keystate(dbname, tablename, result->subkey_ids[i], SUSPENDED) != LD_KM_OK) // 修改密钥状态
                 {
-                    log_warn("revoke subkey %s fail\n", result->subkey_ids[i]);
+                    fprintf(stderr, "revoke subkey %s fail\n", result->subkey_ids[i]);
                     fail_tag = TRUE;
                     break;
                 }
-                // log_warn("revoke key %s succeeded.\n", result->subkey_ids[i]);
+                // fprintf(stderr, "revoke key %s succeeded.\n", result->subkey_ids[i]);
 
                 // 删除密钥值
                 if (alter_keyvalue(dbname, tablename, result->subkey_ids[i], 0, NULL) != LD_KM_OK) {
-                    log_warn("revoke key %s Failed. \n", result->subkey_ids[i]);
+                    fprintf(stderr, "revoke key %s Failed. \n", result->subkey_ids[i]);
                     fail_tag = TRUE;
                     break;
                 }
@@ -1883,15 +1918,15 @@ l_km_err km_revoke_key(uint8_t *dbname, uint8_t *tablename, uint8_t *id) {
 
         // 撤销密钥
         if (alter_keystate(dbname, tablename, id, SUSPENDED) != LD_KM_OK) {
-            log_warn("revoke key %s fail\n", id);
+            fprintf(stderr, "revoke key %s fail\n", id);
             fail_tag = TRUE;
             break;
         }
-        // log_warn("revoke key %s succeeded.\n", id_mk);
+        // fprintf(stderr, "revoke key %s succeeded.\n", id_mk);
 
         // 删除密钥值
         if (alter_keyvalue(dbname, tablename, id, 0, NULL) != LD_KM_OK) {
-            log_warn("revoke key %s Failed. \n", id);
+            fprintf(stderr, "revoke key %s Failed. \n", id);
             fail_tag = TRUE;
             break;
         }
@@ -1927,7 +1962,7 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
         uint8_t *primary_key = "id";
         if (create_table_if_not_exist(&km_table_desc, dbname, tablename, primary_key, NULL, NULL, FALSE) !=
             LD_KM_OK) {
-            log_warn("create table err\n");
+            fprintf(stderr, "create table err\n");
             fail_tag = TRUE;
             break;
         }
@@ -1941,7 +1976,7 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
 
         // 存入数据库
         if (store_key(dbname, tablename, pkg, &km_pkg_desc) != LD_KM_OK) {
-            log_warn("store_key failed: %d\n");
+            fprintf(stderr, "store_key failed: %d\n");
             fail_tag = TRUE;
 
             break;
@@ -1950,17 +1985,17 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
         // 查询主密钥id
         qr_mk = query_id(dbname, tablename, as_name, gs_name, MASTER_KEY_AS_GS, ACTIVE);
         if (qr_mk == NULL) {
-            log_warn("NULL Query.\n");
+            fprintf(stderr, "NULL Query.\n");
             fail_tag = TRUE;
 
             break;
         }
-        // log_warn("kas-gs id %s\n", qr_mk->ids[0]);
+        // fprintf(stderr, "kas-gs id %s\n", qr_mk->ids[0]);
 
         // 查询主密钥句柄
         void *handle_mk;
         if (get_handle_from_db(dbname, tablename, qr_mk->ids[0], &handle_mk) != LD_KM_OK) {
-            log_warn("get_handle_from_db failed\n");
+            fprintf(stderr, "get_handle_from_db failed\n");
             fail_tag = TRUE;
 
             break;
@@ -1987,12 +2022,12 @@ km_install_key(uint8_t *dbname, uint8_t *tablename, uint32_t key_len, uint8_t *k
 
             pkg = derive_key(handle_mk, key_types[i], sessionkey_len, as_name, gs_name, nonce, nonce_len, NULL);
             if (pkg == NULL) {
-                log_warn("dervie key failed\n");
+                fprintf(stderr, "dervie key failed\n");
                 fail_tag = TRUE;
                 break;
             }
             if (store_key(dbname, tablename, pkg, &km_pkg_desc) != LD_KM_OK) {
-                log_warn("store_key failed: %d\n");
+                fprintf(stderr, "store_key failed: %d\n");
                 fail_tag = TRUE;
                 break;
             }
@@ -2023,13 +2058,13 @@ l_km_err write_keypkg_to_file(const char *filename, km_keypkg_t *pkg) {
     do {
         FILE *file = fopen(filename, "w");
         if (file == NULL) {
-            log_warn("open file %s failed.\n", filename);
+            fprintf(stderr, "open file %s failed.\n", filename);
             return LD_ERR_KM_WRITE_FILE;
         }
 
         // Write metadata
         if (fwrite(pkg->meta_data, sizeof(km_keymetadata_t), 1, file) != 1) {
-            log_warn("write metadata failed.\n");
+            fprintf(stderr, "write metadata failed.\n");
             fclose(file);
             return LD_ERR_KM_PARAMETERS_NULL;
         }
@@ -2094,7 +2129,7 @@ km_keypkg_t *read_keypkg_from_file(const char *filename) {
     // 校验密钥
     // if (km_checkvalue_is_same(pkg->chck_alg, pkg->chck_value, pkg->chck_len,NULL,  pkg->key_cipher, pkg->meta_data->length) != TRUE)
     // {
-    //     log_warn("integrity check failed!\n");
+    //     fprintf(stderr, "integrity check failed!\n");
     //     free(pkg);
     //     free(meta_data);
     //     return NULL;
@@ -2207,86 +2242,86 @@ l_km_err print_key_metadata(struct KeyMetaData *key_info) {
     // 使用 snprintf 格式化输出
     char str_buffer[1024]; // 预留足够的空间，包括格式字符串和 ID 的内容
     snprintf(str_buffer, sizeof(str_buffer), "ID:%s\n", str);
-    log_warn("%s", str_buffer); // 输出结果
+    fprintf(stderr, "%s", str_buffer); // 输出结果
 
-    log_warn("Type: ");
+    fprintf(stderr, "Type: ");
 
     switch (key_info->key_type) {
         case ROOT_KEY:
-            log_warn("ROOT_KEY (KAS)\n");
+            fprintf(stderr, "ROOT_KEY (KAS)\n");
             break;
         case MASTER_KEY_AS_SGW:
-            log_warn("MASTER_KEY_AS_SGW (KASSGW)\n");
+            fprintf(stderr, "MASTER_KEY_AS_SGW (KASSGW)\n");
             break;
         case MASTER_KEY_AS_GS:
-            log_warn("MASTER_KEY_AS_GS (KASGS)\n");
+            fprintf(stderr, "MASTER_KEY_AS_GS (KASGS)\n");
             break;
         case SESSION_KEY_USR_ENC:
-            log_warn("SESSION_KEY_USR_ENC (KUENC)\n");
+            fprintf(stderr, "SESSION_KEY_USR_ENC (KUENC)\n");
             break;
         case SESSION_KEY_USR_INT:
-            log_warn("SESSION_KEY_USR_INT (KUINT)\n");
+            fprintf(stderr, "SESSION_KEY_USR_INT (KUINT)\n");
             break;
             //    case SESSION_KEY_CONTROL_ENC:
-            //        log_warn("SESSION_KEY_CONTROL_ENC (KCENC)\n");
+            //        fprintf(stderr, "SESSION_KEY_CONTROL_ENC (KCENC)\n");
             //        break;
             //    case SESSION_KEY_CONTROL_INT:
-            //        log_warn("SESSION_KEY_CONTROL_INT (KCINT)\n");
+            //        fprintf(stderr, "SESSION_KEY_CONTROL_INT (KCINT)\n");
             //        break;
         case GROUP_KEY_BC:
-            log_warn("GROUP_KEY_BC (KBC)\n");
+            fprintf(stderr, "GROUP_KEY_BC (KBC)\n");
             break;
         case GROUP_KEY_CC:
-            log_warn("GROUP_KEY_CC (KCC)\n");
+            fprintf(stderr, "GROUP_KEY_CC (KCC)\n");
             break;
         case NH_KEY:
-            log_warn("NextHop KEY\n");
+            fprintf(stderr, "NextHop KEY\n");
             break;
         default:
-            log_warn("Unknown KEY_TYPE\n");
+            fprintf(stderr, "Unknown KEY_TYPE\n");
     }
 
     uint8_t emptyArray[MAX_OWENER_LEN] = {0};
     if (memcmp(key_info->owner_1, emptyArray, MAX_OWENER_LEN) == 0) {
-        log_warn("Owner 1 : nil (Unspecified)\n");
+        fprintf(stderr, "Owner 1 : nil (Unspecified)\n");
     } else {
-        log_warn("Owner 1: %s\n", key_info->owner_1);
+        fprintf(stderr, "Owner 1: %s\n", key_info->owner_1);
     }
     if (memcmp(key_info->owner_2, emptyArray, MAX_OWENER_LEN) == 0) {
-        log_warn("Owner 2 : nil (Unspecified)\n");
+        fprintf(stderr, "Owner 2 : nil (Unspecified)\n");
     } else {
-        log_warn("Owner 2: %s\n", key_info->owner_2);
+        fprintf(stderr, "Owner 2: %s\n", key_info->owner_2);
     }
-    log_warn("Length: %u BYTES\n", key_info->length);
+    fprintf(stderr, "Length: %u BYTES\n", key_info->length);
 
-    log_warn("State: ");
+    fprintf(stderr, "State: ");
     switch (key_info->state) {
         case PRE_ACTIVATION:
-            log_warn("PRE_ACTIVATION\n");
+            fprintf(stderr, "PRE_ACTIVATION\n");
             break;
         case ACTIVE:
-            log_warn("ACTIVE\n");
+            fprintf(stderr, "ACTIVE\n");
             break;
         case SUSPENDED:
-            log_warn("SUSPENDED\n");
+            fprintf(stderr, "SUSPENDED\n");
             break;
         case DEACTIVATED:
-            log_warn("DEACTIVATED\n");
+            fprintf(stderr, "DEACTIVATED\n");
             break;
         case COMPROMISED:
-            log_warn("COMPROMISED\n");
+            fprintf(stderr, "COMPROMISED\n");
             break;
         case DESTROYED:
-            log_warn("DESTROYED\n");
+            fprintf(stderr, "DESTROYED\n");
             break;
         default:
-            log_warn("Unknown\n");
+            fprintf(stderr, "Unknown\n");
     }
     struct tm *timeinfo = localtime(&key_info->creation_time);
     char buffer[80];
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeinfo);
-    log_warn("Effectuation Time: %s\n", buffer);
-    log_warn("Update Cycle: %lld days \n", (long long) key_info->update_cycle);
+    fprintf(stderr, "Effectuation Time: %s\n", buffer);
+    fprintf(stderr, "Update Cycle: %lld days \n", (long long) key_info->update_cycle);
 
     return LD_KM_OK;
 }
@@ -2295,25 +2330,25 @@ l_km_err print_key_metadata(struct KeyMetaData *key_info) {
 l_km_err print_key_pkg(struct KeyPkg *key_pkg) {
     if (key_pkg == NULL) {
         // 处理错误，输入参数为空或者关键结构体为空
-        log_warn("NULL key_pkg  for //print_key_pkg function.\n");
+        fprintf(stderr, "NULL key_pkg  for //print_key_pkg function.\n");
         return LD_ERR_KM_PARAMETERS_NULL;
     } else if (key_pkg->meta_data == NULL) {
         // 处理错误，输入参数为空或者关键结构体为空
-        log_warn("NULL meta_data for //print_key_pkg function.\n");
+        fprintf(stderr, "NULL meta_data for //print_key_pkg function.\n");
         return LD_ERR_KM_PARAMETERS_NULL;
     }
 
-//    print_key_metadata(key_pkg->meta_data);
+    //    print_key_metadata(key_pkg->meta_data);
     uint8_t emptyArray[64] = {0};
     if (memcmp(key_pkg->kek_cipher, emptyArray, 16) == 0) {
-        log_warn("KEK: nil (Unspecified)\n");
+        fprintf(stderr, "KEK: nil (Unspecified)\n");
     } else {
-        log_buf(LOG_WARN, "KEK (cipher)", key_pkg->kek_cipher, 16);
+        //log_buf(LOG_WARN, "KEK (cipher)", key_pkg->kek_cipher, 16);
     }
-    log_buf(LOG_WARN, "Key ", key_pkg->key_cipher, key_pkg->meta_data->length);
-    log_warn("Check Algorithm: %s\n", chck_algo_str(key_pkg->chck_alg));
-    log_buf(LOG_WARN, "IV", key_pkg->iv, key_pkg->iv_len);
-    log_buf(LOG_WARN, "Check value", key_pkg->chck_value, key_pkg->chck_len);
+    //log_buf(LOG_WARN, "Key ", key_pkg->key_cipher, key_pkg->meta_data->length);
+    fprintf(stderr, "Check Algorithm: %s\n", chck_algo_str(key_pkg->chck_alg));
+    //log_buf(LOG_WARN, "IV", key_pkg->iv, key_pkg->iv_len);
+    //log_buf(LOG_WARN, "Check value", key_pkg->chck_value, key_pkg->chck_len);
 
     return LD_KM_OK;
 }
@@ -2844,7 +2879,7 @@ km_keypkg_t *km_import_rootkey(void * *rootkey_handle, const char *import_bin_pa
         km_hash(ALGO_HASH, pkg->key_cipher, pkg->meta_data->length, hashed_rootkey);
         if (memcmp(hashed_rootkey, pkg->chck_value, pkg->chck_len) != 0)
         {
-            log_warn("root key integrity check Wrong\n");
+            fprintf(stderr, "root key integrity check Wrong\n");
             break;
         }
         pkg->chck_alg = ALGO_HASH;
@@ -2853,7 +2888,7 @@ km_keypkg_t *km_import_rootkey(void * *rootkey_handle, const char *import_bin_pa
         // 返回根密钥句柄
         if (SDF_ImportKey(hSessionHandle, pkg->key_cipher, pkg->meta_data->length, rootkey_handle) != SDR_OK)
         {
-            log_warn("import rootkey failed\n");
+            fprintf(stderr, "import rootkey failed\n");
             break;
         }
 
@@ -2915,7 +2950,7 @@ l_km_err km_get_rootkey_handle(void * *rootkey_handle, const char *filepath)
     // km_keypkg_t *restored_pkg = read_keypkg_from_file(filepath);
     if (restored_pkg == NULL)
     {
-        log_warn("Error reading from file\n");
+        fprintf(stderr, "Error reading from file\n");
         return LD_ERR_KM_READ_FILE;
     }
     // //print_key_pkg(&restored_pkg);
@@ -2927,7 +2962,7 @@ l_km_err km_get_rootkey_handle(void * *rootkey_handle, const char *filepath)
     if (SDF_ImportKeyWithKEK(pSessionHandle, ALGO_WITH_KEK, kek_index, restored_pkg->kek_cipher,
                              restored_pkg->kek_cipher_len, &kek_handle) != LD_KM_OK)
     {
-        log_warn("get key handle : import kek failed!\n");
+        fprintf(stderr, "get key handle : import kek failed!\n");
         return LD_ERR_KM_IMPORT_KEY_WITH_KEK;
     }
 
@@ -2938,7 +2973,7 @@ l_km_err km_get_rootkey_handle(void * *rootkey_handle, const char *filepath)
                      mac_value, &mac_len);
     if (memcmp(mac_value, restored_pkg->chck_value, mac_len) != 0)
     {
-        log_warn("root key integrity Wrong\n");
+        fprintf(stderr, "root key integrity Wrong\n");
         return LD_ERR_KM_ROOTKEY_VERIFY;
     }
 
