@@ -3,13 +3,7 @@
 #ifndef KEY_MANAGE_H
 #define KEY_MANAGE_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/time.h>
-#include <stdint.h>
-#include <string.h>
-#include <uuid/uuid.h>
-#include <global/ldacs_sim.h>
+#include "ldacscrypto.h"
 #include "km.h"
 
 /*

@@ -49,17 +49,17 @@
 
 const char *sql_type(enum km_field_type type) {
     switch (type) {
-        case ft_uuid:
+        case km_ft_uuid:
             return "text";
-        case ft_enum:
+        case km_ft_enum:
             return "text";
-        case ft_uint8t_pointer:
+        case km_ft_uint8t_pointer:
             return "text";
-        case ft_uint32t:
+        case km_ft_uint32t:
             return "integer";
-        case ft_timet:
+        case km_ft_timet:
             return "text";
-        case ft_uint16t:
+        case km_ft_uint16t:
             return "integer";
         default:
             return "";
@@ -91,7 +91,7 @@ l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const c
 
     // 根据描述，组装创建表的sql语句
     fprintf(stream, "CREATE TABLE IF NOT EXISTS %s (\n", table_name);
-    while (current_field->km_field_type != ft_end) {
+    while (current_field->km_field_type != km_ft_end) {
         if (strcmp((char *) primary_key, current_field->name) == 0) // 当前字段是主键字段
         {
 
@@ -110,7 +110,7 @@ l_km_err create_table_if_not_exist(struct_desc *sd, const char *db_name, const c
             fprintf(stream, "    %s %s", current_field->name, sql_type(current_field->km_field_type));
         }
         current_field++;
-        if (current_field->km_field_type != ft_end && strcmp((char *) primary_key, (current_field - 1)->name) != 0) {
+        if (current_field->km_field_type != km_ft_end && strcmp((char *) primary_key, (current_field - 1)->name) != 0) {
             // 不是最后一个字段，且不是主键字段时，添加逗号换行
             fprintf(stream, ",\n");
         }
@@ -168,11 +168,11 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
      *****************************/
     sprintf(sql, "INSERT INTO %s (", table_name);
     // 添加字段名
-    while (current_field->km_field_type != ft_end) {
+    while (current_field->km_field_type != km_ft_end) {
         next_field = current_field;
         next_field++; // 指向下一个描述域
         strcat(sql, current_field->name);
-        if (next_field->km_field_type != ft_end) {
+        if (next_field->km_field_type != km_ft_end) {
             strcat(sql, ", ");
         }
         current_field++;
@@ -181,20 +181,20 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
     // 添加字段值
     current_field = sd->fields;
     strcat(sql, ") VALUES (");
-    while (current_field->km_field_type != ft_end) {
+    while (current_field->km_field_type != km_ft_end) {
         uint8_t uuid[16];
         uint8_t str_uuid[128];
         uint8_t emptyArray[MAX_OWENER_LEN] = {0};
         switch (current_field->km_field_type) // 按照描述解析和重排结构体
         {
             {
-                case ft_uuid:
+                case km_ft_uuid:
                     strcat(sql, "'");
                 uuid_unparse(p_pkg->meta_data->id, str_uuid);
                 strcat(sql, str_uuid);
                 strcat(sql, "'");
                 break;
-                case ft_uint8t_pointer:
+                case km_ft_uint8t_pointer:
                     // 从结构体读取多长 根据名字判断
                     strcat(sql, "'");
 
@@ -265,7 +265,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
                 strcat(sql, "'");
 
                 break;
-                case ft_enum:
+                case km_ft_enum:
                     strcat(sql, "'");
                 if (!strcmp(current_field->name, "key_type")) {
                     strcat(sql, ktype_str(p_pkg->meta_data->key_type));
@@ -276,7 +276,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
                 }
                 strcat(sql, "'");
                 break;
-                case ft_uint32t:
+                case km_ft_uint32t:
                     if (!strcmp(current_field->name, "key_len")) {
                         size_t sqlLength = strlen((char *) sql); // 计算字符串的长度
                         size_t lastIndex = sqlLength - 1;       // 计算最后一个有效字符的位置
@@ -287,7 +287,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
                         snprintf(sql + lastIndex, sizeof(p_pkg->kek_cipher_len), "%u", p_pkg->kek_cipher_len);
                     }
                 break;
-                case ft_timet: // TODO: check
+                case km_ft_timet: // TODO: check
                     if (!strcmp(current_field->name, "creatime")) {
                         struct tm *timeinfo = localtime(&(p_pkg->meta_data->creation_time));
                         char buffer[80];
@@ -297,7 +297,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
                         strcat(sql, "'");
                     }
                 break;
-                case ft_uint16t:
+                case km_ft_uint16t:
                     if (!strcmp(current_field->name, "check_len")) {
                         size_t sqlLength = strlen((char *) sql); // 计算字符串的长度
                         size_t lastIndex = sqlLength - 1;       // 计算最后一个有效字符的位置
@@ -326,7 +326,7 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
                         snprintf(sql + lastIndex, sizeof(update_count), "%u", update_count);
                     }
                 break;
-                case ft_end:
+                case km_ft_end:
                     break;
                 default:
                     break;
@@ -334,13 +334,13 @@ l_km_err store_key(const char *db_name, const char *table_name, struct KeyPkg *p
         }
         next_field = current_field;
         next_field++; // 指向下一个描述域
-        if (next_field->km_field_type != ft_end) {
+        if (next_field->km_field_type != km_ft_end) {
             strcat(sql, ", ");
         }
         current_field++;
     }
     strcat(sql, ");");
-    // fprintf(stderr, "Generated SQL statement: %s\n", sql);
+    // log_warn("Generated SQL statement: %s\n", sql);
 
     /******************************
      *        执行insert语句       *
