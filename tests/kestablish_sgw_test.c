@@ -85,17 +85,17 @@ int main()
     qr_rk = query_id(dbname, sgw_tablename, as_name, sgw_name, ROOT_KEY, ACTIVE);
     if (qr_rk->count == 0)
     {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         ret = LD_ERR_KM_QUERY;
         goto cleanup;
     }
     else
     {
         // 打印结果
-        log_warn("ID Count: %u\n", qr_rk->count);
+        fprintf(stderr, "ID Count: %u\n", qr_rk->count);
         for (uint32_t i = 0; i < qr_rk->count; ++i)
         {
-            log_warn("root key ID %u: %s\n", i, qr_rk->ids[i]);
+            fprintf(stderr, "root key ID %u: %s\n", i, qr_rk->ids[i]);
         }
     }
 
@@ -103,7 +103,7 @@ int main()
     uint32_t len_kassgw = 16;
     if (km_derive_key(dbname, sgw_tablename, qr_rk->ids[0], len_kassgw, gs_name, sharedinfo, sharedinfo_len) != LD_KM_OK)
     {
-        log_warn("[**sgw derive master key error**]\n");
+        fprintf(stderr, "[**sgw derive master key error**]\n");
         ret = 0;
         goto cleanup;
     }
@@ -112,7 +112,7 @@ int main()
     qr_mk = query_id(dbname, sgw_tablename, as_name, gs_name, MASTER_KEY_AS_GS, ACTIVE);
     if (qr_mk->count == 0)
     {
-        log_warn("Query mkid failed.\n");
+        fprintf(stderr, "Query mkid failed.\n");
         ret = LD_ERR_KM_QUERY;
         goto cleanup;
     }
@@ -120,7 +120,7 @@ int main()
     result = query_keyvalue(dbname, sgw_tablename, qr_mk->ids[0]);
     if (!result)
     {
-        log_warn("Key not found or error occurred.\n");
+        fprintf(stderr, "Key not found or error occurred.\n");
         ret = LD_ERR_KM_QUERY;
         goto cleanup;
     }

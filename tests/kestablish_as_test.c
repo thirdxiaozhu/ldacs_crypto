@@ -41,7 +41,7 @@ int main() {
     // 查询根密钥id
     QueryResult_for_queryid *qr_rk = query_id(dbname, as_tablename, as_name, sgw_name, ROOT_KEY, ACTIVE);
     if (qr_rk->count != 1) {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         free_queryid_result(qr_rk);
         return LD_ERR_KM_QUERY;
     }
@@ -50,7 +50,7 @@ int main() {
     uint32_t len_kassgw = 16;
     if (km_derive_key(dbname, as_tablename, qr_rk->ids[0], len_kassgw, gs_name, sharedinfo, sharedinfo_len) !=
         LD_KM_OK) {
-        log_warn("[**sgw derive_key kas-sgw error**]\n");
+        fprintf(stderr, "[**sgw derive_key kas-sgw error**]\n");
         free_queryid_result(qr_rk);
         return 0;
     }
@@ -58,7 +58,7 @@ int main() {
     // 查询AS-GS之间主密钥
     QueryResult_for_queryid *qr_mk = query_id(dbname, as_tablename, as_name, gs_name, MASTER_KEY_AS_GS, ACTIVE);
     if (qr_mk == NULL) {
-        log_warn("Query rkid failed.\n");
+        fprintf(stderr, "Query rkid failed.\n");
         free_queryid_result(qr_rk);
         return LD_ERR_KM_QUERY;
     }
@@ -68,7 +68,7 @@ int main() {
     uint8_t rand[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
     uint32_t len_sessionkey = 16;
     if (km_derive_key(dbname, as_tablename, qr_mk->ids[0], len_sessionkey, gs_name, rand, rand_len) != LD_KM_OK) {
-        log_warn("[**sgw derive_key kas-sgw error**]\n");
+        fprintf(stderr, "[**sgw derive_key kas-sgw error**]\n");
         free_queryid_result(qr_rk);
         free_queryid_result(qr_mk);
         return 0;

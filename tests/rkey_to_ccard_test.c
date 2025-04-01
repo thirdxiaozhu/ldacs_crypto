@@ -16,7 +16,7 @@ int main() {
 
     // 文件到密码卡
     if (km_writefile_to_cryptocard(export_dir, "rootkey.bin") != LD_KM_OK) {
-        log_warn("Error writing to ccard \n");
+        fprintf(stderr, "Error writing to ccard \n");
     }
 
     return 0;

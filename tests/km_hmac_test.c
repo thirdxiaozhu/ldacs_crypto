@@ -20,14 +20,14 @@ int main()
 
     if (km_generate_random(nonce, 16) != LD_KM_OK)
     {
-        log_warn("Error generating random. \n");
+        fprintf(stderr, "Error generating random. \n");
         return LD_ERR_KM_GENERATE_RANDOM;
     }
 
     if (km_hmac(nonce, nonce_len, sac_gs_t, strlen(sac_gs_t), rand, &rand_len) !=
         LD_KM_OK) // rand = hmac(sacgs-t,nonce)
     {
-        log_warn("km_hmac failed\n");
+        fprintf(stderr, "km_hmac failed\n");
         return LD_ERR_KM_HMAC;
     }
 }
