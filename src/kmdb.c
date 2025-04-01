@@ -9,7 +9,6 @@
 #include <sdf/libsdf.h>
 #include <sdfkmt/sdfe-func.h>
 #include <sdfkmt/sdfe-type.h>
-#include <utils/ld_log.h>
 
 #elif defined(USE_PIICO)
 

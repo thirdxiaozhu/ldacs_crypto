@@ -9,7 +9,6 @@
 #include <time.h>
 #include "kmdb.h"
 #include "km_field.h"
-#include <utils/ld_log.h>
 
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
