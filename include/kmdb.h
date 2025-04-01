@@ -5,8 +5,6 @@
  */
 
 #include "key_manage.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include "km_field.h"
 
 #define MAX_ID_LEN 128

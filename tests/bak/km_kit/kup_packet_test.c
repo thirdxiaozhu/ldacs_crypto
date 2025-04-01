@@ -62,13 +62,13 @@ struct KupdateRemind *kupdate_remind_new(uint16_t g_type, uint16_t ver, uint16_t
 
 static km_field_desc kupdate_remind_field[] = {
     // 密钥更新提醒字段描述
-    {ft_enum, 8, "G_TYPE", NULL},
-    {ft_enum, 4, "VER", NULL},
+    {km_ft_enum, 8, "G_TYPE", NULL},
+    {km_ft_enum, 4, "VER", NULL},
     {ft_set, 12, "SAC_AS", NULL},
-    {ft_enum, 4, "Element_Type", NULL},
+    {km_ft_enum, 4, "Element_Type", NULL},
     {ft_set, 12, "SAC_GSS", NULL},
     {ft_set, 12, "SAC_GST", NULL},
-    {ft_end, 0, NULL, NULL},
+    {km_ft_end, 0, NULL, NULL},
 };
 
 struct KupdateRequest
@@ -116,16 +116,16 @@ struct KupdateRequest *kupdate_request_new(uint16_t s_type, uint16_t ver, uint16
 
 static km_field_desc kupdate_request_field[] = {
     // 密钥更新请求字段描述
-    {ft_enum, 8, "S_TYPE", NULL},
-    {ft_enum, 4, "VER", NULL},
-    {ft_enum, 2, "PID", NULL},
+    {km_ft_enum, 8, "S_TYPE", NULL},
+    {km_ft_enum, 4, "VER", NULL},
+    {km_ft_enum, 2, "PID", NULL},
     {ft_set, 12, "SAC_AS", NULL},
-    {ft_enum, 4, "KEY_TYPE", NULL},
+    {km_ft_enum, 4, "KEY_TYPE", NULL},
     {ft_set, 12, "SAC_GSS", NULL},
     {ft_set, 12, "SAC_GST", NULL},
     {ft_str, 16, "NCC", NULL},
     {ft_str, 128, "NONCE", NULL},
-    {ft_end, 0, NULL, NULL},
+    {km_ft_end, 0, NULL, NULL},
 };
 
 struct KupdateResponse
@@ -141,14 +141,14 @@ struct KupdateResponse
 
 static km_field_desc kupdate_response_field[] = {
     // 密钥更新响应字段描述
-    {ft_enum, 8, "S_TYPE", NULL},
-    {ft_enum, 4, "VER", NULL},
-    {ft_enum, 2, "PID", NULL},
+    {km_ft_enum, 8, "S_TYPE", NULL},
+    {km_ft_enum, 4, "VER", NULL},
+    {km_ft_enum, 2, "PID", NULL},
     {ft_set, 12, "SAC_AS", NULL},
-    {ft_enum, 4, "KEY_TYPE", NULL},
+    {km_ft_enum, 4, "KEY_TYPE", NULL},
     {ft_set, 12, "SAC_GST", NULL},
     {ft_str, 16, "NCC", NULL},
-    {ft_end, 0, NULL, NULL},
+    {km_ft_end, 0, NULL, NULL},
 };
 
 struct KupdateTransport
@@ -165,15 +165,15 @@ struct KupdateTransport
 
 static km_field_desc kupdate_keytransport_field[] = {
     // 密钥更新-下发密钥字段描述
-    {ft_enum, 8, "G_TYPE", NULL},
-    {ft_enum, 4, "VER", NULL},
+    {km_ft_enum, 8, "G_TYPE", NULL},
+    {km_ft_enum, 4, "VER", NULL},
     {ft_set, 12, "SAC_AS", NULL},
-    {ft_enum, 4, "Element_Type", NULL},
+    {km_ft_enum, 4, "Element_Type", NULL},
     {ft_len, 4, "Element_Length", NULL},
-    {ft_enum, 4, "KEY_TYPE", NULL},
+    {km_ft_enum, 4, "KEY_TYPE", NULL},
     {ft_str, 128, "KEY", NULL},
     {ft_str, 128, "NONCE", NULL},
-    {ft_end, 0, NULL, NULL},
+    {km_ft_end, 0, NULL, NULL},
 };
 
 struct_desc_t static test_pdu_desc = {"kupdate_remind_packet", kupdate_remind_field};
