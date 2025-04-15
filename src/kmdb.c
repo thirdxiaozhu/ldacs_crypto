@@ -968,7 +968,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     }
     // //log_buf(LOG_WARN, "keycipher", key_cipher, key_len);
 
-    if (km_decrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key_cipher, key_len, key, &key_len) != LD_KM_OK) {
+    if (km_decrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key_cipher, key_len, key, &key_len, FALSE) != LD_KM_OK) {
         fprintf(stderr, "Error decrypting key\n");
         free(key);
         free(kek);

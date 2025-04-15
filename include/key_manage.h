@@ -25,7 +25,7 @@
 #define ALGO_HASH SGD_SM3            // hash调用的算法
 
 // 密钥句柄别名
-//typedef void *void *;
+// typedef void *void *;
 
 // typedef enum { TRUE = 1, FALSE = 0 } bool;
 
@@ -185,14 +185,9 @@ l_km_err km_generate_random(
         int len);
 
 // 国密加密（支持SM4_OFB/CFB/CBC/ECB）
-l_km_err km_encrypt(
-        void *key_handle,
-        uint32_t alg_id,
-        uint8_t *iv,
-        uint8_t *data,
-        uint32_t data_length,
-        uint8_t *cipher_data,
-        uint32_t *cipher_data_len);
+l_km_err
+km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *cipher_data,
+           uint32_t *cipher_data_len, bool check_pad);
 
 // 国密加密（支持SM4_OFB/CFB/CBC/ECB）
 /**
@@ -226,14 +221,8 @@ l_km_err km_sym_encrypt(
         uint8_t *cipher_data,
         uint32_t *cipher_data_len);
 
-l_km_err km_decrypt(
-        void *key_handle,
-        uint32_t alg_id,
-        uint8_t *iv,
-        uint8_t *cipher_data,
-        uint32_t cipher_data_len,
-        uint8_t *plain_data,
-        uint32_t *plain_data_len);
+l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher_data, uint32_t cipher_data_len,
+                    uint8_t *plain_data, uint32_t *plain_data_len, bool check_pad);
 
 // 国密解密（支持SM4_OFB/CFB/CBC/ECB）
 /**
@@ -518,14 +507,14 @@ l_km_err km_update_masterkey(
  * @param[in] len_nonce 随机数长度
  * @param[in] nonce 随机数
  */
-//l_km_err sgw_update_master_key(
-//        uint8_t *dbname,
-//        uint8_t *tablename,
-//        uint8_t *key_id,
-//        uint8_t *sgw_name,
-//        uint8_t *gs_t_name,
-//        uint16_t len_nonce,
-//        uint8_t *nonce);
+// l_km_err sgw_update_master_key(
+//         uint8_t *dbname,
+//         uint8_t *tablename,
+//         uint8_t *key_id,
+//         uint8_t *sgw_name,
+//         uint8_t *gs_t_name,
+//         uint16_t len_nonce,
+//         uint8_t *nonce);
 
 /**
  * @brief 外部接口：撤销密钥及其派生密钥
@@ -662,5 +651,13 @@ uint8_t *chck_algo_str(
  */
 int str_to_chck_algo(
         const char *algo_str);
+
+// PKCS#7 填充函数
+void pkcs7_padding(uint8_t *data, uint32_t *data_len);
+
+// PKCS#7 去除填充函数
+void pkcs7_unpadding(
+        uint8_t *data,
+        uint32_t *data_len);
 
 #endif
