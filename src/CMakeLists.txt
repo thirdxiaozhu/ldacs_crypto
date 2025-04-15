@@ -21,15 +21,23 @@ target_include_directories(${PROJECT_NAME}
 )
 
 
-# 选择适配的密码卡
-cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
-IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
+option(SGW_DEVICE "SGW Device Option" OFF)
+option(AS_DEVICE "AS Device Option" OFF)
+option(GS_DEVICE "GS Device Option" OFF)
+option(GMSSL_DEVICE "GMSSL Device Option" ON)
+
+
+
+IF(SGW_DEVICE)
+    MESSAGE(STATUS "SGW Device Compiling...")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf)
     option(USE_SDF "Enable SDF" ON)
-ELSEIF (${HOST_NAME} MATCHES "gs" OR ${HOST_NAME} MATCHES "as")
+ELSEIF (AS_DEVICE OR GS_DEVICE)
+    MESSAGE(STATUS "AS/GS Device Compiling...")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccmu)
     option(USE_PIICO "Enable PIICO" ON)
 ELSE ()
+    MESSAGE(STATUS "Using GMSSL...")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC gmssl)
     option(USE_GMSSL "Enable GMSSL" ON)
 ENDIF ()
@@ -77,7 +85,6 @@ install(
         DESTINATION /usr/local/lib/cmake/ldacscrypto
 )
 
-message("${CMAKE_INSTALL_PREFIX}")
 
 #set(SO_PATH /usr/local/ldacs/lib)
 #set(SO_CONFIG_DIR /etc/ld.so.conf.d)

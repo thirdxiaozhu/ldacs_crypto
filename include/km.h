@@ -3,9 +3,9 @@
 #define KM_H
 
 
-#define USE_SDF
+/* #undef USE_SDF */
 /* #undef USE_PIICO */
-/* #undef USE_GMSSL */
+#define USE_GMSSL
 
 #ifdef USE_SDF
 
