@@ -13,6 +13,7 @@
 #define DATA_SIZE 16
 #define SM3_DIGEST_LENGTH 32
 #define SESSION_KEY_EXPIRE_TIME 365 // 会话密钥超时时间
+#define BLOCK_SIZE 16 // 数据分组长度
 
 #ifndef USE_GMSSL
 // 用于创建随机数种子索引表时的描述
@@ -108,8 +109,9 @@ l_km_err km_generate_random(uint8_t *random_data, int len) {
     return LD_KM_OK;
 }
 
-l_km_err km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length,
-                    uint8_t *cipher_data, uint32_t *cipher_data_len) {
+l_km_err
+km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32_t data_length, uint8_t *cipher_data,
+           uint32_t *cipher_data_len, bool check_pad) {
     void *DeviceHandle, *pSessionHandle;
     void *phKeyHandle;
     int ret;
@@ -125,9 +127,21 @@ l_km_err km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *dat
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_OPEN_SESSION;
     }
+    int result;
+    if (check_pad) {
+        uint8_t *pad_data = calloc(data_length + BLOCK_SIZE, sizeof(uint8_t));
+        memcpy(pad_data, data, data_length);
+        uint32_t padded_len = data_length;
 
+        pkcs7_padding(pad_data, &padded_len); // 对数据进行填充
+        result = SDF_Encrypt(pSessionHandle, key_handle, alg_id, iv, pad_data, padded_len, cipher_data,
+                             cipher_data_len);
+        free(pad_data);
+    } else {
+        result = SDF_Encrypt(pSessionHandle, key_handle, alg_id, iv, data, data_length, cipher_data,
+                             cipher_data_len);
+    }
     // 调用SDF_Encrypt函数
-    int result = SDF_Encrypt(pSessionHandle, key_handle, alg_id, iv, data, data_length, cipher_data, cipher_data_len);
     if (result != LD_KM_OK) {
         fprintf(stderr, "SDF_Encrypt with phKeyHandle error!ret is %08x \n", result);
         SDF_CloseSession(pSessionHandle);
@@ -155,17 +169,16 @@ l_km_err km_sym_encrypt(const char *db_name, const char *table_name, const char 
     }
 
     // 加密
-    return km_encrypt(key_handle, alg_id, iv, data, data_length, cipher_data, cipher_data_len);
+    return km_encrypt(key_handle, alg_id, iv, data, data_length, cipher_data, cipher_data_len, FALSE);
 }
 
 l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cipher_data, uint32_t cipher_data_len,
-                    uint8_t *plain_data, uint32_t *plain_data_len) {
+                    uint8_t *plain_data, uint32_t *plain_data_len, bool check_pad) {
     void *DeviceHandle, *pSessionHandle;
     SDF_OpenDevice(&DeviceHandle);                  // 打开设备
     SDF_OpenSession(DeviceHandle, &pSessionHandle); // 打开会话句柄
 
     // 调用SDF_Dncrypt函数
-
     int result = SDF_Decrypt(pSessionHandle, key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data,
                              plain_data_len);
     if (result != LD_KM_OK) {
@@ -173,6 +186,10 @@ l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cip
         SDF_CloseSession(pSessionHandle);
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_DECRYPT;
+    }
+
+    if (check_pad) {
+        pkcs7_unpadding(plain_data, plain_data_len); // 去除对数据的填充
     }
     return LD_KM_OK;
 }
@@ -194,7 +211,7 @@ l_km_err km_sym_decrypt(const char *db_name, const char *table_name, const char 
     }
 
     // 解密
-    return km_decrypt(key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data, plain_data_len);
+    return km_decrypt(key_handle, alg_id, iv, cipher_data, cipher_data_len, plain_data, plain_data_len, FALSE);
 }
 
 // hash算法
@@ -2652,7 +2669,7 @@ km_keypkg_t *km_key_pkg_new(km_keymetadata_t *meta, uint8_t *key, bool is_encryp
                     // 密钥加密存储
                     uint32_t cipher_len;
                     if (km_encrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key, meta->length, keypkg->key_cipher,
-                                   &cipher_len)) {
+                                   &cipher_len, FALSE)) {
                         fprintf(stderr, "Error in derive : SDF_Encrypt failed!\n");
                         error_occurred = TRUE;
                     } else {
@@ -2754,6 +2771,21 @@ int bytes_to_hex_str(uint8_t *buff, uint16_t len, char *hex_str, uint16_t hex_st
     hex_str[len * 2] = '\0'; // 确保字符串以 '\0' 结尾
 
     return 0; // 成功
+}
+
+// PKCS#7 填充函数
+void pkcs7_padding(uint8_t *data, uint32_t *data_len) {
+    uint8_t padding_length = BLOCK_SIZE - (*data_len % BLOCK_SIZE);
+    for (size_t i = 0; i < padding_length; i++) {
+        data[(*data_len) + i] = (uint8_t) padding_length;
+    }
+    *data_len += padding_length;
+}
+
+// PKCS#7 去除填充函数
+void pkcs7_unpadding(uint8_t *data, uint32_t *data_len) {
+    uint8_t padding_length = data[(*data_len) - 1];
+    *data_len -= padding_length;
 }
 
 #endif

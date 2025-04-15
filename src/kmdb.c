@@ -968,7 +968,7 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
     }
     // //log_buf(LOG_WARN, "keycipher", key_cipher, key_len);
 
-    if (km_decrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key_cipher, key_len, key, &key_len) != LD_KM_OK) {
+    if (km_decrypt(kek_handle, ALGO_ENC_AND_DEC, iv_enc, key_cipher, key_len, key, &key_len, FALSE) != LD_KM_OK) {
         fprintf(stderr, "Error decrypting key\n");
         free(key);
         free(kek);
@@ -978,6 +978,10 @@ static int callback_for_query_keyvalue(void *data, int argc, char **argv, char *
         return LD_ERR_KM_DECRYPT;
     }
     // //log_buf(LOG_WARN, "decrypted key", key, key_len);
+    for (int i = 0; i < key_len; i++) {
+        fprintf(stderr, "%02x ", key[i]);
+    }
+    fprintf(stderr, "\n");
 
     /* 校验明文密钥完整性 */
     // 计算校验值
