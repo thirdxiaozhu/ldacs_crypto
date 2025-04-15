@@ -378,9 +378,9 @@ l_km_err km_key_import(
  * @param[in] filepath 指定输入文件的路径
  * @param[in] filename 存入密码卡时的文件名
  */
-l_km_err km_writefile_to_cryptocard(
-        uint8_t *filepath,
-        uint8_t *filename);
+//l_km_err km_writefile_to_cryptocard(
+//        uint8_t *filepath,
+//        uint8_t *filename);
 
 l_km_err km_create_ccard_file(
         const char *filename,

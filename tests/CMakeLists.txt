@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 99)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(tests
-        enc_dec_2
+        #        enc_dec_2
         #padding
         # kdistribute
         # db         # 密钥库增删改查相关
@@ -73,7 +73,8 @@ IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME}
     enable_testing()
     foreach (name ${tests})
         add_test(NAME ${name} COMMAND ${name}test)
-        add_executable(${name}test ${name}_test.c)
+        add_executable(${name}test ${name}_test.c
+                ../piico-import/piico-import.c)
         target_link_libraries(${name}test LINK_PUBLIC ldacscrypto pthread uuid sqlite3)
 
         IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")

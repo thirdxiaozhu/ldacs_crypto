@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.18)
+project(piico-import C)
+
+set(CMAKE_C_STANDARD 99)
+
+add_executable(${PROJECT_NAME} piico-import.c)
+add_executable(cli::test_client ALIAS ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccmu)
+INSTALL(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib/liteldacs LIBRARY DESTINATION lib/liteldacs RUNTIME DESTINATION /usr/local/bin)
