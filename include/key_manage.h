@@ -353,6 +353,9 @@ l_km_err km_import_key_with_kek(
 /*************************************************************************
  *                      外部接口：业务逻辑-密钥生成和派生                  *
  *************************************************************************/
+
+l_km_err km_init_table(const char *db_name, const char *table_name);
+
 /**
  * @brief 外部接口：根密钥导入
  * @param[in] dbname 数据库名称，用于存储根密钥
@@ -378,9 +381,9 @@ l_km_err km_key_import(
  * @param[in] filepath 指定输入文件的路径
  * @param[in] filename 存入密码卡时的文件名
  */
-//l_km_err km_writefile_to_cryptocard(
-//        uint8_t *filepath,
-//        uint8_t *filename);
+l_km_err km_writefile_to_cryptocard(
+        const char *filepath,
+        const char *filename);
 
 l_km_err km_create_ccard_file(
         const char *filename,

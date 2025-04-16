@@ -101,6 +101,8 @@ l_km_err km_generate_random(uint8_t *random_data, int len) {
     if (SDF_GenerateRandom(pSessionHandle, len, random_data)) {
         fprintf(stderr, "SDF_GenerateRandom Function failure!, ret %08x\n",
                 SDF_GenerateRandom(pSessionHandle, len, random_data));
+        SDF_CloseSession(pSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_GENERATE_RANDOM;
     }
     SDF_CloseSession(pSessionHandle);
@@ -148,6 +150,8 @@ km_encrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *data, uint32
         SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_ENCRYPT;
     }
+    SDF_CloseSession(pSessionHandle);
+    SDF_CloseDevice(DeviceHandle);
     return LD_KM_OK;
 }
 
@@ -191,6 +195,8 @@ l_km_err km_decrypt(void *key_handle, uint32_t alg_id, uint8_t *iv, uint8_t *cip
     if (check_pad) {
         pkcs7_unpadding(plain_data, plain_data_len); // 去除对数据的填充
     }
+    SDF_CloseSession(pSessionHandle);
+    SDF_CloseDevice(DeviceHandle);
     return LD_KM_OK;
 }
 
@@ -413,8 +419,7 @@ km_hmac_with_keyhandle(void *handle, uint8_t *data, uint32_t data_len, uint8_t *
     uint8_t iv[16] = {0x02, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x20};
     uint8_t key[16];
     uint32_t key_len;
-    // //log_buf(LOG_INFO, "iv", iv, 16);
-    // //log_buf(LOG_INFO, "rand", rand, 16);
+
 
     int ret = SDF_Encrypt(hSessionHandle, handle, ALGO_ENC_AND_DEC, iv, rand, 16, key, &key_len);
     if (ret != LD_KM_OK) {
@@ -737,6 +742,83 @@ l_km_err km_delete_ccard_file(const char *filename) {
     return LD_KM_OK;
 }
 
+l_km_err km_writefile_to_cryptocard(const char *filepath, const char *filename) {
+    void *DeviceHandle, *hSessionHandle;
+    FILE *file;
+    uint32_t file_size;
+    uint16_t result;
+    uint8_t *buffer = NULL; // 初始化指针为 NULL
+
+    // 打开设备
+    if (SDF_OpenDevice(&DeviceHandle) != SDR_OK) {
+        fprintf(stderr, "Error opening device.\n");
+        return LD_ERR_KM_OPEN_DEVICE;
+    }
+
+    // 打开会话句柄
+    if (SDF_OpenSession(DeviceHandle, &hSessionHandle) != SDR_OK) {
+        fprintf(stderr, "Error opening session.\n");
+        SDF_CloseDevice(DeviceHandle);
+        return LD_ERR_KM_OPEN_SESSION;
+    }
+
+    // 打开文件
+    file = fopen(filepath, "rb");
+    if (file == NULL) {
+        fprintf(stderr, "Error opening file %s.\n", filepath);
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
+        return LD_ERR_KM_OPEN_FILE;
+    }
+
+    // 定位文件末尾以获取文件大小
+    fseek(file, 0, SEEK_END);
+    file_size = ftell(file);
+    rewind(file);
+
+    // 分配内存以存储文件内容
+    buffer = (uint8_t *) malloc(file_size * sizeof(uint8_t));
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation error.\n");
+        fclose(file);
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
+        return LD_ERR_KM_WRITE_FILE;
+    }
+
+    // 将文件内容读入缓冲区
+    result = fread(buffer, sizeof(uint8_t), file_size, file);
+    if (result != file_size) {
+        fprintf(stderr, "Error reading file.\n");
+        fclose(file);
+        free(buffer); // 确保释放分配的内存
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
+        return LD_ERR_KM_WRITE_FILE;
+    }
+
+    // 文件内容写入密码卡
+    int writeFileResult = SDF_WriteFile(hSessionHandle, filename, strlen((char *) filename), 0, file_size, buffer);
+    if (writeFileResult != SDR_OK) {
+        fprintf(stderr, "Error writing to cryptocard file %s, return %08x\n", filename, writeFileResult);
+        fclose(file);
+        free(buffer); // 确保释放分配的内存
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
+        return LD_ERR_KM_WRITE_FILE;
+    }
+
+    // 关闭文件
+    fclose(file);
+    // 释放内存
+    free(buffer);
+    // 关闭会话和设备
+    SDF_CloseSession(hSessionHandle);
+    SDF_CloseDevice(DeviceHandle);
+
+    return LD_KM_OK;
+}
+
 // 密码卡内创建文件
 l_km_err km_create_ccard_file(const char *filename, size_t file_size) {
     void *DeviceHandle, *pSessionHandle;
@@ -816,6 +898,8 @@ l_km_err km_generate_key_with_kek(int kek_index, uint32_t kek_len, void **key_ha
             free(cipher_key);
             break;
         }
+        SDF_CloseSession(pSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_KM_OK;
 
     } while (0);
@@ -1003,6 +1087,13 @@ l_km_err km_rkey_gen_export(const char *as_name, const char *sgw_name, uint32_t 
         */
 }
 
+l_km_err km_init_table(const char *db_name, const char *table_name) {
+    if (create_table_if_not_exist(&km_table_desc, db_name, table_name, "id", NULL, NULL, FALSE) != LD_KM_OK) {
+        return LD_ERR_KM_CREATE_DB;
+    }
+    return LD_KM_OK;
+}
+
 /**
  * @brief 根密钥导入
  */
@@ -1109,6 +1200,8 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
     km_keypkg_t *pkg = km_key_pkg_new(meta, NULL, FALSE);
     if (!pkg) {
         fprintf(stderr, "Error in derive: km_key_pkg_new failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return NULL;
     }
 
@@ -1125,6 +1218,8 @@ derive_key(void *kdk_handle, enum KEY_TYPE key_type, uint32_t key_len, const cha
         // 释放已经分配的内存
         free(key);
         free(salt);
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return NULL;
     }
     uint32_t salt_len = 16; // 取前16byte输入pbkdf
@@ -1491,6 +1586,8 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
                                &kek_handle);
     if (ret != LD_KM_OK) {
         fprintf(stderr, "get key handle : import kek failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_IMPORT_KEY_WITH_KEK;
     }
 
@@ -1508,11 +1605,15 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     if (ret != LD_KM_OK) // 计算mac失败
     {
         fprintf(stderr, "get key handle: calc km_mac failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_MAC;
     }
     if (memcmp(pkg->chck_value, chck_value, chck_len) != 0) // 密钥校验不通过
     {
         fprintf(stderr, "get key handle: key verify failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         // printbuff("chck_value", chck_value, 32);
         return LD_ERR_KM_MASTERKEY_VERIFY;
     }
@@ -1524,6 +1625,8 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
                       key, &key_len);
     if (ret != LD_KM_OK) {
         fprintf(stderr, "get masterkey handle: km_decrypt failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_DECRYPT;
     }
 
@@ -1532,6 +1635,8 @@ l_km_err km_get_key_handle(struct KeyPkg *pkg, void **key_handle) {
     ret = SDF_ImportKey(hSessionHandle, key, key_len, key_handle);
     if (ret != LD_KM_OK) {
         fprintf(stderr, "get masterkey handle: import masterkey failed!\n");
+        SDF_CloseSession(hSessionHandle);
+        SDF_CloseDevice(DeviceHandle);
         return LD_ERR_KM_IMPORT_KEY;
     }
 

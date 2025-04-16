@@ -5,7 +5,7 @@
 #include "../include/kmdb.h"
 
 // 将文件存入密码卡文件区 指定输入文件的路径 存入密码卡时的文件名
-l_km_err km_writefile_to_cryptocard(const char *filepath, const char *filename) {
+l_km_err writefile_to_cryptocard(const char *filepath, const char *filename) {
     void *DeviceHandle, *hSessionHandle;
     FILE *file;
     uint32_t file_size;
@@ -97,7 +97,7 @@ int main(int argc, const char **argv) {
     const char *filepath = argv[1];
     const char *card_keyname = argv[2];
 
-    if (km_writefile_to_cryptocard(filepath, card_keyname) != LD_KM_OK) {
+    if (writefile_to_cryptocard(filepath, card_keyname) != LD_KM_OK) {
         printf("Import failed\n");
         exit(0);
     }
