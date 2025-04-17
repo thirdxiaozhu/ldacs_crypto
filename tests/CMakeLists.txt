@@ -6,7 +6,7 @@ set(CMAKE_C_STANDARD 99)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(tests
-        #        enc_dec_2
+        enc_dec_2
         #padding
         # kdistribute
         # db         # 密钥库增删改查相关
@@ -79,7 +79,7 @@ IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME}
 
         IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
             target_link_libraries(${name}test LINK_PUBLIC sdf)
-        ELSEIF (${HOST_NAME} MATCHES "as")
+        ELSEIF (${HOST_NAME} MATCHES "as" OR ${HOST_NAME} MATCHES "e304")
             target_link_libraries(${name}test LINK_PUBLIC piico_ccmu)
         ELSE ()
             target_link_libraries(${name}test LINK_PUBLIC gmssl)
