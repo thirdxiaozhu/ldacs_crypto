@@ -68,7 +68,7 @@ set(tests
 )
 cmake_host_system_information(RESULT HOST_NAME QUERY HOSTNAME)
 
-IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME} MATCHES "as")
+IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME} MATCHES "as" OR ${HOST_NAME} MATCHES "e304")
 
     enable_testing()
     foreach (name ${tests})
