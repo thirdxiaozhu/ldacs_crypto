@@ -24,14 +24,15 @@ target_include_directories(${PROJECT_NAME}
 option(SGW_DEVICE "SGW Device Option" OFF)
 option(AS_DEVICE "AS Device Option" OFF)
 option(GS_DEVICE "GS Device Option" OFF)
-option(GMSSL_DEVICE "GMSSL Device Option" ON)
+#option(GMSSL_DEVICE "GMSSL Device Option" OFF)
 
 
-
-IF(SGW_DEVICE)
+IF (SGW_DEVICE)
     MESSAGE(STATUS "SGW Device Compiling...")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC sdf)
     option(USE_SDF "Enable SDF" ON)
+    #    add_executable(gen-rootkey gen_rootkey.c)
+    #    target_link_libraries(gen-rootkey LINK_PUBLIC uuid sqlite3 sdf)
 ELSEIF (AS_DEVICE OR GS_DEVICE)
     MESSAGE(STATUS "AS/GS Device Compiling...")
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC piico_ccmu)
