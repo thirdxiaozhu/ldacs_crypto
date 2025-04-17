@@ -73,8 +73,7 @@ IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc" OR ${HOST_NAME}
     enable_testing()
     foreach (name ${tests})
         add_test(NAME ${name} COMMAND ${name}test)
-        add_executable(${name}test ${name}_test.c
-                ../piico-import/piico-import.c)
+        add_executable(${name}test ${name}_test.c)
         target_link_libraries(${name}test LINK_PUBLIC ldacscrypto pthread uuid sqlite3)
 
         IF (${HOST_NAME} MATCHES "gateway" OR ${HOST_NAME} MATCHES "gsc")
