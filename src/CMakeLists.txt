@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.20)
 project(ldacscrypto VERSION 1.0.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
@@ -12,7 +12,6 @@ endif ()
 add_library(${PROJECT_NAME} STATIC key_manage.c kmdb.c)   # 生成共享库
 
 target_link_libraries(${PROJECT_NAME} LINK_PUBLIC uuid sqlite3)
-
 
 target_include_directories(${PROJECT_NAME}
         PUBLIC
